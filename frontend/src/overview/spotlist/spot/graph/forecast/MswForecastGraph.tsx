@@ -30,14 +30,13 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     const allTimestamps = getTimestamps([...measuredData, ...median]);
 
     // Update all series with current measurement if available
-    const updateWithCurrentSample = (series: ApiLineEntry[]) => {
-        if (!currentSample) return series;
+    const removeSamplesBeforeCurrentTime = (series: ApiLineEntry[]) => {
+        if (!currentSample || !currentSample.timestamp) {
+            return series;
+        }
 
         const currentTime = currentSample.timestamp;
-        return [
-            {timestamp: currentTime, flow: currentSample.flow},
-            ...series.filter(item => item.timestamp > currentTime)
-        ];
+        return [...series.filter(item => item.timestamp > currentTime)];
     };
 
     // Process all data series
@@ -45,11 +44,11 @@ export const MswForecastGraph = (props: MswGraphProps) => {
         measured: currentSample
             ? [...measuredData, {timestamp: currentSample.timestamp, flow: currentSample.flow}]
             : measuredData,
-        median: updateWithCurrentSample(median),
-        min: updateWithCurrentSample(min),
-        max: updateWithCurrentSample(max),
-        p25: updateWithCurrentSample(twentyFivePercentile),
-        p75: updateWithCurrentSample(seventyFivePercentile)
+        median: removeSamplesBeforeCurrentTime(median),
+        min: removeSamplesBeforeCurrentTime(min),
+        max: removeSamplesBeforeCurrentTime(max),
+        p25: removeSamplesBeforeCurrentTime(twentyFivePercentile),
+        p75: removeSamplesBeforeCurrentTime(seventyFivePercentile)
     };
 
 
