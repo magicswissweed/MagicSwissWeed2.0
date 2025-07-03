@@ -85,6 +85,20 @@ public class UserTableDao extends DAOImpl<UserTableRecord, com.aa.msw.gen.jooq.t
     }
 
     /**
+     * Fetch a unique record that has <code>extid = value</code>
+     */
+    public com.aa.msw.gen.jooq.tables.pojos.UserTable fetchOneByExtid(String value) {
+        return fetchOne(UserTable.USER_TABLE.EXTID, value);
+    }
+
+    /**
+     * Fetch a unique record that has <code>extid = value</code>
+     */
+    public Optional<com.aa.msw.gen.jooq.tables.pojos.UserTable> fetchOptionalByExtid(String value) {
+        return fetchOptional(UserTable.USER_TABLE.EXTID, value);
+    }
+
+    /**
      * Fetch records that have <code>email BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
@@ -97,6 +111,20 @@ public class UserTableDao extends DAOImpl<UserTableRecord, com.aa.msw.gen.jooq.t
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.UserTable> fetchByEmail(String... values) {
         return fetch(UserTable.USER_TABLE.EMAIL, values);
+    }
+
+    /**
+     * Fetch a unique record that has <code>email = value</code>
+     */
+    public com.aa.msw.gen.jooq.tables.pojos.UserTable fetchOneByEmail(String value) {
+        return fetchOne(UserTable.USER_TABLE.EMAIL, value);
+    }
+
+    /**
+     * Fetch a unique record that has <code>email = value</code>
+     */
+    public Optional<com.aa.msw.gen.jooq.tables.pojos.UserTable> fetchOptionalByEmail(String value) {
+        return fetchOptional(UserTable.USER_TABLE.EMAIL, value);
     }
 
     /**

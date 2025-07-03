@@ -9,7 +9,9 @@ import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.tables.UserToSpotTable.UserToSpotTablePath;
 import com.aa.msw.gen.jooq.tables.records.UserTableRecord;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.jooq.Condition;
@@ -143,6 +145,11 @@ public class UserTable extends TableImpl<UserTableRecord> {
     @Override
     public UniqueKey<UserTableRecord> getPrimaryKey() {
         return Keys.USER_TABLE_PKEY;
+    }
+
+    @Override
+    public List<UniqueKey<UserTableRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.UNIQUE_EXTID, Keys.UNIQUE_EMAIL);
     }
 
     private transient UserToSpotTablePath _userToSpotTable;

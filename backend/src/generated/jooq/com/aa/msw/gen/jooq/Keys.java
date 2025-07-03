@@ -48,6 +48,8 @@ public class Keys {
     public static final UniqueKey<SampleTableRecord> SAMPLE_TABLE_PKEY = Internal.createUniqueKey(SampleTable.SAMPLE_TABLE, DSL.name("sample_table_pkey"), new TableField[] { SampleTable.SAMPLE_TABLE.ID }, true);
     public static final UniqueKey<SpotTableRecord> SPOT_TABLE_PKEY = Internal.createUniqueKey(SpotTable.SPOT_TABLE, DSL.name("spot_table_pkey"), new TableField[] { SpotTable.SPOT_TABLE.ID }, true);
     public static final UniqueKey<StationTableRecord> STATION_TABLE_PKEY = Internal.createUniqueKey(StationTable.STATION_TABLE, DSL.name("station_table_pkey"), new TableField[] { StationTable.STATION_TABLE.DB_ID }, true);
+    public static final UniqueKey<UserTableRecord> UNIQUE_EMAIL = Internal.createUniqueKey(UserTable.USER_TABLE, DSL.name("unique_email"), new TableField[] { UserTable.USER_TABLE.EMAIL }, true);
+    public static final UniqueKey<UserTableRecord> UNIQUE_EXTID = Internal.createUniqueKey(UserTable.USER_TABLE, DSL.name("unique_extid"), new TableField[] { UserTable.USER_TABLE.EXTID }, true);
     public static final UniqueKey<UserTableRecord> USER_TABLE_PKEY = Internal.createUniqueKey(UserTable.USER_TABLE, DSL.name("user_table_pkey"), new TableField[] { UserTable.USER_TABLE.ID }, true);
     public static final UniqueKey<UserToSpotTableRecord> USER_TO_SPOT_TABLE_PKEY = Internal.createUniqueKey(UserToSpotTable.USER_TO_SPOT_TABLE, DSL.name("user_to_spot_table_pkey"), new TableField[] { UserToSpotTable.USER_TO_SPOT_TABLE.ID }, true);
 
