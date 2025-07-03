@@ -64,6 +64,21 @@ export interface ApiFlowSample {
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const ApiFlowStatusEnum = {
+    Good: 'GOOD',
+    Bad: 'BAD',
+    TendencyToBecomeGood: 'TENDENCY_TO_BECOME_GOOD'
+} as const;
+
+export type ApiFlowStatusEnum = typeof ApiFlowStatusEnum[keyof typeof ApiFlowStatusEnum];
+
+
+/**
+ * 
+ * @export
  * @interface ApiForecast
  */
 export interface ApiForecast {
@@ -320,6 +335,12 @@ export interface ApiSpotInformation {
      * @memberof ApiSpotInformation
      */
     'currentSample': ApiSample;
+    /**
+     * 
+     * @type {ApiFlowStatusEnum}
+     * @memberof ApiSpotInformation
+     */
+    'flowStatusEnum': ApiFlowStatusEnum;
 }
 
 export const ApiSpotInformationSpotTypeEnum = {

@@ -265,10 +265,19 @@ components:
       allOf:
         - $ref: '#/components/schemas/ApiSpot'
         - type: object
-          required: [ currentSample ]
+          required: [ currentSample, flowStatusEnum ]
           properties:
             currentSample:
               $ref: '#/components/schemas/ApiSample'
+            flowStatusEnum:
+              $ref: '#/components/schemas/ApiFlowStatusEnum'
+    ApiFlowStatusEnum:
+      type: string
+      nullable: false
+      enum:
+        - GOOD
+        - BAD
+        - TENDENCY_TO_BECOME_GOOD
     SpotOrderList:
       type: array
       required: [ type, format ]

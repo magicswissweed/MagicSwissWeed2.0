@@ -1,14 +1,7 @@
 import './MswEditSpot.scss';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import React, {useEffect, useRef, useState} from "react";
-import {
-    ApiSpot,
-    ApiSpotInformation,
-    ApiSpotSpotTypeEnum,
-    ApiStation,
-    EditPrivateSpotRequest,
-    SpotsApi
-} from '../../gen/msw-api-ts';
+import {ApiSpot, ApiSpotSpotTypeEnum, ApiStation, EditPrivateSpotRequest, SpotsApi} from '../../gen/msw-api-ts';
 import {useUserAuth} from '../../user/UserAuthContext';
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../../api/config/AuthConfiguration";
@@ -16,10 +9,11 @@ import {spotsService} from "../../service/SpotsService";
 import edit_icon from "../../assets/edit.svg";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
+import {SpotModel} from "../../model/SpotModel";
 
 // specify the properties (inputs) for the MswEditSpot component
 interface MswEditSpotProps {
-    spot: ApiSpotInformation;
+    spot: SpotModel;
 }
 
 export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {

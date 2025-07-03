@@ -1,5 +1,6 @@
 import {
     ApiFlowSample,
+    ApiFlowStatusEnum,
     ApiForecast,
     ApiHistoricalYears,
     ApiSample,
@@ -17,6 +18,7 @@ export class SpotModel {
     maxFlow: number;
     station: ApiStation;
     currentSample: ApiSample;
+    flowStatus: FlowColorEnum;
     forecastLoaded: boolean;
     forecast: ApiForecast | undefined;
     last40DaysLoaded: boolean;
@@ -33,6 +35,7 @@ export class SpotModel {
         maxFlow: number,
         station: ApiStation,
         currentSample: ApiSample,
+        flowStatus: FlowColorEnum,
         forecastLoaded: boolean,
         forecast: ApiForecast | undefined,
         last40DaysLoaded: boolean,
@@ -47,10 +50,26 @@ export class SpotModel {
         this.maxFlow = maxFlow;
         this.station = station;
         this.currentSample = currentSample;
+        this.flowStatus = flowStatus
         this.forecastLoaded = forecastLoaded;
         this.last40DaysLoaded = last40DaysLoaded;
         this.last40Days = last40Days;
         this.forecast = forecast;
         this.historical = historical;
+    }
+}
+
+export enum FlowColorEnum {
+    GREEN = "green", ORANGE = "orange", RED = "red"
+}
+
+export function getFlowColorEnumFromFlowStatus(apiFlowStatus: ApiFlowStatusEnum): FlowColorEnum {
+    switch (apiFlowStatus) {
+        case "GOOD":
+            return FlowColorEnum.GREEN
+        case "TENDENCY_TO_BECOME_GOOD":
+            return FlowColorEnum.ORANGE
+        case "BAD":
+            return FlowColorEnum.RED
     }
 }

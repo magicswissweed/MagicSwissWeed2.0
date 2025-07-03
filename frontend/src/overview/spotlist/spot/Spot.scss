@@ -12,8 +12,8 @@ $icons-container-width: 40px;
   flex-direction: column;
   padding: 0;
   color: #000000;
-  background-color: #ececec;
   border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
   @include small {
     .miniGraph {

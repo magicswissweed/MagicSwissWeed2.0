@@ -19,10 +19,10 @@ jobs:
       - name: Run deployment script on remote server
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ssh.ponteshare.ch
+          host: ${{ secrets.SSH_URL }}
           username: studi
           password: ${{ secrets.SSH_PASSWORD }}
-          port: 1910
+          port: ${{ secrets.SSH_PORT }}
           script: |
             cd /opt/ponte-services/magicswissweed
             sudo ./deploy.sh ${{ github.event.inputs.docker_image_name }}

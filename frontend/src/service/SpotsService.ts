@@ -1,4 +1,4 @@
-import { 
+import {
     ApiSpotInformation,
     ForecastApi,
     HistoricalApi,
@@ -10,7 +10,7 @@ import {
 } from "../gen/msw-api-ts";
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../api/config/AuthConfiguration";
-import {SpotModel} from "../model/SpotModel";
+import {getFlowColorEnumFromFlowStatus, SpotModel} from "../model/SpotModel";
 
 type SubscriberCallback = (spots: Array<SpotModel>) => void;
 
@@ -33,7 +33,7 @@ class SpotsService {
                 let stationsWithoutForecast = this.spots
                     .filter(s => !s.forecast)
                     .map(s => s.stationId)
-                if(stationsWithoutForecast.length > 0) {
+                if (stationsWithoutForecast.length > 0) {
                     new SampleApi().getLast40DaysSamples(stationsWithoutForecast)
                         .then(this.addLast40DaysToState.bind(this))
                 }
@@ -70,6 +70,7 @@ class SpotsService {
                     s.maxFlow,
                     s.station,
                     s.currentSample,
+                    getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
                     false,
                     undefined,
                     false,
@@ -95,6 +96,7 @@ class SpotsService {
                     s.maxFlow,
                     s.station,
                     s.currentSample,
+                    s.flowStatus,
                     s.forecastLoaded,
                     s.forecast,
                     true,
@@ -122,6 +124,7 @@ class SpotsService {
                     s.maxFlow,
                     s.station,
                     s.currentSample,
+                    s.flowStatus,
                     true,
                     newForecast,
                     s.last40DaysLoaded,

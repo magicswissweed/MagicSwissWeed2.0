@@ -20,9 +20,6 @@ export function useUserAuth() {
     return useContext(userAuthContext);
 }
 
-const userWasLoggedInCookieName = "msw-user-was-logged-in-cookie";
-const userWasLoggedInCookieValue = "true";
-
 // @ts-ignore
 export function UserAuthContextProvider({children}) {
     // null if not logged in, undefined if not yet known
@@ -32,12 +29,17 @@ export function UserAuthContextProvider({children}) {
     useEffect(() => {
         const unsubscribe = firebaseAuth.onAuthStateChanged((currentuser) => {
             if (currentuser) {
-                setCookie(userWasLoggedInCookieName, userWasLoggedInCookieValue);
-                currentuser.getIdToken(false).then((token) => {
-                    setToken(token);
+                currentuser.getIdToken(false).then(async (token) => {
+                    authConfiguration(token).then((config) => {
+                        new UserApi(config).registerUser().then(() => { // Maybe register, maybe downsync, maybe nothing
+                            setToken(token) // token is set after making sure that the user is created in the backend
+                            setUser(currentuser);
+                        });
+                    });
                 })
+            } else {
+                setUser(currentuser);
             }
-            setUser(currentuser);
         });
 
         return () => {
@@ -70,7 +72,6 @@ export function UserAuthContextProvider({children}) {
 
     async function logOut() {
         await signOut(firebaseAuth);
-        setCookie(userWasLoggedInCookieName, "");
         document.location.reload();
     }
 
@@ -78,31 +79,4 @@ export function UserAuthContextProvider({children}) {
         const googleAuthProvider = new GoogleAuthProvider();
         return signInWithPopup(firebaseAuth, googleAuthProvider);
     }
-}
-
-export function wasUserLoggedInBefore(): boolean {
-    return getCookie(userWasLoggedInCookieName) == userWasLoggedInCookieValue;
-}
-
-function setCookie(cname: string, cvalue: string) {
-    const d = new Date();
-    d.setTime(d.getTime() + (356 * 24 * 60 * 60 * 1000));
-    let expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname: string) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
 }

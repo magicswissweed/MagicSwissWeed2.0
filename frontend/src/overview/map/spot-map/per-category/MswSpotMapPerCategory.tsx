@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef} from "react";
 import {GoogleMap, useLoadScript} from "@react-google-maps/api";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import './MswSpotMapPerCategory.scss';
-import {getFlowColorEnum} from "../../../../service/SpotsHelper";
 import {SpotModel} from "../../../../model/SpotModel";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
@@ -60,21 +59,20 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
     const createMarkers = (spots: SpotModel[]) => {
         return spots.map((spot, index) => {
             const position = getOffsetPosition(spot.station.latitude, spot.station.longitude, index);
-            const flowColorEnum = getFlowColorEnum(spot, spot.currentSample.flow)
 
             const marker = new google.maps.Marker({
                 position,
                 icon: {
                     path: google.maps.SymbolPath.CIRCLE,
                     scale: 10,
-                    fillColor: flowColorEnum.toString(),
+                    fillColor: spot.flowStatus.toString(),
                     fillOpacity: 1,
                     strokeWeight: 1,
                     strokeColor: "white",
                 },
             });
 
-            (marker as any).customColor = flowColorEnum.toString();
+            (marker as any).customColor = spot.flowStatus.toString();
             return marker;
         });
     };

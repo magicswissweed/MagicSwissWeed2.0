@@ -1,6 +1,5 @@
 package com.aa.msw.database;
 
-import com.aa.msw.auth.RequestUserInterceptor;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.database.repository.dao.SampleDao;
 import org.slf4j.Logger;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CronJobDeleteOldEntries {
     public static final int DEFAULT_RETENTION_TIME_IN_DAYS = 30;
-    private static final Logger LOG = LoggerFactory.getLogger(RequestUserInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CronJobDeleteOldEntries.class);
     private final SampleDao sampleDao;
     private final ForecastDao forecastDao;
 

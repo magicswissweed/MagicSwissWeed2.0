@@ -49,7 +49,7 @@ public abstract class AbstractLineFetchService extends AbstractFetchService {
     }
 
     protected static Map<OffsetDateTime, Double> mapLine(HydroLine hydroLine) throws IOException {
-        if (hydroLine.x().size() > hydroLine.y().size()) {
+        if (hydroLine == null || hydroLine.x() == null || hydroLine.y() == null || hydroLine.x().size() != hydroLine.y().size()) {
             throw new IOException("Should be the same number of dates as values.");
         }
         Map<OffsetDateTime, Double> line = new LinkedHashMap<>();

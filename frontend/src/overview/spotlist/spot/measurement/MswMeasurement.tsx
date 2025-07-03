@@ -1,6 +1,5 @@
 import './MswMeasurement.scss'
 import {Component} from 'react';
-import {FlowColorEnum, getFlowColorEnum} from "../../../../service/SpotsHelper";
 import {SpotModel} from "../../../../model/SpotModel";
 
 interface MeasurementsProps {
@@ -35,35 +34,12 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
     private getFlow() {
-        let flow: number = this.spot.currentSample!.flow;
         return <>
-            <div className={this.getFlowColor(flow)}>{flow}</div>
+            <div className={this.spot.flowStatus}>{this.spot.currentSample.flow}</div>
             <div className="unit">
                 m<sup>3</sup>/s
             </div>
-
-            {/* Not yet possible, because we don't get the minFlowForDanger from the backend atm */}
-            {/*{this.spot.currentSample.flow > this.spot.minFlowForDanger && (*/}
-            {/*  <div*/}
-            {/*    className="danger"*/}
-            {/*    title="Moderate flood danger, be careful!"*/}
-            {/*  >*/}
-            {/*    &ensp; ⚠️*/}
-            {/*  </div>*/}
-            {/*)}*/}
         </>;
-    }
-
-    private getFlowColor(flow: number) {
-        let flowColorEnum = getFlowColorEnum(this.spot, flow);
-        switch (flowColorEnum) {
-            case FlowColorEnum.GREEN:
-                return "flow_good";
-            case FlowColorEnum.ORANGE:
-                return "flow_could_become_good";
-            case FlowColorEnum.RED:
-                return "flow_bad";
-        }
     }
 
 

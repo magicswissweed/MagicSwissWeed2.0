@@ -2,6 +2,7 @@ package com.aa.msw.api.station;
 
 import com.aa.msw.database.exceptions.NoSampleAvailableException;
 import com.aa.msw.database.repository.dao.StationDao;
+import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.InputDataFetcherService;
 import com.aa.msw.source.hydrodaten.stations.StationFetchService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -77,10 +79,10 @@ public class StationApiService {
 
     private boolean isValidStation(Station station) {
         try {
-            inputDataFetcherService.fetchForStationId(station.stationId());
+            List<Sample> samples = inputDataFetcherService.fetchForStationId(station.stationId());
+            return samples.size() == 1;
         } catch (NoSampleAvailableException e) {
             return false;
         }
-        return true;
     }
 }

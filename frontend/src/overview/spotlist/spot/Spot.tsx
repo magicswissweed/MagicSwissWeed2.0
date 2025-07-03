@@ -1,6 +1,6 @@
 import './Spot.scss'
 import React, {useState} from 'react';
-import {ApiSpotInformation, SpotsApi} from '../../../gen/msw-api-ts';
+import {SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import {MswMiniGraph} from './graph/miniGraph/MswMiniGraph';
@@ -32,7 +32,7 @@ export const Spot = (props: SpotProps) => {
 
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
-    const handleDeleteSpotAndCloseModal = (spot: ApiSpotInformation) => deleteSpot(spot).then(handleCancelConfirmationModal);
+    const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
     const handleShowConfirmationModal = () => setShowConfirmationModal(true);
 
@@ -136,7 +136,7 @@ export const Spot = (props: SpotProps) => {
         }
     }
 
-    async function deleteSpot(spot: ApiSpotInformation) {
+    async function deleteSpot(spot: SpotModel) {
         let config = await authConfiguration(token);
         new SpotsApi(config).deletePrivateSpot(spot.id!); // no await to not be blocking
         spotsService.deleteSpot(spot.id!);

@@ -25,7 +25,7 @@ export const MswHeader = () => {
     if (user) {
         loginOrLogout = <>
             <MswAddSpot/>
-            <Button variant='msw-outline' size='sm' onClick={logOut}>Log Out</Button>
+            <Button variant='danger' size='sm' onClick={logOut}>Log Out</Button>
         </>
     } else {
         loginOrLogout = <>

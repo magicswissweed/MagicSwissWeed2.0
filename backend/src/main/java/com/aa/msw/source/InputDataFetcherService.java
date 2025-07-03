@@ -47,12 +47,6 @@ public class InputDataFetcherService {
         } catch (IOException | URISyntaxException e) {
             throw new NoSampleAvailableException(e.getMessage());
         }
-        try {
-            forecastFetchService.fetchForecasts(Set.of(stationId));
-        } catch (URISyntaxException e) {
-            // NOP: This can happen, if no forecast is available for the spot...
-        }
-
         return samples;
     }
 

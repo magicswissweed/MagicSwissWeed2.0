@@ -36,7 +36,7 @@ export const MswFooter = () => {
                         This website is a passion project by Aaron Studer and Nicola Küng.
                     </p>
                     <p>
-                        Nicola built a <a href={"https://nkueng.github.io/MagicSwissWeed/"}>first version</a> of
+                        Nicola built a <a href={"https://nkueng.github.io/MagicSwissWeed1.0/"}>first version</a> of
                         MagicSwissWeed to learn JavaScript and bring public data to life.
                     </p>
                     <p>

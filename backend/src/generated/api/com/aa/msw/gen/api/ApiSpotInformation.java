@@ -2,6 +2,7 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
+import com.aa.msw.gen.api.ApiFlowStatusEnum;
 import com.aa.msw.gen.api.ApiSample;
 import com.aa.msw.gen.api.ApiStation;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-05-30T21:04:15.247420+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-09T13:29:56.518144+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;
@@ -78,6 +79,8 @@ public class ApiSpotInformation {
 
   private ApiSample currentSample;
 
+  private ApiFlowStatusEnum flowStatusEnum;
+
   public ApiSpotInformation() {
     super();
   }
@@ -85,7 +88,7 @@ public class ApiSpotInformation {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpotInformation(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, ApiSample currentSample) {
+  public ApiSpotInformation(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, ApiSample currentSample, ApiFlowStatusEnum flowStatusEnum) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
@@ -95,6 +98,7 @@ public class ApiSpotInformation {
     this.maxFlow = maxFlow;
     this.station = station;
     this.currentSample = currentSample;
+    this.flowStatusEnum = flowStatusEnum;
   }
 
   public ApiSpotInformation id(UUID id) {
@@ -277,6 +281,26 @@ public class ApiSpotInformation {
     this.currentSample = currentSample;
   }
 
+  public ApiSpotInformation flowStatusEnum(ApiFlowStatusEnum flowStatusEnum) {
+    this.flowStatusEnum = flowStatusEnum;
+    return this;
+  }
+
+  /**
+   * Get flowStatusEnum
+   * @return flowStatusEnum
+  */
+  @NotNull @Valid 
+  @Schema(name = "flowStatusEnum", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("flowStatusEnum")
+  public ApiFlowStatusEnum getFlowStatusEnum() {
+    return flowStatusEnum;
+  }
+
+  public void setFlowStatusEnum(ApiFlowStatusEnum flowStatusEnum) {
+    this.flowStatusEnum = flowStatusEnum;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -294,12 +318,13 @@ public class ApiSpotInformation {
         Objects.equals(this.minFlow, apiSpotInformation.minFlow) &&
         Objects.equals(this.maxFlow, apiSpotInformation.maxFlow) &&
         Objects.equals(this.station, apiSpotInformation.station) &&
-        Objects.equals(this.currentSample, apiSpotInformation.currentSample);
+        Objects.equals(this.currentSample, apiSpotInformation.currentSample) &&
+        Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, currentSample);
+    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, currentSample, flowStatusEnum);
   }
 
   @Override
@@ -315,6 +340,7 @@ public class ApiSpotInformation {
     sb.append("    maxFlow: ").append(toIndentedString(maxFlow)).append("\n");
     sb.append("    station: ").append(toIndentedString(station)).append("\n");
     sb.append("    currentSample: ").append(toIndentedString(currentSample)).append("\n");
+    sb.append("    flowStatusEnum: ").append(toIndentedString(flowStatusEnum)).append("\n");
     sb.append("}");
     return sb.toString();
   }
