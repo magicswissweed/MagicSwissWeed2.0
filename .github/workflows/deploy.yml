@@ -38,6 +38,17 @@ jobs:
       - name: Docker configuration
         run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Start Database
+        run: docker compose --project-name msw -f docker-compose.yml up -d
+
+      - name: 🔨 Build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+
       - name: 🖨️ Prepare Backend Docker Build
         run: |
           mv backend/build/libs/$(ls backend/build/libs | grep -v plain) backend/app.jar
