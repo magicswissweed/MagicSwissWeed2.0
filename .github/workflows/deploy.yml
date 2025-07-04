@@ -32,7 +32,7 @@ jobs:
           mv backend/build/libs/$(ls backend/build/libs | grep -v plain) backend/app.jar
 
       - name: 📦 Check if Backend Docker image already exists
-        id: image-check
+        id: image-check-backend
         run: |
           IMAGE="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA"
           echo "Checking for image: $IMAGE"
@@ -58,7 +58,7 @@ jobs:
             backend
 
       - name: 📦 Check if Frontend Docker image already exists
-        id: image-check
+        id: image-check-frontend
         run: |
           IMAGE="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$GITHUB_SHA"
           echo "Checking for image: $IMAGE"
