@@ -8,6 +8,17 @@ on:
         required: true
         type: string
 
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+  GAR_LOCATION: ${{ vars.GAR_LOCATION }}
+  GAR_REPOSITORY_BACKEND: ${{ vars.GAR_REPOSITORY_BACKEND }}
+  GAR_REPOSITORY_FRONTEND: ${{ vars.GAR_REPOSITORY_FRONTEND }}
+
+  GRADLE_OPTS: -Xmx1024m
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
