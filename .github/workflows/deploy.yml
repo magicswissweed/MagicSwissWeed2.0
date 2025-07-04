@@ -59,11 +59,10 @@ jobs:
           IMAGE="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA"
           echo "Checking for image: $IMAGE"
 
-          EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND" \
-            --filter="version=$GITHUB_SHA" \
-            --format="value(version)")
+          IMAGE_EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
+            --format="value(IMAGE)" | grep "$GITHUB_SHA" || true)
 
-          if [[ "$EXISTS" == "$GITHUB_SHA" ]]; then
+          if [[ -n "$IMAGE_EXISTS" ]]; then
             echo "Image already exists. Skipping build and push."
             echo "skip_backend_build=true" >> $GITHUB_OUTPUT
           else
@@ -88,8 +87,11 @@ jobs:
           EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
             --filter="version=$GITHUB_SHA" \
             --format="value(version)")
+          
+          IMAGE_EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
+            --format="value(IMAGE)" | grep "$GITHUB_SHA" || true)
 
-          if [[ "$EXISTS" == "$GITHUB_SHA" ]]; then
+          if [[ -n "$IMAGE_EXISTS" ]]; then
             echo "Image already exists. Skipping build and push."
             echo "skip_frontend_build=true" >> $GITHUB_OUTPUT
           else
