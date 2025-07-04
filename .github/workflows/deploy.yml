@@ -72,7 +72,7 @@ jobs:
           fi
 
       - name: 🐳 Build Backend Docker Image
-        if: steps.image-check.outputs.skip_backend_build == 'false'
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
         run: |
           docker build \
             --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA" \
@@ -98,7 +98,7 @@ jobs:
           fi
 
       - name: 🐳 Build Frontend Docker Image
-        if: steps.image-check.outputs.skip_frontend_build == 'false'
+        if: steps.image-check-frontend.outputs.skip_frontend_build == 'false'
         run: |
           docker build \
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$GITHUB_SHA" \
