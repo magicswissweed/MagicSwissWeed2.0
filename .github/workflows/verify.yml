@@ -36,14 +36,6 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ env.GCP_SERVICE_ACCOUNT }}
-
-      - name: Docker configuration
-        run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
@@ -59,30 +51,3 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew test
-
-      - name: 🖨️ Prepare Backend Docker Build
-        run: |
-          mv backend/build/libs/$(ls backend/build/libs | grep -v plain) backend/app.jar
-
-      - name: 🐳 Build Backend Docker Image
-        run: |
-          docker build \
-            --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA" \
-            --build-arg JAR_FILE=app.jar \
-            backend
-
-      - name: 🐳 Build Frontend Docker Image
-        run: |
-          docker build \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$GITHUB_SHA" \
-          frontend
-
-      - name: 🚀 Push Backend Image to GCP Artifact Registry
-        if: github.ref == 'refs/heads/master'
-        run: |
-          docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA"
-
-      - name: 🚀 Push Frontend Image to GCP Artifact Registry
-        if: github.ref == 'refs/heads/master'
-        run: |
-          docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$GITHUB_SHA"
