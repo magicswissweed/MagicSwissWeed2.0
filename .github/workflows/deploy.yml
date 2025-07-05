@@ -105,14 +105,12 @@ jobs:
           docker build \
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$GITHUB_SHA" \
           frontend
-
       - name: 🚀 Push Backend Image to GCP Artifact Registry
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && steps.image-check-backend.outputs.skip_backend_build == 'false'
         run: |
           docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA"
-
       - name: 🚀 Push Frontend Image to GCP Artifact Registry
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && steps.image-check-frontend.outputs.skip_frontend_build == 'false'
         run: |
           docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$GITHUB_SHA"
 
