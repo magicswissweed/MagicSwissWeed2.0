@@ -132,4 +132,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /opt/ponte-services/magicswissweed
-            sudo env BACKEND_IMAGE_NAME="$BACKEND_IMAGE_NAME" FRONTEND_IMAGE_NAME="$FRONTEND_IMAGE_NAME" ./deploy.sh "$BACKEND_IMAGE_NAME" "$FRONTEND_IMAGE_NAME"
+            sudo ./deploy.sh ${{ env.BACKEND_IMAGE_NAME }} ${{ env.FRONTEND_IMAGE_NAME }}
