@@ -38,21 +38,6 @@ jobs:
       - name: Docker configuration
         run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-
-      - name: Start Database
-        run: docker compose --project-name msw -f docker-compose.yml up -d
-
-      - name: 🔨 Build
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build -x test
-
-      - name: 🖨️ Prepare Backend Docker Build
-        run: |
-          mv backend/build/libs/$(ls backend/build/libs | grep -v plain) backend/app.jar
-
       - name: 📦 Check if Backend Docker image already exists
         id: image-check-backend
         run: |
@@ -70,14 +55,6 @@ jobs:
             echo "skip_backend_build=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: 🐳 Build Backend Docker Image
-        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
-        run: |
-          docker build \
-            --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA" \
-            --build-arg JAR_FILE=app.jar \
-            backend
-
       - name: 📦 Check if Frontend Docker image already exists
         id: image-check-frontend
         run: |
@@ -87,7 +64,7 @@ jobs:
           EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
             --filter="version=$GITHUB_SHA" \
             --format="value(version)")
-          
+
           IMAGE_EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
             --format="value(IMAGE)" | grep "$GITHUB_SHA" || true)
 
@@ -98,6 +75,33 @@ jobs:
             echo "Image does not exist. Proceeding."
             echo "skip_frontend_build=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Setup Gradle
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        uses: gradle/gradle-build-action@v2
+
+      - name: Start Database
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: docker compose --project-name msw -f docker-compose.yml up -d
+
+      - name: 🔨 Build
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+
+      - name: 🖨️ Prepare Backend Docker Build
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          mv backend/build/libs/$(ls backend/build/libs | grep -v plain) backend/app.jar
+
+      - name: 🐳 Build Backend Docker Image
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          docker build \
+            --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$GITHUB_SHA" \
+            --build-arg JAR_FILE=app.jar \
+            backend
 
       - name: 🐳 Build Frontend Docker Image
         if: steps.image-check-frontend.outputs.skip_frontend_build == 'false'
