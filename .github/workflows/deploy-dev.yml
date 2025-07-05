@@ -1,4 +1,4 @@
-name: Deploy via SSH
+name: Deploy DEV via SSH
 
 on:
   workflow_dispatch:
