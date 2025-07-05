@@ -20,7 +20,7 @@ env:
   GRADLE_OPTS: -Xmx1024m
 
   BACKEND_IMAGE_NAME: ${{github.event.inputs.git_commit_hash}} # Same as prod, because it's the same image -> can be reused
-  FRONTEND_IMAGE_NAME: ${{github.event.inputs.git_commit_hash}}-DEV
+  FRONTEND_IMAGE_NAME: ${{github.event.inputs.git_commit_hash}}-dev
 
 jobs:
   deploy:
