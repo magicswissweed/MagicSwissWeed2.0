@@ -1,0 +1,136 @@
+name: Deploy via SSH
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_commit_hash:
+        description: "The Docker image name to deploy - equals the git commit id on the master"
+        required: true
+        type: string
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+  GAR_LOCATION: ${{ vars.GAR_LOCATION }}
+  GAR_REPOSITORY_BACKEND: ${{ vars.GAR_REPOSITORY_BACKEND }}
+  GAR_REPOSITORY_FRONTEND: ${{ vars.GAR_REPOSITORY_FRONTEND }}
+
+  GRADLE_OPTS: -Xmx1024m
+
+  BACKEND_IMAGE_NAME: ${{github.event.inputs.git_commit_hash}} # Same as prod, because it's the same image -> can be reused
+  FRONTEND_IMAGE_NAME: ${{github.event.inputs.git_commit_hash}}-DEV
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.git_commit_hash }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ env.GCP_SERVICE_ACCOUNT }}
+
+      - name: Docker configuration
+        run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+
+      - name: 📦 Check if Backend Docker image already exists
+        id: image-check-backend
+        run: |
+          IMAGE="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$BACKEND_IMAGE_NAME"
+          echo "Checking for image: $IMAGE"
+
+          IMAGE_EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
+            --format="value(IMAGE)" | grep "$BACKEND_IMAGE_NAME" || true)
+
+          if [[ -n "$IMAGE_EXISTS" ]]; then
+            echo "Image already exists. Skipping build and push."
+            echo "skip_backend_build=true" >> $GITHUB_OUTPUT
+          else
+            echo "Image does not exist. Proceeding."
+            echo "skip_backend_build=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📦 Check if Frontend Docker image already exists
+        id: image-check-frontend
+        run: |
+          IMAGE="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$FRONTEND_IMAGE_NAME"
+          echo "Checking for image: $IMAGE"
+
+          EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
+            --filter="version=$FRONTEND_IMAGE_NAME" \
+            --format="value(version)")
+
+          IMAGE_EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
+            --format="value(IMAGE)" | grep "$FRONTEND_IMAGE_NAME" || true)
+
+          if [[ -n "$IMAGE_EXISTS" ]]; then
+            echo "Image already exists. Skipping build and push."
+            echo "skip_frontend_build=true" >> $GITHUB_OUTPUT
+          else
+            echo "Image does not exist. Proceeding."
+            echo "skip_frontend_build=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Gradle
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        uses: gradle/gradle-build-action@v2
+
+      - name: Start Database
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: docker compose --project-name msw -f docker-compose.yml up -d
+
+      - name: 🔨 Build
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+
+      - name: 🖨️ Prepare Backend Docker Build
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          mv backend/build/libs/$(ls backend/build/libs | grep -v plain) backend/app.jar
+
+      - name: 🐳 Build Backend Docker Image
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          docker build \
+            --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$BACKEND_IMAGE_NAME" \
+            --build-arg JAR_FILE=app.jar \
+            backend
+
+      - name: 🐳 Build Frontend Docker Image
+        if: steps.image-check-frontend.outputs.skip_frontend_build == 'false'
+        run: |
+          docker build \
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$FRONTEND_IMAGE_NAME" \
+          --build-arg API_BASE_URL=https://api-dev.msw.ponteshare.ch \
+          frontend
+      - name: 🚀 Push Backend Image to GCP Artifact Registry
+        if: steps.image-check-backend.outputs.skip_backend_build == 'false'
+        run: |
+          docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_BACKEND/$BACKEND_IMAGE_NAME"
+      - name: 🚀 Push Frontend Image to GCP Artifact Registry
+        if: steps.image-check-frontend.outputs.skip_frontend_build == 'false'
+        run: |
+          docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND/$FRONTEND_IMAGE_NAME"
+
+      - name: Run deployment script on remote server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SSH_URL }}
+          username: studi
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /opt/ponte-services/magicswissweed
+            sudo ./deploy.sh ${{ env.BACKEND_IMAGE_NAME }} ${{ env.FRONTEND_IMAGE_NAME }}
