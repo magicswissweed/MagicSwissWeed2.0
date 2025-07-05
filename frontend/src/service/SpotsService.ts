@@ -1,6 +1,4 @@
 import {
-    ApiForecast,
-    ApiSample,
     ApiSpotInformation,
     ForecastApi,
     HistoricalApi,
@@ -82,13 +80,6 @@ class SpotsService {
         }
     };
 
-    private addCurrentSampleToForecastLines(forecast: ApiForecast | undefined, currentSample: ApiSample) {
-        if (forecast) {
-            forecast.measuredData.push({timestamp: currentSample.timestamp, flow: currentSample.flow})
-        }
-        return forecast;
-    }
-
     private addLast40DaysToState(res: AxiosResponse<StationToLast40Days[], any>) {
         if (res && res.data) {
             const updatedSpots = this.spots.map(s => {
@@ -121,10 +112,7 @@ class SpotsService {
         if (res && res.data) {
             const updatedSpots = this.spots.map(s => {
                 const filteredListByStationId = res.data.filter(i => i.station === s.stationId);
-                const newForecast = this.addCurrentSampleToForecastLines(
-                    filteredListByStationId[0]?.forecast,
-                    s.currentSample
-                );
+                const newForecast = filteredListByStationId[0]?.forecast;
                 // create new SpotModel so that react can see that something changed (updating a field is not enough)
                 return new SpotModel(
                     s.id,
