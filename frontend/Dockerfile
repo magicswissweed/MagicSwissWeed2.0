@@ -13,7 +13,7 @@ COPY .env.production .env.production
 # Replace localhost with the production URL
 ARG API_BASE_URL=https://api.msw.ponteshare.ch
 ENV API_BASE_URL=${API_BASE_URL}
-RUN sed -i 's|http://localhost:8080|${API_BASE_URL}|g' src/gen/msw-api-ts/base.ts
+RUN sh -c 'sed -i "s|http://localhost:8080|${API_BASE_URL}|g" src/gen/msw-api-ts/base.ts'
 
 RUN npm install
 RUN npm run build
