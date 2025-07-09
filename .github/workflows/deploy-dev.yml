@@ -94,6 +94,8 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
+        env:
+          DB_HOST: localhost:6543
 
       - name: 🖨️ Prepare Backend Docker Build
         if: steps.image-check-backend.outputs.skip_backend_build == 'false'
