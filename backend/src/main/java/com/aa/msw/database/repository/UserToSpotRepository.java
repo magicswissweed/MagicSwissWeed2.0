@@ -5,22 +5,15 @@ import com.aa.msw.database.helpers.UserToSpot;
 import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.helpers.id.UserId;
 import com.aa.msw.database.helpers.id.UserToSpotId;
-import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.database.repository.dao.UserToSpotDao;
 import com.aa.msw.gen.jooq.tables.UserToSpotTable;
 import com.aa.msw.gen.jooq.tables.daos.UserToSpotTableDao;
 import com.aa.msw.gen.jooq.tables.records.UserToSpotTableRecord;
-import com.aa.msw.model.Spot;
-import com.aa.msw.model.SpotTypeEnum;
-import com.aa.msw.model.UserSpot;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Component
@@ -28,63 +21,13 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
         implements UserToSpotDao {
 
     private static final UserToSpotTable TABLE = UserToSpotTable.USER_TO_SPOT_TABLE;
-    private final SpotDao spotDao;
 
-    public UserToSpotRepository(final DSLContext dsl, SpotDao spotDao) {
+    public UserToSpotRepository(final DSLContext dsl) {
         super(dsl, new UserToSpotTableDao(dsl.configuration()), TABLE, TABLE.ID);
-        this.spotDao = spotDao;
     }
 
     @Override
-    @Transactional
-    public void addPrivateSpot(Spot spot, int position) {
-        spotDao.persist(spot);
-        increasePositionOfAllSpotsOfTypeByOne(spot.type());
-        persistUserToSpot(spot, position);
-    }
-
-    @Override
-    @Transactional
-    public void updatePrivateSpot(Spot updatedSpot) {
-        Spot existingSpot = spotDao.get(updatedSpot.getId());
-        if (!existingSpot.isPublic() && userHasSpot(existingSpot.getId())) {
-            spotDao.update(updatedSpot);
-        }
-    }
-
-    private void increasePositionOfAllSpotsOfTypeByOne(SpotTypeEnum type) {
-        List<UserToSpot> userToSpots = getUserToSpotOrderedOfType(type);
-
-        for (int i = 0; i < userToSpots.size(); i++) {
-            UserToSpot userToSpot = userToSpots.get(i);
-            userToSpot.setPosition(i + 1);
-            update(userToSpot);
-        }
-    }
-
-    @Transactional
-    public void persistUserToSpot(Spot spot, int position) {
-        persist(
-                new UserToSpot(
-                        new UserToSpotId(),
-                        UserContext.getCurrentUser().userId(),
-                        spot.spotId(),
-                        position
-                )
-        );
-    }
-
-    @Override
-    @Transactional
-    public List<UserSpot> getUserSpotsOrdered() {
-        return getUserToSpotOrdered()
-                .stream()
-                .map(userToSpot -> new UserSpot(userToSpot.position(), spotDao.get(userToSpot.spotId())))
-                .sorted(Comparator.comparingInt(UserSpot::position))
-                .collect(Collectors.toList());
-    }
-
-    private boolean userHasSpot(SpotId id) {
+    public boolean userHasSpot(SpotId id) {
         return !dsl.selectFrom(TABLE)
                 .where(TABLE.USER_ID.eq(UserContext.getCurrentUser().userId().getId()))
                 .and(TABLE.SPOT_ID.eq(id.getId()))
@@ -92,17 +35,12 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 .isEmpty();
     }
 
-    private List<UserToSpot> getUserToSpotOrdered() {
+    @Override
+    public List<UserToSpot> getUserToSpotOrdered() {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.USER_ID.eq(UserContext.getCurrentUser().userId().getId()))
                 .orderBy(TABLE.POSITION)
                 .fetch(this::mapRecord);
-    }
-
-    private List<UserToSpot> getUserToSpotOrderedOfType(SpotTypeEnum type) {
-        return getUserToSpotOrdered().stream()
-                .filter(userToSpot -> spotDao.get(userToSpot.spotId()).type() == type)
-                .toList();
     }
 
     @Override
@@ -111,20 +49,6 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 .where(TABLE.USER_ID.eq(userId.getId()))
                 .and(TABLE.SPOT_ID.eq(spotId.getId()))
                 .fetchOne(this::mapRecord);
-    }
-
-    @Override
-    @Transactional
-    public void addAllPublicSpotsToUser() {
-        List<Spot> publicSpots = new ArrayList<>(spotDao.getPublicSpots());
-
-        List<Spot> mappedSpotIds = getUserSpotsOrdered().stream().map(UserSpot::spot).toList();
-
-        for (Spot publicSpot : publicSpots) {
-            if (!mappedSpotIds.contains(publicSpot)) {
-                persistUserToSpot(publicSpot, 0);
-            }
-        }
     }
 
     @Override

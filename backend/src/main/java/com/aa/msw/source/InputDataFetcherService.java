@@ -4,6 +4,7 @@ import com.aa.msw.database.exceptions.NoSampleAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.database.repository.dao.StationDao;
+import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.model.Forecast;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
@@ -25,15 +26,17 @@ public class InputDataFetcherService {
     private final StationDao stationDao;
     private final SampleDao sampleDao;
     private final ForecastDao forecastDao;
+    private final SpotDbService spotDbService;
     private Set<Integer> stationIds;
 
-    public InputDataFetcherService(SampleFetchService sampleFetchService, ForecastFetchService forecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao) {
+    public InputDataFetcherService(SampleFetchService sampleFetchService, ForecastFetchService forecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService) {
         this.sampleFetchService = sampleFetchService;
         this.forecastFetchService = forecastFetchService;
         this.stationDao = stationDao;
         this.sampleDao = sampleDao;
         this.forecastDao = forecastDao;
         stationIds = getAllStationIds();
+        this.spotDbService = spotDbService;
     }
 
     public void updateStationIds() {
@@ -54,14 +57,15 @@ public class InputDataFetcherService {
     public void fetchDataAndWriteToDb() throws IOException, URISyntaxException {
         fetchAndWriteSamples();
         fetchAndWriteForecasts();
+        spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
     }
 
-    public void fetchAndWriteSamples() throws IOException, URISyntaxException {
+    private void fetchAndWriteSamples() throws IOException, URISyntaxException {
         List<Sample> samples = sampleFetchService.fetchSamples(stationIds);
         sampleDao.persistSamplesIfNotExist(samples);
     }
 
-    public void fetchAndWriteForecasts() throws URISyntaxException {
+    private void fetchAndWriteForecasts() throws URISyntaxException {
         List<Forecast> forecasts = forecastFetchService.fetchForecasts(stationIds);
         forecastDao.persistForecastsIfNotExist(forecasts);
     }

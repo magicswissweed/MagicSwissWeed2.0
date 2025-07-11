@@ -9,12 +9,12 @@ import com.aa.msw.gen.jooq.tables.records.SpotTableRecord;
 import com.aa.msw.model.Spot;
 import com.aa.msw.model.SpotTypeEnum;
 import org.jooq.DSLContext;
-import org.jooq.Record1;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 
 @Component
@@ -87,17 +87,18 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
     }
 
     @Override
-    public Set<Integer> getAllStationIds() {
-        return new HashSet<>(
-                dsl.selectDistinct(TABLE.STATIONID).from(TABLE)
-                        .fetch(Record1::value1)
-        );
-    }
-
-    @Override
     public List<Spot> getPublicSpots() {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.ISPUBLIC)
                 .fetch(this::mapRecord);
+    }
+
+    @Override
+    public Set<Spot> getSpotsWithStationId(Integer stationId) {
+        return dsl.selectFrom(TABLE)
+                .where(TABLE.STATIONID.eq(stationId))
+                .fetch(this::mapRecord)
+                .stream()
+                .collect(toUnmodifiableSet());
     }
 }

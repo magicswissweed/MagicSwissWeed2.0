@@ -5,6 +5,7 @@ import com.aa.msw.database.exceptions.NoSuchUserException;
 import com.aa.msw.database.helpers.id.UserExtId;
 import com.aa.msw.database.helpers.id.UserId;
 import com.aa.msw.database.repository.dao.UserDao;
+import com.aa.msw.database.services.UserDbService;
 import com.aa.msw.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -27,9 +28,11 @@ public class RequestUserInterceptor implements HandlerInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(RequestUserInterceptor.class);
 
     private final UserDao userDao;
+    private final UserDbService userDbService;
 
-    public RequestUserInterceptor(UserDao userDao) {
+    public RequestUserInterceptor(UserDao userDao, UserDbService userDbService) {
         this.userDao = userDao;
+        this.userDbService = userDbService;
     }
 
     @Transactional
@@ -51,7 +54,7 @@ public class RequestUserInterceptor implements HandlerInterceptor {
                             decodedToken.getEmail(),
                             "");
                     UserContext.setCurrentUser(user);
-                    userDao.registerUserAndAddPublicSpots();
+                    userDbService.registerUserAndAddPublicSpots();
                 }
             } catch (FirebaseAuthException e) {
                 LOG.info("Exception when decoding token: " + e.getMessage());

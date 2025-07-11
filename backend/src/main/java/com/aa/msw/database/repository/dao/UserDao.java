@@ -8,6 +8,4 @@ import com.aa.msw.model.User;
 public interface UserDao extends Dao<UserId, User> {
 
     User getUser(UserExtId externalId) throws NoSuchUserException;
-
-    void registerUserAndAddPublicSpots();
 }

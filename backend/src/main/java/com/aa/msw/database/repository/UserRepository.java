@@ -1,11 +1,9 @@
 package com.aa.msw.database.repository;
 
-import com.aa.msw.auth.threadlocal.UserContext;
 import com.aa.msw.database.exceptions.NoSuchUserException;
 import com.aa.msw.database.helpers.id.UserExtId;
 import com.aa.msw.database.helpers.id.UserId;
 import com.aa.msw.database.repository.dao.UserDao;
-import com.aa.msw.database.repository.dao.UserToSpotDao;
 import com.aa.msw.gen.jooq.tables.UserTable;
 import com.aa.msw.gen.jooq.tables.daos.UserTableDao;
 import com.aa.msw.gen.jooq.tables.records.UserTableRecord;
@@ -23,11 +21,8 @@ public class UserRepository extends AbstractRepository<UserId, User, UserTableRe
 
     private static final UserTable TABLE = UserTable.USER_TABLE;
 
-    private final UserToSpotDao userToSpotDao;
-
-    public UserRepository(final DSLContext dsl, UserToSpotDao userToSpotDao) {
+    public UserRepository(final DSLContext dsl) {
         super(dsl, new UserTableDao(dsl.configuration()), TABLE, TABLE.ID);
-        this.userToSpotDao = userToSpotDao;
     }
 
     @Override
@@ -43,12 +38,6 @@ public class UserRepository extends AbstractRepository<UserId, User, UserTableRe
         }
     }
 
-    @Override
-    @Transactional
-    public void registerUserAndAddPublicSpots() {
-        persist(UserContext.getCurrentUser());
-        userToSpotDao.addAllPublicSpotsToUser();
-    }
 
     @Override
     protected User mapRecord(UserTableRecord record) {

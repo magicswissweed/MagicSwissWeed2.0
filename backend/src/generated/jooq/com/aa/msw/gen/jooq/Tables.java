@@ -9,6 +9,7 @@ import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.SampleTable;
+import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.UserTable;
@@ -45,6 +46,11 @@ public class Tables {
      * The table <code>public.sample_table</code>.
      */
     public static final SampleTable SAMPLE_TABLE = SampleTable.SAMPLE_TABLE;
+
+    /**
+     * The table <code>public.spot_current_info_table</code>.
+     */
+    public static final SpotCurrentInfoTable SPOT_CURRENT_INFO_TABLE = SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE;
 
     /**
      * The table <code>public.spot_table</code>.
