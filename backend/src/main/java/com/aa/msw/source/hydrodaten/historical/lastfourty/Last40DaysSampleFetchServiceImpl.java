@@ -49,6 +49,7 @@ public class Last40DaysSampleFetchServiceImpl extends AbstractLineFetchService i
         );
     }
 
+    @Override
     public Set<Last40Days> fetchLast40DaysSamples(Set<Integer> stationIds) throws URISyntaxException {
         Set<Last40Days> result = new HashSet<>();
         for (Integer stationId : stationIds) {

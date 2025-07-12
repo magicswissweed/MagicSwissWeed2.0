@@ -32,8 +32,10 @@ public class SampleApiService {
         return mapSample(sampleDao.getCurrentSample(stationId));
     }
 
-    public List<ApiFlowSample> getLast40DaysSamples(Integer stationId) {
-        return last40daysApiService.getLast40Days(stationId).last40DaysSamples()
+    public List<ApiFlowSample> getLast40DaysSamples(Integer stationId) throws NoDataAvailableException {
+        return last40daysApiService
+                .getLast40Days(stationId)
+                .last40DaysSamples()
                 .entrySet()
                 .stream()
                 .map(sample -> new ApiFlowSample()
