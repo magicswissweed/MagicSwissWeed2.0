@@ -108,24 +108,20 @@ public class Last40DaysRepository extends AbstractRepository
     @Override
     @Transactional
     public void persistLast40DaysSamples(Set<Last40Days> fetchedLast40DaysSamples) {
-        for (Last40Days last40DaysSample : fetchedLast40DaysSamples) {
-            updateOrPersist(last40DaysSample);
-        }
-    }
-
-    private void updateOrPersist(Last40Days last40Days) {
-        int stationId = last40Days.stationId();
-        try {
-            Last40Days currentlySavedLast40Days = getForStation(stationId);
-            update(
-                    new Last40Days(
-                            currentlySavedLast40Days.databaseId(),
-                            stationId,
-                            last40Days.last40DaysSamples()
-                    )
-            );
-        } catch (NoDataAvailableException e) {
-            insert(last40Days);
+        for (Last40Days last40Days : fetchedLast40DaysSamples) {
+            int stationId = last40Days.stationId();
+            try {
+                Last40Days currentlySavedLast40Days = getForStation(stationId);
+                update(
+                        new Last40Days(
+                                currentlySavedLast40Days.databaseId(),
+                                stationId,
+                                last40Days.last40DaysSamples()
+                        )
+                );
+            } catch (NoDataAvailableException e) {
+                insert(last40Days);
+            }
         }
     }
 
