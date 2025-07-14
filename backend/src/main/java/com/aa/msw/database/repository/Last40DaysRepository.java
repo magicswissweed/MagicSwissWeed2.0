@@ -108,18 +108,20 @@ public class Last40DaysRepository extends AbstractRepository
     @Override
     @Transactional
     public void persistLast40DaysSamples(Set<Last40Days> fetchedLast40DaysSamples) {
+        Map<Integer, Last40Days> existingByStationId = getAll().stream()
+                .collect(Collectors.toMap(Last40Days::stationId, i -> i));
+
         for (Last40Days last40Days : fetchedLast40DaysSamples) {
             int stationId = last40Days.stationId();
-            try {
-                Last40Days currentlySavedLast40Days = getForStation(stationId);
+            Last40Days existing = existingByStationId.get(stationId);
+            if (existing != null) {
                 update(
                         new Last40Days(
-                                currentlySavedLast40Days.databaseId(),
+                                existing.databaseId(),
                                 stationId,
                                 last40Days.last40DaysSamples()
-                        )
-                );
-            } catch (NoDataAvailableException e) {
+                        ));
+            } else {
                 insert(last40Days);
             }
         }

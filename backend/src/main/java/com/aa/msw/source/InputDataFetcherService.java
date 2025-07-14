@@ -32,7 +32,6 @@ public class InputDataFetcherService {
     private final SpotDbService spotDbService;
     private final Last40DaysSampleFetchService last40DaysSampleFetchService;
     private final Last40DaysDao last40DaysDao;
-    private Set<Integer> stationIds;
 
     public InputDataFetcherService(SampleFetchService sampleFetchService, ForecastFetchService forecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, Last40DaysSampleFetchService last40DaysSampleFetchService, Last40DaysDao last40DaysDao) {
         this.sampleFetchService = sampleFetchService;
@@ -40,14 +39,9 @@ public class InputDataFetcherService {
         this.stationDao = stationDao;
         this.sampleDao = sampleDao;
         this.forecastDao = forecastDao;
-        stationIds = getAllStationIds();
         this.spotDbService = spotDbService;
         this.last40DaysSampleFetchService = last40DaysSampleFetchService;
         this.last40DaysDao = last40DaysDao;
-    }
-
-    public void updateStationIds() {
-        this.stationIds = getAllStationIds();
     }
 
     public List<Sample> fetchForStationId(Integer stationId) throws NoSampleAvailableException {
@@ -62,23 +56,24 @@ public class InputDataFetcherService {
 
     @Scheduled(fixedRate = 5 * 60 * 1000) // 5 minutes in milliseconds
     public void fetchDataAndWriteToDb() throws IOException, URISyntaxException {
-        fetchAndWriteSamples();
-        fetchAndWriteForecasts();
-        fetchAndWriteLast40Days();
+        Set<Integer> stationIds = getAllStationIds();
+        fetchAndWriteSamples(stationIds);
+        fetchAndWriteForecasts(stationIds);
+        fetchAndWriteLast40Days(stationIds);
         spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
     }
 
-    private void fetchAndWriteSamples() throws IOException, URISyntaxException {
+    private void fetchAndWriteSamples(Set<Integer> stationIds) throws IOException, URISyntaxException {
         List<Sample> samples = sampleFetchService.fetchSamples(stationIds);
         sampleDao.persistSamplesIfNotExist(samples);
     }
 
-    private void fetchAndWriteForecasts() throws URISyntaxException {
+    private void fetchAndWriteForecasts(Set<Integer> stationIds) throws URISyntaxException {
         List<Forecast> forecasts = forecastFetchService.fetchForecasts(stationIds);
         forecastDao.persistForecastsIfNotExist(forecasts);
     }
 
-    public void fetchAndWriteLast40Days() throws URISyntaxException {
+    public void fetchAndWriteLast40Days(Set<Integer> stationIds) throws URISyntaxException {
         Set<Last40Days> fetchedLast40DaysSamples = last40DaysSampleFetchService.fetchLast40DaysSamples(stationIds);
         if (!fetchedLast40DaysSamples.isEmpty()) {
             last40DaysDao.persistLast40DaysSamples(fetchedLast40DaysSamples);
