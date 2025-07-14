@@ -71,7 +71,7 @@ jobs:
             --format="value(version)")
 
           IMAGE_EXISTS=$(gcloud artifacts docker images list "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY_FRONTEND" \
-            --format="value(IMAGE)" | grep "$FRONTEND_IMAGE_NAME" || true)
+            --format="value(IMAGE)" | grep -x "$FRONTEND_IMAGE_NAME" || true)
 
           if [[ -n "$IMAGE_EXISTS" ]]; then
             echo "Image already exists. Skipping build and push."
