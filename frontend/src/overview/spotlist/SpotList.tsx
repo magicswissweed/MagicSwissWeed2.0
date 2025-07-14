@@ -57,40 +57,43 @@ export const SpotList = (props: SpotListProps) => {
             <h2>{props.title}</h2>
             <DragDropContext onDragEnd={handleDrop}>
                 <Droppable droppableId="locations-wrapper">
-                    {(droppableProvided: any) => (
-                        <div {...droppableProvided.droppableProps} ref={droppableProvided.innerRef}>
-                            {spots.map((spot: SpotModel, index: number) => (
-                                <Draggable key={spot.id} draggableId={spot.id!} index={index}>
-                                    {(draggableProvided: any) => (
-                                        <div className="draggable-container"
-                                             ref={draggableProvided.innerRef} {...draggableProvided.draggableProps}>
-                                            <Spot spot={spot}
-                                                  dragHandleProps={draggableProvided.dragHandleProps}
-                                                  showGraphOfType={props.showGraphOfType}/>
+                    {(droppableProvided: any) => {
+                        let signUpLink = <span
+                            onClick={() => setShowSignupModal(true)}
+                            style={{cursor: 'pointer', textDecoration: 'underline'}}>
+                            sign up
+                        </span>;
+                        return (
+                            <div {...droppableProvided.droppableProps} ref={droppableProvided.innerRef}>
+                                {spots.map((spot: SpotModel, index: number) => (
+                                    <Draggable key={spot.id} draggableId={spot.id!} index={index}>
+                                        {(draggableProvided: any) => (
+                                            <div className="draggable-container"
+                                                 ref={draggableProvided.innerRef} {...draggableProvided.draggableProps}>
+                                                <Spot spot={spot}
+                                                      dragHandleProps={draggableProvided.dragHandleProps}
+                                                      showGraphOfType={props.showGraphOfType}/>
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {!user && props.title === "Riversurf" &&
+                                    <div className="draggable-container">
+                                        <div className="guest-message">
+                                            <div className="curved-arrow">
+                                                <img src={curved_arrow} alt=""/>
+                                            </div>
+                                            <h3>
+                                                <span className='black'>Wanna add your own surf spots? </span>
+                                                Simply {signUpLink}
+                                            </h3>
                                         </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {!user && props.title === "Riversurf" &&
-                                <div className="draggable-container">
-                                    <div className="guest-message">
-                                        <div className="curved-arrow">
-                                            <img src={curved_arrow} alt=""/>
-                                        </div>
-                                        <h3>
-                                            <span id='black'>Wanna add your own surf spots?</span>
-                                            Simply
-                                            <span onClick={() => setShowSignupModal(true)}
-                                                  style={{cursor: 'pointer', textDecoration: 'underline'}}>
-                                                sign up
-                                            </span>
-                                        </h3>
                                     </div>
-                                </div>
-                            }
-                            {droppableProvided.placeholder}
-                        </div>
-                    )}
+                                }
+                                {droppableProvided.placeholder}
+                            </div>
+                        );
+                    }}
                 </Droppable>
             </DragDropContext>
         </div>
