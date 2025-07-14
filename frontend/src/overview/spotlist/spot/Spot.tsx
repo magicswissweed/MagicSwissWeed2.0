@@ -42,7 +42,9 @@ export const Spot = (props: SpotProps) => {
             <summary className="spotname">
                 {getSpotSummaryContent(props.spot)}
             </summary>
-            {getCollapsibleContent(props.spot)}
+            <div className="collapsibleContent">
+                {getCollapsibleContent(props.spot)}
+            </div>
         </details>
     </>;
 
@@ -121,18 +123,10 @@ export const Spot = (props: SpotProps) => {
             if (spot.forecastLoaded) {
                 return spot.forecast ? forecastContent : lastMeasurementsContent
             } else {
-                return <>
-                    <div className="collapsibleContent">
-                        <MswLoader/>
-                    </div>
-                </>;
+                return <><MswLoader/></>;
             }
         } else {
-            return <>
-                <div className="collapsibleContent">
-                    {historicalYearsContent}
-                </div>
-            </>;
+            return <>{historicalYearsContent}</>;
         }
     }
 

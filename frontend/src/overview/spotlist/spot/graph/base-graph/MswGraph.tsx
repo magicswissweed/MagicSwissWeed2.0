@@ -61,6 +61,7 @@ export function createTrace(
     isMini: boolean,
     color?: string,
     name?: string) {
+    const isMobile = window.innerWidth <= 720;
     return {
         x: getTimestamps(data),
         y: getFlows(data),
@@ -68,7 +69,7 @@ export function createTrace(
         mode: 'lines' as const,
         line: {width: 1, shape: 'spline' as const, color},
         name,
-        showlegend: !isMini,
+        showlegend: !isMini && !isMobile,
         hoverinfo: isMini ? 'skip' as const : 'all' as const,
         hovertemplate: isMini ? undefined : '%{x|%d.%m.%Y %H:%M}<br>Flow: %{y:.1f}<extra></extra>',
     };
