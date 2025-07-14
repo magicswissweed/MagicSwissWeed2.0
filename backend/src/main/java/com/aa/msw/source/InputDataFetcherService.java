@@ -81,7 +81,6 @@ public class InputDataFetcherService {
     public void fetchAndWriteLast40Days() throws URISyntaxException {
         Set<Last40Days> fetchedLast40DaysSamples = last40DaysSampleFetchService.fetchLast40DaysSamples(stationIds);
         if (!fetchedLast40DaysSamples.isEmpty()) {
-            last40DaysDao.deleteAll();
             last40DaysDao.persistLast40DaysSamples(fetchedLast40DaysSamples);
         }
     }
