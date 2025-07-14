@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,7 +55,9 @@ public abstract class AbstractLineFetchService extends AbstractFetchService {
         }
         Map<OffsetDateTime, Double> line = new LinkedHashMap<>();
         for (int i = 0; i < hydroLine.x().size(); i++) {
-            line.put(hydroLine.x().get(i), hydroLine.y().get(i));
+            OffsetDateTime timeStampWithOffset = hydroLine.x().get(i);
+            var utcTimestamp = timeStampWithOffset.withOffsetSameInstant(ZoneOffset.UTC);
+            line.put(utcTimestamp, hydroLine.y().get(i));
         }
         return line;
     }
