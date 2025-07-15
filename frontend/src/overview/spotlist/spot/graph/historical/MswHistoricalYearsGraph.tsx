@@ -111,8 +111,9 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                 createTrace(
                     processedData.measured,
                     props.isMini,
+                    plotColors.measured,
                     'Measured',
-                    plotColors.measured,)
+                  )
             ]}
             layout={layout}
             style={{
