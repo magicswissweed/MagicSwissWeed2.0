@@ -52,16 +52,23 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     };
 
 
+    function getTicksAt(hour: number, timestamps: Array<string>): Array<string> {
+        return timestamps
+            .map(ts => ts.replace('Z', ''))
+            .filter(ts => new Date(ts).getHours() === hour);
+    }
+
     // Get common layout and extend it with forecast-specific settings
+    let midDayTicks = getTicksAt(12, allTimestamps);
+    let startOfDayTicks = getTicksAt(0, allTimestamps)
     const layout = {
         ...getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow),
         xaxis: {
             ...getCommonPlotlyLayout(props.isMini, allTimestamps).xaxis,
             // Only show labels at noon
-            tickvals: allTimestamps.filter(timestamp => new Date(timestamp).getHours() === 12),
+            tickvals: midDayTicks,
             // Format labels as weekday names
-            ticktext: allTimestamps
-                .filter(timestamp => new Date(timestamp).getHours() === 12)
+            ticktext: midDayTicks
                 .map(timestamp => {
                     const date = new Date(timestamp);
                     const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -72,8 +79,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
             ...(getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow).shapes || []),
             // Vertical lines at midnight (darker than noon grid)
             ...(allTimestamps.length > 0 ?
-                    allTimestamps
-                        .filter(timestamp => new Date(timestamp).getHours() === 0)
+                    startOfDayTicks
                         .map(timestamp => ({
                             type: 'line' as const,
                             x0: timestamp,
