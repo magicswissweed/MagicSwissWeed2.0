@@ -1,6 +1,6 @@
 import './MswEditSpot.scss';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import React, {useEffect, useRef, useState} from "react";
+import React, {RefObject, useEffect, useRef, useState} from "react";
 import {ApiSpot, ApiSpotSpotTypeEnum, ApiStation, EditPrivateSpotRequest, SpotsApi} from '../../gen/msw-api-ts';
 import {useUserAuth} from '../../user/UserAuthContext';
 import {AxiosResponse} from "axios";
@@ -14,12 +14,16 @@ import {SpotModel} from "../../model/SpotModel";
 // specify the properties (inputs) for the MswEditSpot component
 interface MswEditSpotProps {
     spot: SpotModel;
+    detailsRef: RefObject<HTMLDetailsElement>,
 }
 
-export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
+export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot, detailsRef}) => {
     // define modal states
     const [showEditSpotModal, setShowEditSpotModal] = useState(false);
-    const handleShowEditSpotModal = () => setShowEditSpotModal(true);
+    const handleShowEditSpotModal = () => {
+        setShowEditSpotModal(true);
+        closeSpot();
+    }
     const handleEditSpotAndCloseModal = (e: { preventDefault: any; }) => {
         e.preventDefault();
         editSpot().then(() => setIsSubmitButtonDisabled(false));
@@ -45,7 +49,14 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
 
     const formRef = useRef<HTMLFormElement | null>(null);
 
+    function closeSpot() {
+        if (detailsRef && detailsRef.current) {
+            detailsRef.current.open = false;
+        }
+    }
+
     async function editSpot() {
+        closeSpot();
         // set potential error message if no station is selected
         if (!stationId) {
             setStationSelectionError('Please select a valid option.');

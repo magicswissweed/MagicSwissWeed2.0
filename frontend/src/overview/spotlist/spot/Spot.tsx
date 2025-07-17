@@ -1,5 +1,5 @@
 import './Spot.scss'
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
@@ -30,15 +30,23 @@ export const Spot = (props: SpotProps) => {
     // @ts-ignore
     const {token, user} = useUserAuth();
 
+    const detailsRef = useRef<HTMLDetailsElement>(null);
+
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
     const handleShowConfirmationModal = () => setShowConfirmationModal(true);
 
+    useEffect(() => {
+        // Always close all spots when the graphType changes - prevents weird behavior in UI
+        if (detailsRef.current) {
+            detailsRef.current.open = false;
+        }
+    }, [props.showGraphOfType]);
 
     return <>
-        <details key={props.spot.name} className="spot">
+        <details key={props.spot.name} className="spot" ref={detailsRef}>
             <summary className="spotname">
                 {getSpotSummaryContent(props.spot)}
             </summary>
@@ -73,7 +81,7 @@ export const Spot = (props: SpotProps) => {
                     </a>
                 </div>
                 {user &&
-                    <MswEditSpot spot={spot}/>
+                    <MswEditSpot spot={spot} detailsRef={detailsRef}/>
                 }
                 {user &&
                     <div className="icon" onClick={() => handleShowConfirmationModal()}>
