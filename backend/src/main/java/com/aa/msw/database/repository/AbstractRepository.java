@@ -90,6 +90,7 @@ public abstract class AbstractRepository<ID extends DbSyncedId,
         }
     }
 
+    @Transactional
     public DOMAIN update(DOMAIN domain) {
         RECORD record = mapDomain(domain);
         record.update();
@@ -97,6 +98,7 @@ public abstract class AbstractRepository<ID extends DbSyncedId,
         return mapRecord(record);
     }
 
+    @Transactional
     protected DOMAIN insert(DOMAIN domain) {
         RECORD record = mapDomain(domain);
         record.insert();

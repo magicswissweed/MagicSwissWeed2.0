@@ -41,7 +41,6 @@ public class PublicSpotListConfiguration {
             persistSpots(PUBLIC_RIVER_SURF_SPOTS);
             persistSpots(PUBLIC_BUNGEE_SURF_SPOTS);
 
-            inputDataFetcherService.updateStationIds();
             try {
                 inputDataFetcherService.fetchDataAndWriteToDb();
             } catch (IOException | URISyntaxException e) {

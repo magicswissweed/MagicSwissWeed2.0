@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
         return getForecast(
                 record.getId(),
                 record.getStationid(),
-                record.getTimestamp(),
+                record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
                 record.getMeasureddata(),
                 record.getMedian(),
                 record.getTwentyfivepercentile(),

@@ -1,5 +1,5 @@
 import './Spot.scss'
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
@@ -30,26 +30,30 @@ export const Spot = (props: SpotProps) => {
     // @ts-ignore
     const {token, user} = useUserAuth();
 
+    const detailsRef = useRef<HTMLDetailsElement>(null);
+
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
     const handleShowConfirmationModal = () => setShowConfirmationModal(true);
 
+    useEffect(() => {
+        // Always close all spots when the graphType changes - prevents weird behavior in UI
+        if (detailsRef.current) {
+            detailsRef.current.open = false;
+        }
+    }, [props.showGraphOfType]);
 
     return <>
-        <details key={props.spot.name} className="spot spot-desktop">
+        <details key={props.spot.name} className="spot" ref={detailsRef}>
             <summary className="spotname">
                 {getSpotSummaryContent(props.spot)}
             </summary>
-            {getCollapsibleContent(props.spot)}
-        </details>
-        <div className="spot spot-mobile">
-            <div className={"spot-overview"}>
-                {getSpotSummaryContent(props.spot)}
+            <div className="collapsibleContent">
+                {getCollapsibleContent(props.spot)}
             </div>
-            {getCollapsibleContent(props.spot, false, true, true, true, true)}
-        </div>
+        </details>
     </>;
 
     function getSpotSummaryContent(spot: SpotModel) {
@@ -77,7 +81,7 @@ export const Spot = (props: SpotProps) => {
                     </a>
                 </div>
                 {user &&
-                    <MswEditSpot spot={spot}/>
+                    <MswEditSpot spot={spot} detailsRef={detailsRef}/>
                 }
                 {user &&
                     <div className="icon" onClick={() => handleShowConfirmationModal()}>
@@ -107,61 +111,30 @@ export const Spot = (props: SpotProps) => {
         </>
     }
 
-    function getCollapsibleContent(spot: SpotModel,
-                                   withLegend: boolean = true,
-                                   withXAxis: boolean = true,
-                                   withYAxis: boolean = true,
-                                   withMinMaxReferenceLines: boolean = true,
-                                   withTooltip: boolean = true) {
+    function getCollapsibleContent(spot: SpotModel) {
         let forecastContent = <>
-            <MswForecastGraph spot={spot}
-                              aspectRatio={2}
-                              withLegend={withLegend}
-                              withXAxis={withXAxis}
-                              withYAxis={withYAxis}
-                              withMinMaxReferenceLines={withMinMaxReferenceLines}
-                              withTooltip={withTooltip}/>
+            <MswForecastGraph spot={spot} isMini={false}/>
         </>;
 
         let lastMeasurementsContent = <>
             <div className="last40days-container">
-                <p>Forecast unavailable - displaying last 40 days</p>
-                <MswLastMeasurementsGraph spot={spot}
-                                          aspectRatio={2}
-                                          withLegend={withLegend}
-                                          withXAxis={withXAxis}
-                                          withYAxis={withYAxis}
-                                          withMinMaxReferenceLines={withMinMaxReferenceLines}
-                                          withTooltip={withTooltip}/>
+                <p>Forecast unavailable - showing last 40 days</p>
+                <MswLastMeasurementsGraph spot={spot} isMini={false}/>
             </div>
         </>;
 
         let historicalYearsContent = <>
-            <MswHistoricalYearsGraph spot={spot}
-                                     aspectRatio={2}
-                                     withLegend={withLegend}
-                                     withXAxis={withXAxis}
-                                     withYAxis={withYAxis}
-                                     withMinMaxReferenceLines={withMinMaxReferenceLines}
-                                     withTooltip={withTooltip}/>
+            <MswHistoricalYearsGraph spot={spot} isMini={false}/>
         </>;
 
         if (props.showGraphOfType === GraphTypeEnum.Forecast) {
             if (spot.forecastLoaded) {
                 return spot.forecast ? forecastContent : lastMeasurementsContent
             } else {
-                return <>
-                    <div className="collapsibleContent">
-                        <MswLoader/>
-                    </div>
-                </>;
+                return <><MswLoader/></>;
             }
         } else {
-            return <>
-                <div className="collapsibleContent">
-                    {historicalYearsContent}
-                </div>
-            </>;
+            return <>{historicalYearsContent}</>;
         }
     }
 

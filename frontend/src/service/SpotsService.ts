@@ -1,6 +1,4 @@
 import {
-    ApiForecast,
-    ApiSample,
     ApiSpotInformation,
     ForecastApi,
     HistoricalApi,
@@ -13,9 +11,11 @@ import {
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../api/config/AuthConfiguration";
 import {getFlowColorEnumFromFlowStatus, SpotModel} from "../model/SpotModel";
+import {DateTimeConverter} from "./DateTimeConverter";
 
 type SubscriberCallback = (spots: Array<SpotModel>) => void;
 
+// Info: All Timestamps are sent in UTC and are converted to local time before saving them to the SpotModel
 class SpotsService {
     private spots: Array<SpotModel> = [];
     private subscribers: Array<SubscriberCallback> = [];
@@ -61,40 +61,8 @@ class SpotsService {
 
     private writeSpotsToState = (res: AxiosResponse<ApiSpotInformation[], any>) => {
         if (res && res.data) {
-            let spots: Array<SpotModel> = res.data.map(s =>
-                new SpotModel(
-                    s.id,
-                    s.name,
-                    s.stationId,
-                    s.spotType,
-                    s.isPublic,
-                    s.minFlow,
-                    s.maxFlow,
-                    s.station,
-                    s.currentSample,
-                    getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
-                    false,
-                    undefined,
-                    false,
-                    undefined,
-                    undefined))
-            this.setSpots(spots);
-        }
-    };
-
-    private addCurrentSampleToForecastLines(forecast: ApiForecast | undefined, currentSample: ApiSample) {
-        if (forecast) {
-            forecast.measuredData.push({timestamp: currentSample.timestamp, flow: currentSample.flow})
-        }
-        return forecast;
-    }
-
-    private addLast40DaysToState(res: AxiosResponse<StationToLast40Days[], any>) {
-        if (res && res.data) {
-            const updatedSpots = this.spots.map(s => {
-                const filteredListByStationId = res.data.filter(i => i.station === s.stationId);
-                const newLast40Days = filteredListByStationId[0]?.last40Days
-                // create new SpotModel so that react can see that something changed (updating a field is not enough)
+            let spots: Array<SpotModel> = res.data.map(s => {
+                let currentSample = DateTimeConverter.utcApiSampleToLocalTime(s.currentSample);
                 return new SpotModel(
                     s.id,
                     s.name,
@@ -104,15 +72,31 @@ class SpotsService {
                     s.minFlow,
                     s.maxFlow,
                     s.station,
-                    s.currentSample,
-                    s.flowStatus,
-                    s.forecastLoaded,
-                    s.forecast,
-                    true,
-                    newLast40Days,
-                    s.historical
-                );
+                    currentSample,
+                    getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
+                    false,
+                    undefined,
+                    false,
+                    undefined,
+                    undefined);
+            })
+            this.setSpots(spots);
+        }
+    };
+
+    private addLast40DaysToState(res: AxiosResponse<StationToLast40Days[], any>) {
+        if (res && res.data) {
+            const updatedSpots = this.spots.map(s => {
+                const filteredListByStationId = res.data.filter(i => i.station === s.stationId);
+                const newLast40Days = DateTimeConverter.utcLast40DaysToLocalTime(filteredListByStationId[0]?.last40Days)
+                // create new SpotModel so that react can see that something changed (updating a field is not enough)
+                return {
+                    ...s,
+                    last40DaysLoaded: true,
+                    last40Days: newLast40Days,
+                }
             });
+
             this.setSpots(updatedSpots);
         }
     }
@@ -121,28 +105,13 @@ class SpotsService {
         if (res && res.data) {
             const updatedSpots = this.spots.map(s => {
                 const filteredListByStationId = res.data.filter(i => i.station === s.stationId);
-                const newForecast = this.addCurrentSampleToForecastLines(
-                    filteredListByStationId[0]?.forecast,
-                    s.currentSample
-                );
+                const newForecast = DateTimeConverter.utcForecastToLocalTime(filteredListByStationId[0]?.forecast);
                 // create new SpotModel so that react can see that something changed (updating a field is not enough)
-                return new SpotModel(
-                    s.id,
-                    s.name,
-                    s.stationId,
-                    s.spotType,
-                    s.isPublic,
-                    s.minFlow,
-                    s.maxFlow,
-                    s.station,
-                    s.currentSample,
-                    s.flowStatus,
-                    true,
-                    newForecast,
-                    s.last40DaysLoaded,
-                    s.last40Days,
-                    s.historical
-                );
+                return {
+                    ...s,
+                    forecastLoaded: true,
+                    forecast: newForecast,
+                }
             });
 
             this.setSpots(updatedSpots);
@@ -151,14 +120,18 @@ class SpotsService {
 
     private addHistoricalDataToState(res: AxiosResponse<StationToApiHistoricalYears[], any>) {
         if (res && res.data) {
-            let spots = this.spots;
-            spots.forEach(s => {
-                    let filteredListByStationId =
-                        res.data.filter(i => i.station === s.stationId);
-                    s.historical = filteredListByStationId[0]?.historical;
+            let updatedSpots = this.spots.map(s => {
+                let filteredListByStationId =
+                    res.data.filter(i => i.station === s.stationId);
+                const historical = DateTimeConverter.utcHistoricalToLocalTime(filteredListByStationId[0]?.historical);
+                // create new SpotModel so that react can see that something changed (updating a field is not enough)
+                return {
+                    ...s,
+                    historical: historical,
                 }
-            )
-            this.setSpots(spots);
+            });
+
+            this.setSpots(updatedSpots);
         }
     }
 

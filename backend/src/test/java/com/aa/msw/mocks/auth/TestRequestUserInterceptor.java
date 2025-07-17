@@ -5,6 +5,7 @@ import com.aa.msw.database.exceptions.NoSuchUserException;
 import com.aa.msw.database.helpers.id.UserExtId;
 import com.aa.msw.database.helpers.id.UserId;
 import com.aa.msw.database.repository.dao.UserDao;
+import com.aa.msw.database.services.UserDbService;
 import com.aa.msw.integrationtest.TestUser;
 import com.aa.msw.model.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,9 +22,11 @@ import static com.aa.msw.integrationtest.TestUser.ALL_TEST_USERS;
 public class TestRequestUserInterceptor implements HandlerInterceptor {
 
     private final UserDao userDao;
+    private final UserDbService userDbService;
 
-    public TestRequestUserInterceptor(UserDao userDao) {
+    public TestRequestUserInterceptor(UserDao userDao, UserDbService userDbService) {
         this.userDao = userDao;
+        this.userDbService = userDbService;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class TestRequestUserInterceptor implements HandlerInterceptor {
                     testUser.email(),
                     "");
             UserContext.setCurrentUser(user);
-            userDao.registerUserAndAddPublicSpots();
+            userDbService.registerUserAndAddPublicSpots();
         }
 
         return true;

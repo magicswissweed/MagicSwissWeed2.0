@@ -24,7 +24,6 @@ public class SampleApiController implements SampleApi {
     public ResponseEntity<ApiSample> getCurrentSample(Integer stationId) {
         try {
             ApiSample sample = sampleApiService.getCurrentSample(stationId);
-            sampleApiService.searchForNewerSample();
             return ResponseEntity.ok(sample);
         } catch (NoDataAvailableException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

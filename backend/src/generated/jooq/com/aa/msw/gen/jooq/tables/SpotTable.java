@@ -7,6 +7,7 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Spottype;
+import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable.SpotCurrentInfoTablePath;
 import com.aa.msw.gen.jooq.tables.UserToSpotTable.UserToSpotTablePath;
 import com.aa.msw.gen.jooq.tables.records.SpotTableRecord;
 
@@ -159,6 +160,19 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
     @Override
     public UniqueKey<SpotTableRecord> getPrimaryKey() {
         return Keys.SPOT_TABLE_PKEY;
+    }
+
+    private transient SpotCurrentInfoTablePath _spotCurrentInfoTable;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.spot_current_info_table</code> table
+     */
+    public SpotCurrentInfoTablePath spotCurrentInfoTable() {
+        if (_spotCurrentInfoTable == null)
+            _spotCurrentInfoTable = new SpotCurrentInfoTablePath(this, null, Keys.SPOT_CURRENT_INFO_TABLE__SPOT_CURRENT_INFO_TABLE_SPOT_ID_FKEY.getInverseKey());
+
+        return _spotCurrentInfoTable;
     }
 
     private transient UserToSpotTablePath _userToSpotTable;

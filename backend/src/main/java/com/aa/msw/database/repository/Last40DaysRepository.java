@@ -1,5 +1,6 @@
 package com.aa.msw.database.repository;
 
+import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.Last40DaysId;
 import com.aa.msw.database.repository.dao.Last40DaysDao;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
@@ -11,12 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -104,14 +103,28 @@ public class Last40DaysRepository extends AbstractRepository
     }
 
     @Override
-    public Set<Last40Days> getAllLast40Days() {
-        return dsl.selectFrom(TABLE)
-                .fetchSet(this::mapRecord);
+    @Transactional
+    public void persistLast40DaysSamples(Set<Last40Days> fetchedLast40DaysSamples) {
+        fetchedLast40DaysSamples.stream()
+                .sorted(Comparator.comparingInt(Last40Days::stationId))
+                .forEach(last40Days -> {
+                    deleteIfExists(last40Days.stationId());
+                    insert(last40Days);
+                });
     }
 
     @Override
-    public void deleteAll() {
+    public Last40Days getForStation(Integer stationId) throws NoDataAvailableException {
+        return dsl.selectFrom(TABLE)
+                .where(TABLE.STATION_ID.eq(stationId))
+                .limit(1)
+                .fetchOptional(this::mapRecord)
+                .orElseThrow(() -> new NoDataAvailableException("No current Last40DaysSamples found for station " + stationId));
+    }
+
+    private void deleteIfExists(int stationId) {
         dsl.deleteFrom(TABLE)
+                .where(TABLE.STATION_ID.eq(stationId))
                 .execute();
     }
 }

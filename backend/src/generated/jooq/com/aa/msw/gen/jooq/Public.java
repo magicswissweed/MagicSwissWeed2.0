@@ -9,6 +9,7 @@ import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.SampleTable;
+import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.UserTable;
@@ -61,6 +62,11 @@ public class Public extends SchemaImpl {
     public final SampleTable SAMPLE_TABLE = SampleTable.SAMPLE_TABLE;
 
     /**
+     * The table <code>public.spot_current_info_table</code>.
+     */
+    public final SpotCurrentInfoTable SPOT_CURRENT_INFO_TABLE = SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE;
+
+    /**
      * The table <code>public.spot_table</code>.
      */
     public final SpotTable SPOT_TABLE = SpotTable.SPOT_TABLE;
@@ -101,6 +107,7 @@ public class Public extends SchemaImpl {
             HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE,
             Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE,
             SampleTable.SAMPLE_TABLE,
+            SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE,
             SpotTable.SPOT_TABLE,
             StationTable.STATION_TABLE,
             UserTable.USER_TABLE,

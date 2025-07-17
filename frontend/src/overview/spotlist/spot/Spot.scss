@@ -14,29 +14,12 @@ $icons-container-width: 40px;
   color: #000000;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
 
-.spot-overview {
-  display: flex;
-}
-
-.spot-desktop {
   @include small {
-    display: none;
+    .miniGraph {
+      display: none;
+    }
   }
-}
-
-.spot-mobile {
-  .forecastContainer {
-    display: none;
-  }
-
-  @include small() {
-    display: flex;
-  }
-
-  display: none;
-  flex-direction: column;
 }
 
 .icons-container {
@@ -55,6 +38,14 @@ $icons-container-width: 40px;
   img {
     width: 60%;
   }
+
+  @include small {
+    margin: 2.5px 0;
+
+    .arrow-icon > img {
+      margin: 2.5px 0
+    }
+  }
 }
 
 details > summary div.collapsible-icon {
@@ -71,10 +62,6 @@ details[open] summary div.collapsible-icon {
   img {
     cursor: pointer;
   }
-
-  @include small {
-    display: none
-  }
 }
 
 summary::-webkit-details-marker {
@@ -83,7 +70,7 @@ summary::-webkit-details-marker {
 
 .collapsibleContent {
   display: flex;
-  margin: 20px 10px;
+  margin-bottom: 10px;
 }
 
 .spotname {
@@ -130,7 +117,7 @@ details.spot[open] summary.spotname {
 
   @include small() {
     flex-direction: column;
-    row-gap: 20px;
+    row-gap: 10px;
   }
 }
 

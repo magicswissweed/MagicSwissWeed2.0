@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import './MswFooter.scss';
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { BuyMeACoffeeButton } from './BuyMeACoffeeButton';
+import {BuyMeACoffeeButton} from './BuyMeACoffeeButton';
 
 export const MswFooter = () => {
     const [showAboutModal, setShowAboutModal] = useState(false);
@@ -12,12 +12,19 @@ export const MswFooter = () => {
             <footer>
                 <div className="Footer">
                     <ul className='Footer_list'>
-                        <li>Source:{" "}
-                            <a href="https://www.hydrodaten.admin.ch">
-                                BAFU
-                            </a>
+                        <li>
+                            <li>
+                                <a
+                                    style={{width: "135px"}}
+                                    target="_blank"
+                                    href="https://github.com/magicswissweed/msw/issues">
+                                    Add your own Feature
+                                </a>
+                            </li>
                         </li>
-                        <li>Created by Nicola K&#252;ng and Aaron Studer</li>
+                        <li>
+                            <BuyMeACoffeeButton/>
+                        </li>
                         <li>
                             <Button variant="link" onClick={() => setShowAboutModal(true)}>
                                 About
@@ -51,10 +58,13 @@ export const MswFooter = () => {
                         If you find this site useful, we would appreciate your support and feedback.
                     </p>
 
+                    Source:{" "}
+                    <a href="https://www.hydrodaten.admin.ch">
+                        BAFU
+                    </a>
                 </Modal.Body>
                 <Modal.Footer style={{justifyContent: "center"}}>
                     <div style={{display: "flex", gap: "1rem"}}>
-                        <BuyMeACoffeeButton />
                         <Button variant="msw"
                                 style={{width: "135px"}}
                                 onClick={() => window.location.href = "https://github.com/magicswissweed/msw/issues"}>

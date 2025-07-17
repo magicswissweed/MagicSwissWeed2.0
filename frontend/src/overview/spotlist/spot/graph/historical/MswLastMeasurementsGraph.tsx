@@ -1,95 +1,70 @@
 import '../base-graph/MswGraph.scss'
-import {ComposedChart, Legend, ResponsiveContainer, YAxis} from 'recharts';
 import {
-    DATA_KEY_MEASURED,
-    getCartesianGrid,
-    getCurrentTimeReferenceLine,
-    getMeasuredLine,
-    getMinMaxReferenceLines,
-    getReferenceArea,
-    getTooltip,
-    getXAxis,
-    LINE_NAME_MEASURED,
+    commonPlotlyConfig,
+    createTrace,
+    getAspectRatio,
+    getCommonPlotlyLayout,
+    getTimestamps,
     MswGraphProps,
-    NormalizedDataItem,
-    normalizeGraphDataLine
+    ONE_WEEK,
+    plotColors
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
-import {SpotModel} from "../../../../../model/SpotModel";
+import Plot from 'react-plotly.js';
 
 export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
-    let spot: SpotModel;
-    let aspectRatio: number;
-    let withLegend: boolean;
-    let withXAxis: boolean;
-    let withYAxis: boolean;
-    let withMinMaxReferenceLines: boolean;
-    let withTooltip: boolean;
-
-    spot = props.spot;
-    aspectRatio = props.aspectRatio;
-    withLegend = props.withLegend === true;
-    withXAxis = props.withXAxis === true;
-    withYAxis = props.withYAxis === true;
-    withMinMaxReferenceLines = props.withMinMaxReferenceLines === true;
-    withTooltip = props.withTooltip === true;
-
+    let lineData = props.spot.last40DaysLoaded && props.spot.last40Days ?
+        [
+            ...props.spot.last40Days,
+            {timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}
+        ] :
+        [];
     if (props.spot.last40DaysLoaded) {
-        if (props.spot.last40Days === undefined || props.spot.last40Days.length === 0) {
+        if (!lineData || lineData.length === 0) {
             return <div>Detailed Graph not possible at the moment...</div>
         }
     } else {
         return <MswLoader/>
     }
 
+    // Calculate weekly ticks for x-axis
+    const now = new Date();
+    const sixWeeksAgo = new Date(now.getTime() - (6 * ONE_WEEK));
+    const weeklyTicks = [];
+    const weeklyLabels = [];
 
-    function roundToOneDecimal(value: unknown): number {
-        // @ts-ignore
-        return Math.round(value * 10) / 10;
-    }
-
-    let normalizedGraphData: NormalizedDataItem[] = normalizeGraphDataLine(props.spot.last40Days, DATA_KEY_MEASURED);
-    normalizedGraphData = normalizedGraphData.map(item => ({
-        ...item,
-        [DATA_KEY_MEASURED]: roundToOneDecimal(item[DATA_KEY_MEASURED])
-    }));
-
-    const ticks: number[] = getTicks();
-
-    return <>
-        <ResponsiveContainer className="graph" width="100%" aspect={aspectRatio}>
-            <ComposedChart data={normalizedGraphData}>
-                {getReferenceArea(spot)}
-                {getCurrentTimeReferenceLine()}
-                {getMeasuredLine()}
-                {getCartesianGrid()}
-                {getXAxis(ticks, withXAxis, v => new Date(v).getDate() + "." + (new Date(v).getMonth() + 1) + ".")}
-
-                {withMinMaxReferenceLines && getMinMaxReferenceLines(spot)}
-                {withTooltip && getTooltip()}
-                {withYAxis && <YAxis/>}
-                {withLegend && getLegend()}
-            </ComposedChart>
-        </ResponsiveContainer>
-    </>
-
-    function getTicks() {
-        const nrOfTicks = 6;
-        const nrOfDays = 50;
-        const oneDayInMs = 24 * 60 * 60 * 1000;
-
-        return Array.from(
-            {length: nrOfTicks},
-            (_, i) => Date.now() - oneDayInMs * i * (nrOfDays / nrOfTicks)
+    for (let date = new Date(now); date >= sixWeeksAgo; date = new Date(date.getTime() - ONE_WEEK)) {
+        weeklyTicks.push(date.getTime());
+        weeklyLabels.push(
+            `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}`
         );
     }
 
-    function getLegend() {
-        return <Legend
-            payload={[
-                {type: "line", value: LINE_NAME_MEASURED, color: "green"},
+    // Get common layout and extend it with last measurements specific settings
+    const layout = {
+        ...getCommonPlotlyLayout(
+            props.isMini,
+            getTimestamps(lineData),
+            props.spot.minFlow,
+            props.spot.maxFlow,
+            false // do not show current time line
+        ),
+        xaxis: {
+            ...getCommonPlotlyLayout(props.isMini, getTimestamps(lineData)).xaxis,
+            tickvals: weeklyTicks,
+            ticktext: weeklyLabels,
+        }
+    };
+
+    return (
+        <Plot
+            data={[
+                createTrace(lineData, props.isMini, plotColors.measured, 'Measured')
             ]}
-            wrapperStyle={{textTransform: 'uppercase'}}
-        />;
-    }
-}
+            layout={layout}
+            style={{width: '100%', aspectRatio: getAspectRatio(props.isMini)}}
+            useResizeHandler={true}
+            config={{...commonPlotlyConfig, staticPlot: props.isMini}}
+        />
+    );
+};

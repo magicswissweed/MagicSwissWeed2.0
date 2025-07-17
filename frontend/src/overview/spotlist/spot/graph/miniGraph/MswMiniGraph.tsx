@@ -18,15 +18,16 @@ export const MswMiniGraph = (props: MswMiniForecastProps) => {
     if (props.showGraphOfType === GraphTypeEnum.Forecast) {
         if (props.spot.forecastLoaded) {
             if (props.spot.forecast) {
-                content = <MswForecastGraph spot={props.spot} aspectRatio={3}/>;
+                content =
+                    <MswForecastGraph spot={props.spot} isMini={true}/>;
             } else {
-                content = <MswLastMeasurementsGraph spot={props.spot} aspectRatio={3}/>
+                content = <MswLastMeasurementsGraph spot={props.spot} isMini={true}/>
             }
         } else {
             content = <MswLoader/>
         }
     } else {
-        content = <MswHistoricalYearsGraph spot={props.spot} aspectRatio={3}/>
+        content = <MswHistoricalYearsGraph spot={props.spot} isMini={true}/>
     }
 
 
