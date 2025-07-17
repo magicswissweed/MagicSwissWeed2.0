@@ -139,7 +139,7 @@ export function getCommonPlotlyLayout(
         } : undefined,
         margin: isMini ?
             {l: 5, r: 5, t: 5, b: 5} :
-            {l: 30, r: 30, t: 0, b: 0}, // provide space for x-axis labels without legend
+            {l: 30, r: 30, t: 0, b: 30}, // provide space for x-axis labels without legend
         shapes: [
             // Vertical line showing current time
             ...(
