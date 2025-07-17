@@ -44,7 +44,7 @@ public class SampleFetchServiceImpl extends AbstractFetchService implements Samp
         for (ExistenzSample sample : stationSamples) {
             if (sample.par().equals("flow")) {
                 flow = (int) sample.value();
-                timestamp = Instant.ofEpochSecond(sample.timestamp()).atOffset(ZoneOffset.of("+02:00"));
+                timestamp = Instant.ofEpochSecond(sample.timestamp()).atOffset(ZoneOffset.UTC);
             } else if (sample.par().equals("temperature")) {
                 temp = Optional.of(sample.value());
             }

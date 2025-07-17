@@ -53,9 +53,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
 
 
     function getTicksAt(hour: number, timestamps: Array<string>): Array<string> {
-        return timestamps
-            .map(ts => ts.replace('Z', ''))
-            .filter(ts => new Date(ts).getHours() === hour);
+        return timestamps.filter(ts => new Date(ts).getHours() === hour);
     }
 
     // Get common layout and extend it with forecast-specific settings

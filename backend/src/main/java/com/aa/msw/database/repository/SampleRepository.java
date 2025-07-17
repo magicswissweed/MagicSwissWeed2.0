@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         return new Sample(
                 new SampleId(record.getId()),
                 record.getStationid(),
-                record.getTimestamp(),
+                record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
                 optionalTemp,
                 record.getFlow());
     }
