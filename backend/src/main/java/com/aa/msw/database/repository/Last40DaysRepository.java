@@ -15,10 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -108,23 +105,12 @@ public class Last40DaysRepository extends AbstractRepository
     @Override
     @Transactional
     public void persistLast40DaysSamples(Set<Last40Days> fetchedLast40DaysSamples) {
-        Map<Integer, Last40Days> existingByStationId = getAll().stream()
-                .collect(Collectors.toMap(Last40Days::stationId, i -> i));
-
-        for (Last40Days last40Days : fetchedLast40DaysSamples) {
-            int stationId = last40Days.stationId();
-            Last40Days existing = existingByStationId.get(stationId);
-            if (existing != null) {
-                update(
-                        new Last40Days(
-                                existing.databaseId(),
-                                stationId,
-                                last40Days.last40DaysSamples()
-                        ));
-            } else {
-                insert(last40Days);
-            }
-        }
+        fetchedLast40DaysSamples.stream()
+                .sorted(Comparator.comparingInt(Last40Days::stationId))
+                .forEach(last40Days -> {
+                    deleteIfExists(last40Days.stationId());
+                    insert(last40Days);
+                });
     }
 
     @Override
@@ -134,5 +120,11 @@ public class Last40DaysRepository extends AbstractRepository
                 .limit(1)
                 .fetchOptional(this::mapRecord)
                 .orElseThrow(() -> new NoDataAvailableException("No current Last40DaysSamples found for station " + stationId));
+    }
+
+    private void deleteIfExists(int stationId) {
+        dsl.deleteFrom(TABLE)
+                .where(TABLE.STATION_ID.eq(stationId))
+                .execute();
     }
 }
