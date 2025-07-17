@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef} from "react";
-import {GoogleMap, useLoadScript} from "@react-google-maps/api";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {GoogleMap, InfoWindow, useLoadScript} from "@react-google-maps/api";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import './MswSpotMapPerCategory.scss';
 import {SpotModel} from "../../../../model/SpotModel";
@@ -19,6 +19,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
     const {isLoaded, loadError} = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
     });
+    const [selectedSpot, setSelectedSpot] = useState<SpotModel | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const clustererRef = useRef<MarkerClusterer | null>(null);
@@ -72,6 +73,8 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 },
             });
 
+            marker.addListener("click", () => setSelectedSpot(spot));
+
             (marker as any).customColor = spot.flowStatus.toString();
             return marker;
         });
@@ -109,7 +112,16 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 zoom={8}
                 center={mapCenter}
                 onLoad={handleMapLoad}
-            />
+            >
+                {selectedSpot && (
+                    <InfoWindow
+                        position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
+                        onCloseClick={() => setSelectedSpot(null)}
+                    >
+                        <p style={{textTransform: "none"}}>{selectedSpot.name}: {selectedSpot.currentSample.flow} m³/s</p>
+                    </InfoWindow>
+                )}
+            </GoogleMap>
         </div>
     );
 };
