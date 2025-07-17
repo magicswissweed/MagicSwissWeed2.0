@@ -13,8 +13,14 @@ import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
 
 export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
+    let lineData = props.spot.last40DaysLoaded && props.spot.last40Days ?
+        [
+            ...props.spot.last40Days,
+            {timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}
+        ] :
+        [];
     if (props.spot.last40DaysLoaded) {
-        if (!props.spot.last40Days || props.spot.last40Days.length === 0) {
+        if (!lineData || lineData.length === 0) {
             return <div>Detailed Graph not possible at the moment...</div>
         }
     } else {
@@ -38,13 +44,13 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     const layout = {
         ...getCommonPlotlyLayout(
             props.isMini,
-            getTimestamps(props.spot.last40Days),
+            getTimestamps(lineData),
             props.spot.minFlow,
             props.spot.maxFlow,
             false // do not show current time line
         ),
         xaxis: {
-            ...getCommonPlotlyLayout(props.isMini, getTimestamps(props.spot.last40Days)).xaxis,
+            ...getCommonPlotlyLayout(props.isMini, getTimestamps(lineData)).xaxis,
             tickvals: weeklyTicks,
             ticktext: weeklyLabels,
         }
@@ -53,7 +59,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     return (
         <Plot
             data={[
-                createTrace(props.spot.last40Days, props.isMini, plotColors.measured, 'Measured')
+                createTrace(lineData, props.isMini, plotColors.measured, 'Measured')
             ]}
             layout={layout}
             style={{width: '100%', aspectRatio: getAspectRatio(props.isMini)}}
