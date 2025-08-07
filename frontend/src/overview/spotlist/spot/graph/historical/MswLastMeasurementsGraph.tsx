@@ -3,6 +3,7 @@ import {
     commonPlotlyConfig,
     createTrace,
     getCommonPlotlyLayout,
+    getTicksAt,
     getTimestamps,
     MswGraphProps,
     ONE_WEEK,
@@ -26,18 +27,20 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         return <MswLoader/>
     }
 
-    // Calculate weekly ticks for x-axis
+    // keep only the last 7 days
     const now = new Date();
-    const sixWeeksAgo = new Date(now.getTime() - (6 * ONE_WEEK));
-    const weeklyTicks = [];
-    const weeklyLabels = [];
+    const oneWeekAgo = new Date(now.getTime() - ONE_WEEK);
+    lineData = lineData.filter(sample => {
+        // Ensure sample.timestamp is a number for comparison
+        const sampleTimestamp = typeof sample.timestamp === 'string'
+            ? Date.parse(sample.timestamp)
+            : sample.timestamp;
+        return sampleTimestamp >= oneWeekAgo.getTime();
+    });
 
-    for (let date = new Date(now); date >= sixWeeksAgo; date = new Date(date.getTime() - ONE_WEEK)) {
-        weeklyTicks.push(date.getTime());
-        weeklyLabels.push(
-            `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}`
-        );
-    }
+    // Get common layout and extend it with forecast-specific settings
+    let midDayTicks = getTicksAt(12, getTimestamps(lineData));
+    let startOfDayTicks = getTicksAt(0, getTimestamps(lineData));
 
     // Get common layout and extend it with last measurements specific settings
     const layout = {
@@ -50,9 +53,43 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         ),
         xaxis: {
             ...getCommonPlotlyLayout(props.isMini, getTimestamps(lineData)).xaxis,
-            tickvals: weeklyTicks,
-            ticktext: weeklyLabels,
-        }
+            // Only show labels at noon
+            tickvals: midDayTicks,
+            // Format labels as weekday names
+            ticktext: midDayTicks
+                .map(timestamp => {
+                    const date = new Date(timestamp);
+                    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    return weekdays[date.getDay()];
+                }),
+        },
+        shapes: [
+            ...(getCommonPlotlyLayout(
+              props.isMini, 
+              getTimestamps(lineData), 
+              props.spot.minFlow, 
+              props.spot.maxFlow,
+              false
+            ).shapes || []),
+            // Vertical lines at midnight (darker than noon grid)
+            ...(getTimestamps(lineData).length > 0 ?
+              startOfDayTicks
+                  .map(timestamp => ({
+                      type: 'line' as const,
+                      x0: timestamp,
+                      x1: timestamp,
+                      y0: 0,
+                      y1: 1,
+                      yref: 'paper' as const,
+                      line: {
+                          color: 'rgba(169, 169, 169, 0.8)',  // Dark gray for midnight lines
+                          width: 1
+                      },
+                      layer: 'below' as const
+                  }))
+              : []
+      ),
+        ]
     };
 
     return (

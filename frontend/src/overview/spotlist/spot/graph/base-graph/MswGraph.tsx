@@ -32,12 +32,13 @@ export const plotColors = {
     acceptableRange: {fill: transparentGreen}
 };
 
-// Extract timestamps and flows from a data series
+// Extract timestamps from a data series
 export function getTimestamps(data: ApiFlowSample[]): string[] {
     return data.map(item => item.timestamp).sort()
 }
 
-function getFlows(data: ApiFlowSample[]): number[] {
+// Extract flows from a data series
+export function getFlows(data: ApiFlowSample[]): number[] {
     return data.map(item => item.flow);
 }
 
@@ -49,6 +50,14 @@ export function calculateMaxY(measured: ApiFlowSample[], max: ApiFlowSample[], p
     )
 
     return maxY * (1 + paddingPercent / 100); // Add padding percentage
+}
+
+// Get timestamps at a specific hour (and minute)
+export function getTicksAt(hour: number, timestamps: Array<string>, minute: number = 0): Array<string> {
+  let matchingTimestamps = timestamps.filter(ts => new Date(ts).getHours() === hour);
+  matchingTimestamps = matchingTimestamps.filter(ts => new Date(ts).getMinutes() === minute);
+  
+  return matchingTimestamps;
 }
 
 // Create a trace for Plotly with common defaults

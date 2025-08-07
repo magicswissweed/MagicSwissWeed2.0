@@ -6,6 +6,7 @@ import {
     createAreaTrace,
     createTrace,
     getCommonPlotlyLayout,
+    getTicksAt,
     getTimestamps,
     MswGraphProps,
     plotColors
@@ -49,11 +50,6 @@ export const MswForecastGraph = (props: MswGraphProps) => {
         p25: removeSamplesBeforeCurrentTime(twentyFivePercentile),
         p75: removeSamplesBeforeCurrentTime(seventyFivePercentile)
     };
-
-
-    function getTicksAt(hour: number, timestamps: Array<string>): Array<string> {
-        return timestamps.filter(ts => new Date(ts).getHours() === hour);
-    }
 
     // Get common layout and extend it with forecast-specific settings
     let midDayTicks = getTicksAt(12, allTimestamps);
