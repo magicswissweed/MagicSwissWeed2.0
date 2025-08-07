@@ -1,9 +1,8 @@
 import './Spot.scss'
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
-import {MswMiniGraph} from './graph/miniGraph/MswMiniGraph';
 import arrow_down_icon from '../../../assets/arrow_down.svg';
 import delete_icon from '../../../assets/trash.svg';
 import link_icon from '../../../assets/link.svg';
@@ -30,33 +29,24 @@ export const Spot = (props: SpotProps) => {
     // @ts-ignore
     const {token, user} = useUserAuth();
 
-    const detailsRef = useRef<HTMLDetailsElement>(null);
-
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [isSpotOpen, setIsSpotOpen] = useState(false);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
     const handleShowConfirmationModal = () => setShowConfirmationModal(true);
 
-    useEffect(() => {
-        // Always close all spots when the graphType changes, or when the graph is loaded - prevents weird behavior in UI
-        // TODO: fix this in a better way (so that the spot can be opened and closed at any time without problems)
-        if (detailsRef.current) {
-            if (props.spot.forecastLoaded || props.spot.last40DaysLoaded) {
-                detailsRef.current.open = false;
-            }
-        }
-    }, [props.showGraphOfType, props.spot.forecastLoaded, props.spot.last40DaysLoaded]);
-
     return <>
-        <details key={props.spot.name} className="spot" ref={detailsRef}>
-            <summary className="spotname">
+        <div key={props.spot.name} className={"spot " + (isSpotOpen ? "open" : "")}>
+            <div className="spot-summary">
                 {getSpotSummaryContent(props.spot)}
-            </summary>
-            <div className="collapsibleContent">
-                {getCollapsibleContent(props.spot)}
             </div>
-        </details>
+            {isSpotOpen &&
+                <div className="collapsibleContent">
+                    {getGraph(props.spot, false)}
+                </div>
+            }
+        </div>
     </>;
 
     function getSpotSummaryContent(spot: SpotModel) {
@@ -75,7 +65,11 @@ export const Spot = (props: SpotProps) => {
                     {spot.name}
                 </div>
                 <MswMeasurement spot={spot}/>
-                <MswMiniGraph spot={spot} showGraphOfType={props.showGraphOfType}/>
+                {!isSpotOpen &&
+                    <div className={"miniGraph"} style={{width: '100%', height: '100%'}}>
+                        {getGraph(props.spot, true)}
+                    </div>
+                }
             </div>
             <div className="icons-container">
                 <div className="icon">
@@ -84,7 +78,7 @@ export const Spot = (props: SpotProps) => {
                     </a>
                 </div>
                 {user &&
-                    <MswEditSpot spot={spot} detailsRef={detailsRef}/>
+                    <MswEditSpot spot={spot}/>
                 }
                 {user &&
                     <div className="icon" onClick={() => handleShowConfirmationModal()}>
@@ -107,27 +101,24 @@ export const Spot = (props: SpotProps) => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <div className="collapsible-icon icon arrow-icon">
+                <div className="collapsible-icon icon arrow-icon" onClick={() => setIsSpotOpen(!isSpotOpen)}>
                     <img alt="extend forecast" src={arrow_down_icon}/>
                 </div>
             </div>
         </>
     }
 
-    function getCollapsibleContent(spot: SpotModel) {
+    function getGraph(spot: SpotModel, isMini: boolean) {
         let forecastContent = <>
-            <MswForecastGraph spot={spot} isMini={false}/>
+            <MswForecastGraph spot={spot} isMini={isMini}/>
         </>;
 
         let lastMeasurementsContent = <>
-            <div className="last40days-container">
-                <p>Forecast unavailable - showing last 40 days</p>
-                <MswLastMeasurementsGraph spot={spot} isMini={false}/>
-            </div>
+            <MswLastMeasurementsGraph spot={spot} isMini={isMini}/>
         </>;
 
         let historicalYearsContent = <>
-            <MswHistoricalYearsGraph spot={spot} isMini={false}/>
+            <MswHistoricalYearsGraph spot={spot} isMini={isMini}/>
         </>;
 
         if (props.showGraphOfType === GraphTypeEnum.Forecast) {

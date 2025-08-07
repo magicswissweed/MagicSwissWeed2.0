@@ -2,7 +2,6 @@ import '../base-graph/MswGraph.scss'
 import {
     commonPlotlyConfig,
     createTrace,
-    getAspectRatio,
     getCommonPlotlyLayout,
     getTimestamps,
     MswGraphProps,
@@ -62,7 +61,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
                 createTrace(lineData, !props.isMini, props.isMini, plotColors.measured, 'Measured')
             ]}
             layout={layout}
-            style={{width: '100%', aspectRatio: getAspectRatio(props.isMini)}}
+            style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
             config={{...commonPlotlyConfig, staticPlot: props.isMini}}
         />

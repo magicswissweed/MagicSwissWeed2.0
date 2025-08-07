@@ -4,7 +4,6 @@ import {
     commonPlotlyConfig,
     createAreaTrace,
     createTrace,
-    getAspectRatio,
     getCommonPlotlyLayout,
     getTimestamps,
     MswGraphProps,
@@ -118,7 +117,7 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
             layout={layout}
             style={{
                 width: '100%',
-                aspectRatio: getAspectRatio(props.isMini)
+                height: '100%'
             }}
             useResizeHandler={true}
             config={{...commonPlotlyConfig, staticPlot: props.isMini}}

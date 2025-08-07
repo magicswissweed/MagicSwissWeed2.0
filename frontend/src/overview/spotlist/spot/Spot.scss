@@ -15,6 +15,17 @@ $icons-container-width: 40px;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
+  .miniGraph {
+    font-size: 20px;
+    display: flex;
+    flex: 2;
+    align-items: center;
+    width: 100%;
+    max-width: 350px;
+    margin: auto;
+    column-gap: 5px;
+  }
+
   @include small {
     .miniGraph {
       display: none;
@@ -48,13 +59,13 @@ $icons-container-width: 40px;
   }
 }
 
-details > summary div.collapsible-icon {
+.spot > .spot-summary div.collapsible-icon {
   transition: all 1s;
   align-self: center;
   width: 100%;
 }
 
-details[open] summary div.collapsible-icon {
+.spot.open .spot-summary div.collapsible-icon {
   transform: rotate(180deg);
 }
 
@@ -64,16 +75,17 @@ details[open] summary div.collapsible-icon {
   }
 }
 
-summary::-webkit-details-marker {
-  display: none;
-}
-
 .collapsibleContent {
   display: flex;
   margin-bottom: 10px;
+  height: 400px;
+
+  @include small() {
+    height: 200px;
+  }
 }
 
-.spotname {
+.spot-summary {
   display: flex;
   width: 100%;
 }
@@ -92,18 +104,12 @@ summary::-webkit-details-marker {
   word-break: break-word;
 }
 
-.spotname a:hover {
+.spot-summary a:hover {
   text-decoration: underline;
 }
 
-details.spot[open] summary.spotname {
-  .forecastContainer {
-    display: none;
-  }
-
-  .measurements {
-    flex-direction: row;
-  }
+.spot.open .spot-summary .measurements {
+  flex-direction: row;
 }
 
 .spotContainer {
@@ -127,6 +133,6 @@ details.spot[open] summary.spotname {
   }
 }
 
-.last40days-container {
-  width: 100%;
+.last40days-graph-container {
+  width: 100px;
 }

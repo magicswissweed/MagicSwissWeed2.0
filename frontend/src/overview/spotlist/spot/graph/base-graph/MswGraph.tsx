@@ -41,10 +41,6 @@ function getFlows(data: ApiFlowSample[]): number[] {
     return data.map(item => item.flow);
 }
 
-export function getAspectRatio(isMini: boolean): number {
-    return isMini ? 3 : 2;
-}
-
 // Calculate maximum Y value from data series with padding
 export function calculateMaxY(measured: ApiFlowSample[], max: ApiFlowSample[], paddingPercent: number = 10): number {
     const maxY = Math.max(
@@ -115,7 +111,7 @@ export function getCommonPlotlyLayout(
     const lightGray = 'rgba(211, 211, 211, 0.5)';
     return {
         // TODO: clean up unused properties
-        // autosize: true,
+        autosize: true,
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
         xaxis: {

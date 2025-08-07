@@ -5,7 +5,6 @@ import {
     commonPlotlyConfig,
     createAreaTrace,
     createTrace,
-    getAspectRatio,
     getCommonPlotlyLayout,
     getTimestamps,
     MswGraphProps,
@@ -133,10 +132,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                 )
             ]}
             layout={layout}
-            style={{
-                width: '100%',
-                aspectRatio: getAspectRatio(props.isMini)
-            }}
+            style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
             config={{
                 ...commonPlotlyConfig,
