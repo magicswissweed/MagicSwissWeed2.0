@@ -123,6 +123,9 @@ export function getCommonPlotlyLayout(
             gridcolor: lightGray,
             showticklabels: !isMini,
             range: allTimestamps.length ? [allTimestamps[0], allTimestamps[allTimestamps.length - 1]] : undefined,
+            spikemode: 'toaxis+across',
+            spikethickness: -2,
+            spikecolor: 'rgba(0, 0, 0, 0.5)',
         },
         yaxis: {
             showticklabels: !isMini,
