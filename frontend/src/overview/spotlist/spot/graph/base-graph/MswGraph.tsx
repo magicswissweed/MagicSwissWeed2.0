@@ -58,6 +58,7 @@ export function calculateMaxY(measured: ApiFlowSample[], max: ApiFlowSample[], p
 // Create a trace for Plotly with common defaults
 export function createTrace(
     data: ApiFlowSample[],
+    showTooltip: boolean,
     isMini: boolean,
     color?: string,
     name?: string) {
@@ -70,8 +71,8 @@ export function createTrace(
         line: {width: 1, shape: 'spline' as const, color},
         name,
         showlegend: !isMini && !isMobile,
-        hoverinfo: isMini ? 'skip' as const : 'all' as const,
-        hovertemplate: isMini ? undefined : '%{x|%d.%m.%Y %H:%M}<br>Flow: %{y:.1f}<extra></extra>',
+        hoverinfo: showTooltip ? 'all' as const : 'skip' as const,
+        hovertemplate: showTooltip ? '%{x|%d.%m.%Y %H:%M}<br>Flow: %{y:.1f}<extra></extra>' : undefined,
     };
 }
 
@@ -83,11 +84,11 @@ export function createAreaTrace(
     isMini: boolean) {
     return [
         {
-            ...createTrace(upperData, isMini, 'transparent'),
-            showlegend: false
+            ...createTrace(upperData, false, isMini, 'transparent'),
+            showlegend: false,
         },
         {
-            ...createTrace(lowerData, isMini, 'transparent', name),
+            ...createTrace(lowerData, false, isMini, 'transparent', name),
             fill: 'tonexty',
             fillcolor: fillcolor,
         }

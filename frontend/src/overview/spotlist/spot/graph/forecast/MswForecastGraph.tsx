@@ -114,18 +114,19 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                     processedData.p25,
                     '25-75%',
                     plotColors.percentileRange.fill,
-                    props.isMini
-                ),
+                    props.isMini),
 
                 // Top layers: Forecast median and measured data
                 createTrace(
                     processedData.median,
+                    !props.isMini,
                     props.isMini,
                     plotColors.median,
                     'Median',
                 ),
                 createTrace(
                     processedData.measured,
+                    !props.isMini,
                     props.isMini,
                     plotColors.measured,
                     'Measured',

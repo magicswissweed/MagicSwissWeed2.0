@@ -98,22 +98,22 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                     processedData.p25,
                     '25-75%',
                     plotColors.percentileRange.fill,
-                    props.isMini
-                ),
+                    props.isMini),
 
                 // Top layers: Historical median and measured data
                 createTrace(
                     processedData.median,
+                    !props.isMini,
                     props.isMini,
                     plotColors.median,
                     'Median',
                 ),
                 createTrace(
                     processedData.measured,
+                    !props.isMini,
                     props.isMini,
                     plotColors.measured,
-                    'Measured',
-                  )
+                    'Measured')
             ]}
             layout={layout}
             style={{

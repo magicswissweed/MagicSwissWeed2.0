@@ -59,7 +59,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     return (
         <Plot
             data={[
-                createTrace(lineData, props.isMini, plotColors.measured, 'Measured')
+                createTrace(lineData, !props.isMini, props.isMini, plotColors.measured, 'Measured')
             ]}
             layout={layout}
             style={{width: '100%', aspectRatio: getAspectRatio(props.isMini)}}
