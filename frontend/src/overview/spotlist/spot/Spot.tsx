@@ -39,11 +39,14 @@ export const Spot = (props: SpotProps) => {
     const handleShowConfirmationModal = () => setShowConfirmationModal(true);
 
     useEffect(() => {
-        // Always close all spots when the graphType changes - prevents weird behavior in UI
+        // Always close all spots when the graphType changes, or when the graph is loaded - prevents weird behavior in UI
+        // TODO: fix this in a better way (so that the spot can be opened and closed at any time without problems)
         if (detailsRef.current) {
-            detailsRef.current.open = false;
+            if (props.spot.forecastLoaded || props.spot.last40DaysLoaded) {
+                detailsRef.current.open = false;
+            }
         }
-    }, [props.showGraphOfType]);
+    }, [props.showGraphOfType, props.spot.forecastLoaded, props.spot.last40DaysLoaded]);
 
     return <>
         <details key={props.spot.name} className="spot" ref={detailsRef}>
