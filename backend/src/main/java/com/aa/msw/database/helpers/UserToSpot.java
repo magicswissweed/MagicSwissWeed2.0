@@ -11,14 +11,19 @@ public final class UserToSpot implements HasId<UserToSpotId> {
     private final UserToSpotId userToSpotId;
     private final UserId userId;
     private final SpotId spotId;
+    private final boolean withNotification;
     private int position;
 
-    public UserToSpot(UserToSpotId userToSpotId, UserId userId, SpotId spotId,
-                      int position) {
+    public UserToSpot(UserToSpotId userToSpotId,
+                      UserId userId,
+                      SpotId spotId,
+                      int position,
+                      boolean withNotification) {
         this.userToSpotId = userToSpotId;
         this.userId = userId;
         this.spotId = spotId;
         this.position = position;
+        this.withNotification = withNotification;
     }
 
     @Override
@@ -46,6 +51,10 @@ public final class UserToSpot implements HasId<UserToSpotId> {
         return position;
     }
 
+    public boolean withNotification() {
+        return withNotification;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -54,7 +63,8 @@ public final class UserToSpot implements HasId<UserToSpotId> {
         return Objects.equals(this.userToSpotId, that.userToSpotId) &&
                 Objects.equals(this.userId, that.userId) &&
                 Objects.equals(this.spotId, that.spotId) &&
-                this.position == that.position;
+                this.position == that.position &&
+                this.withNotification == that.withNotification;
     }
 
     @Override
@@ -68,7 +78,8 @@ public final class UserToSpot implements HasId<UserToSpotId> {
                 "userToSpotId=" + userToSpotId + ", " +
                 "userId=" + userId + ", " +
                 "spotId=" + spotId + ", " +
-                "position=" + position + ']';
+                "position=" + position + ", " +
+                "withNotification=" + withNotification + ']';
     }
 
 }

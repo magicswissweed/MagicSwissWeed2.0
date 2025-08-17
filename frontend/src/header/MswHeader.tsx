@@ -10,7 +10,7 @@ import {useAuthModal} from '../user/AuthModalContext';
 
 export const MswHeader = () => {
     // @ts-ignore
-    const {user, logOut} = useUserAuth();
+    const {user, token, logOut} = useUserAuth();
     const {
         showLoginModal,
         showSignupModal,

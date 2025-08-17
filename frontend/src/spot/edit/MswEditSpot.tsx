@@ -10,6 +10,7 @@ import edit_icon from "../../assets/edit.svg";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
 import {SpotModel} from "../../model/SpotModel";
+import {subscribeToPushNotifications} from "../../subscribeToPushNotifications";
 
 // specify the properties (inputs) for the MswEditSpot component
 interface MswEditSpotProps {
@@ -24,6 +25,9 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     }
     const handleEditSpotAndCloseModal = (e: { preventDefault: any; }) => {
         e.preventDefault();
+        if (withNotification) {
+            subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
+        }
         editSpot().then(() => setIsSubmitButtonDisabled(false));
     }
     const handleCancelEditSpotModal = () => setShowEditSpotModal(false);
@@ -34,6 +38,7 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     const [stationId, setStationId] = useState<number | undefined>(spot.stationId);
     const [minFlow, setMinFlow] = useState<number | undefined>(spot.minFlow);
     const [maxFlow, setMaxFlow] = useState<number | undefined>(spot.maxFlow);
+    const [withNotification, setWithNotification] = useState(spot.withNotification);
     const [stations, setStations] = useState<ApiStation[]>([])
     const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
     const [stationSelectionError, setStationSelectionError] = useState('');
@@ -68,7 +73,8 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             isPublic: false,
             minFlow: minFlow!,
             maxFlow: maxFlow!,
-            station: stations.filter(s => s.id === stationId).pop()!
+            station: stations.filter(s => s.id === stationId).pop()!,
+            withNotification: withNotification
         };
 
         // wrap spot object in request object and send to API
@@ -108,6 +114,8 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             setMinFlow,
             maxFlow,
             setMaxFlow,
+            withNotification,
+            setWithNotification,
             isSubmitButtonDisabled,
             setIsSubmitButtonDisabled,
             isEditMode)}

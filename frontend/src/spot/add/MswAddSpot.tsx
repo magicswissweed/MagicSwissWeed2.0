@@ -10,6 +10,7 @@ import {authConfiguration} from "../../api/config/AuthConfiguration";
 import {spotsService} from "../../service/SpotsService";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
+import {subscribeToPushNotifications} from "../../subscribeToPushNotifications";
 
 export const MswAddSpot = () => {
 
@@ -26,6 +27,9 @@ export const MswAddSpot = () => {
 
     const handleAddSpotAndCloseModal = (e: { preventDefault: any; }) => {
         e.preventDefault();
+        if (withNotification) {
+            subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
+        }
         addSpot().then(() => {
             setIsSubmitButtonDisabled(false);
             resetValuesToDefault();
@@ -41,6 +45,7 @@ export const MswAddSpot = () => {
     const [stationId, setStationId] = useState<number | undefined>(undefined);
     const [minFlow, setMinFlow] = useState<number | undefined>(undefined);
     const [maxFlow, setMaxFlow] = useState<number | undefined>(undefined);
+    const [withNotification, setWithNotification] = useState(false);
     const [stations, setStations] = useState<ApiStation[]>([])
     const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
     const [stationSelectionError, setStationSelectionError] = useState('');
@@ -73,7 +78,8 @@ export const MswAddSpot = () => {
             isPublic: false,
             minFlow: minFlow!,
             maxFlow: maxFlow!,
-            station: stations.filter(s => s.id === stationId).pop()!
+            station: stations.filter(s => s.id === stationId).pop()!,
+            withNotification: withNotification
         };
         let response: AxiosResponse<void, any> = await new SpotsApi(config).addPrivateSpot({spot: apiSpot, position: 0})
         if (response.status === 200) {
@@ -104,6 +110,8 @@ export const MswAddSpot = () => {
             setMinFlow,
             maxFlow,
             setMaxFlow,
+            withNotification,
+            setWithNotification,
             isSubmitButtonDisabled,
             setIsSubmitButtonDisabled,
             isEditMode)}

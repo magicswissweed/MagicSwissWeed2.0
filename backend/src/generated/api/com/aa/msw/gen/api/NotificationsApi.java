@@ -5,6 +5,7 @@
  */
 package com.aa.msw.gen.api;
 
+import com.aa.msw.gen.api.PushNotificationSubscription;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,32 +34,60 @@ import jakarta.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-17T20:54:42.033051+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
-@Tag(name = "user", description = "the user API")
-public interface UserApi {
+@Tag(name = "notifications", description = "the notifications API")
+public interface NotificationsApi {
 
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
 
     /**
-     * POST /api/v1/user/register : Register new User.
+     * POST /api/v1/notifications/register : Register for Push-Notifications
      *
-     * @return Registration was successful. (status code 200)
+     * @param pushNotificationSubscription The Subscription. (required)
+     * @return Subscribed successfully. (status code 200)
      */
     @Operation(
-        operationId = "registerUser",
-        summary = "Register new User.",
-        tags = { "user" },
+        operationId = "registerForPushNotifications",
+        summary = "Register for Push-Notifications",
+        tags = { "notifications" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Registration was successful.")
+            @ApiResponse(responseCode = "200", description = "Subscribed successfully.")
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/api/v1/user/register"
+        value = "/api/v1/notifications/register",
+        consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> registerUser(
+    default ResponseEntity<Void> registerForPushNotifications(
+        @Parameter(name = "PushNotificationSubscription", description = "The Subscription.", required = true) @Valid @RequestBody PushNotificationSubscription pushNotificationSubscription
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * GET /api/v1/notifications/triggerTestNotifications : Trigger test notifications to all subscribed clients
+     *
+     * @return Triggered test notifications successfully. (status code 200)
+     */
+    @Operation(
+        operationId = "triggerTestNotifications",
+        summary = "Trigger test notifications to all subscribed clients",
+        tags = { "notifications" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Triggered test notifications successfully.")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/api/v1/notifications/triggerTestNotifications"
+    )
+    
+    default ResponseEntity<Void> triggerTestNotifications(
         
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

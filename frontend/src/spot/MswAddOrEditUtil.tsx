@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {ApiSpotSpotTypeEnum, ApiStation} from "../gen/msw-api-ts";
-import {Button, Form} from "react-bootstrap";
+import {Button, Col, Form, Row} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import Modal from "react-bootstrap/Modal";
 import {MswStationMap} from "../overview/map/station-map/MswStationMap";
@@ -8,7 +8,7 @@ import './MswAddOrEditUtil.scss';
 
 export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCancelModal: (() => void) | undefined, formRef: React.MutableRefObject<HTMLFormElement | null>, handleSaveAndCloseModal: (e: {
     preventDefault: any
-}) => void, spotName: string, setSpotName: (value: (((prevState: string) => string) | string)) => void, type: ApiSpotSpotTypeEnum, setType: (value: (((prevState: (ApiSpotSpotTypeEnum)) => (ApiSpotSpotTypeEnum)) | ApiSpotSpotTypeEnum)) => void, setStationId: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, setStationSelectionError: (value: (((prevState: string) => string) | string)) => void, stations: ApiStation[], stationId: number | undefined, stationSelectionError: string, minFlow: number | undefined, setMinFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, maxFlow: number | undefined, setMaxFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, isSubmitButtonDisabled: boolean | undefined, setIsSubmitButtonDisabled: (value: (((prevState: boolean) => boolean) | boolean)) => void, isEditMode: boolean) {
+}) => void, spotName: string, setSpotName: (value: (((prevState: string) => string) | string)) => void, type: ApiSpotSpotTypeEnum, setType: (value: (((prevState: (ApiSpotSpotTypeEnum)) => (ApiSpotSpotTypeEnum)) | ApiSpotSpotTypeEnum)) => void, setStationId: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, setStationSelectionError: (value: (((prevState: string) => string) | string)) => void, stations: ApiStation[], stationId: number | undefined, stationSelectionError: string, minFlow: number | undefined, setMinFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, maxFlow: number | undefined, setMaxFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, withNotification: boolean, setWithNotification: (value: (((prevState: (boolean)) => (boolean)) | boolean)) => void, isSubmitButtonDisabled: boolean | undefined, setIsSubmitButtonDisabled: (value: (((prevState: boolean) => boolean) | boolean)) => void, isEditMode: boolean) {
     // Validation effect for enabling/disabling submit button
     useEffect(() => {
         const flowsValid =
@@ -147,6 +147,23 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                     Maximum flow must be greater than minimum flow.
                                 </div>
                             )}
+                        </Form>
+
+                        {/*TODO: style me*/}
+                        <Form>
+                            <Row className="align-items-center">
+                                <Col className="text-end">Enable Notifications</Col>
+                                <Col xs="auto">
+                                    <Form.Check
+                                        type="switch"
+                                        id="enable-notification-toggle"
+                                        checked={withNotification}
+                                        onChange={() => {
+                                            setWithNotification(!withNotification)
+                                        }}
+                                    />
+                                </Col>
+                            </Row>
                         </Form>
                     </div>
                     <div className="container-right">

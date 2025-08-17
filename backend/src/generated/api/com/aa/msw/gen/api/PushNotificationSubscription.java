@@ -2,10 +2,8 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
-import com.aa.msw.gen.api.ApiSpot;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,44 +15,43 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * EditPrivateSpotRequest
+ * PushNotificationSubscription
  */
 
-@JsonTypeName("editPrivateSpot_request")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-17T20:54:42.033051+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
-public class EditPrivateSpotRequest {
+public class PushNotificationSubscription {
 
-  private ApiSpot spot;
+  private String token;
 
-  public EditPrivateSpotRequest() {
+  public PushNotificationSubscription() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public EditPrivateSpotRequest(ApiSpot spot) {
-    this.spot = spot;
+  public PushNotificationSubscription(String token) {
+    this.token = token;
   }
 
-  public EditPrivateSpotRequest spot(ApiSpot spot) {
-    this.spot = spot;
+  public PushNotificationSubscription token(String token) {
+    this.token = token;
     return this;
   }
 
   /**
-   * Get spot
-   * @return spot
+   * Get token
+   * @return token
   */
-  @NotNull @Valid 
-  @Schema(name = "spot", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("spot")
-  public ApiSpot getSpot() {
-    return spot;
+  @NotNull 
+  @Schema(name = "token", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("token")
+  public String getToken() {
+    return token;
   }
 
-  public void setSpot(ApiSpot spot) {
-    this.spot = spot;
+  public void setToken(String token) {
+    this.token = token;
   }
 
   @Override
@@ -65,20 +62,20 @@ public class EditPrivateSpotRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    EditPrivateSpotRequest editPrivateSpotRequest = (EditPrivateSpotRequest) o;
-    return Objects.equals(this.spot, editPrivateSpotRequest.spot);
+    PushNotificationSubscription pushNotificationSubscription = (PushNotificationSubscription) o;
+    return Objects.equals(this.token, pushNotificationSubscription.token);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spot);
+    return Objects.hash(token);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class EditPrivateSpotRequest {\n");
-    sb.append("    spot: ").append(toIndentedString(spot)).append("\n");
+    sb.append("class PushNotificationSubscription {\n");
+    sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

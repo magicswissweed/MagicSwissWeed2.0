@@ -42,7 +42,6 @@ public class SpotsApiController implements SpotsApi {
     @Override
     public ResponseEntity<Void> addPrivateSpot(AddPrivateSpotRequest addPrivateSpotRequest) {
         ApiSpot apiSpot = addPrivateSpotRequest.getSpot();
-        int position = addPrivateSpotRequest.getPosition();
 
         Spot spot = new Spot(
                 new SpotId(apiSpot.getId(), false),
@@ -54,7 +53,10 @@ public class SpotsApiController implements SpotsApi {
                 apiSpot.getMaxFlow()
         );
         try {
-            spotsApiService.addPrivateSpot(spot, position);
+            spotsApiService.addPrivateSpot(
+                    spot,
+                    addPrivateSpotRequest.getPosition(),
+                    addPrivateSpotRequest.getSpot().getWithNotification());
         } catch (NoSampleAvailableException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -75,7 +77,7 @@ public class SpotsApiController implements SpotsApi {
                 apiSpot.getMaxFlow()
         );
         try {
-            spotsApiService.editSpot(updatedSpot);
+            spotsApiService.editSpot(updatedSpot, apiSpot.getWithNotification());
         } catch (NoSampleAvailableException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

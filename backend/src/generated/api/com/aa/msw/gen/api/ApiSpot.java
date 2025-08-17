@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * ApiSpot
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-09T13:29:56.518144+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-17T20:54:42.033051+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpot {
 
   private UUID id;
@@ -75,6 +75,8 @@ public class ApiSpot {
 
   private ApiStation station;
 
+  private Boolean withNotification;
+
   public ApiSpot() {
     super();
   }
@@ -82,7 +84,7 @@ public class ApiSpot {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpot(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station) {
+  public ApiSpot(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, Boolean withNotification) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
@@ -91,6 +93,7 @@ public class ApiSpot {
     this.minFlow = minFlow;
     this.maxFlow = maxFlow;
     this.station = station;
+    this.withNotification = withNotification;
   }
 
   public ApiSpot id(UUID id) {
@@ -253,6 +256,26 @@ public class ApiSpot {
     this.station = station;
   }
 
+  public ApiSpot withNotification(Boolean withNotification) {
+    this.withNotification = withNotification;
+    return this;
+  }
+
+  /**
+   * Get withNotification
+   * @return withNotification
+  */
+  @NotNull 
+  @Schema(name = "withNotification", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("withNotification")
+  public Boolean getWithNotification() {
+    return withNotification;
+  }
+
+  public void setWithNotification(Boolean withNotification) {
+    this.withNotification = withNotification;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -269,12 +292,13 @@ public class ApiSpot {
         Objects.equals(this.isPublic, apiSpot.isPublic) &&
         Objects.equals(this.minFlow, apiSpot.minFlow) &&
         Objects.equals(this.maxFlow, apiSpot.maxFlow) &&
-        Objects.equals(this.station, apiSpot.station);
+        Objects.equals(this.station, apiSpot.station) &&
+        Objects.equals(this.withNotification, apiSpot.withNotification);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station);
+    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification);
   }
 
   @Override
@@ -289,6 +313,7 @@ public class ApiSpot {
     sb.append("    minFlow: ").append(toIndentedString(minFlow)).append("\n");
     sb.append("    maxFlow: ").append(toIndentedString(maxFlow)).append("\n");
     sb.append("    station: ").append(toIndentedString(station)).append("\n");
+    sb.append("    withNotification: ").append(toIndentedString(withNotification)).append("\n");
     sb.append("}");
     return sb.toString();
   }

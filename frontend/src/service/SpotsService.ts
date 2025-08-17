@@ -78,7 +78,8 @@ class SpotsService {
                     undefined,
                     false,
                     undefined,
-                    undefined);
+                    undefined,
+                    s.withNotification);
             })
             this.setSpots(spots);
         }

@@ -113,4 +113,19 @@ public class UserToSpotTableDao extends DAOImpl<UserToSpotTableRecord, com.aa.ms
     public List<com.aa.msw.gen.jooq.tables.pojos.UserToSpotTable> fetchByPosition(Integer... values) {
         return fetch(UserToSpotTable.USER_TO_SPOT_TABLE.POSITION, values);
     }
+
+    /**
+     * Fetch records that have <code>withnotification BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.UserToSpotTable> fetchRangeOfWithnotification(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(UserToSpotTable.USER_TO_SPOT_TABLE.WITHNOTIFICATION, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>withnotification IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.UserToSpotTable> fetchByWithnotification(Boolean... values) {
+        return fetch(UserToSpotTable.USER_TO_SPOT_TABLE.WITHNOTIFICATION, values);
+    }
 }

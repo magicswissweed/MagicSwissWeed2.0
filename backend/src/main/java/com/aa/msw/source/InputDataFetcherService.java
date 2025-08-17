@@ -1,5 +1,6 @@
 package com.aa.msw.source;
 
+import com.aa.msw.NotificationService;
 import com.aa.msw.database.exceptions.NoSampleAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.database.repository.dao.Last40DaysDao;
@@ -32,8 +33,9 @@ public class InputDataFetcherService {
     private final SpotDbService spotDbService;
     private final Last40DaysSampleFetchService last40DaysSampleFetchService;
     private final Last40DaysDao last40DaysDao;
+    private final NotificationService notificationService;
 
-    public InputDataFetcherService(SampleFetchService sampleFetchService, ForecastFetchService forecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, Last40DaysSampleFetchService last40DaysSampleFetchService, Last40DaysDao last40DaysDao) {
+    public InputDataFetcherService(SampleFetchService sampleFetchService, ForecastFetchService forecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, Last40DaysSampleFetchService last40DaysSampleFetchService, Last40DaysDao last40DaysDao, NotificationService notificationService) {
         this.sampleFetchService = sampleFetchService;
         this.forecastFetchService = forecastFetchService;
         this.stationDao = stationDao;
@@ -42,6 +44,7 @@ public class InputDataFetcherService {
         this.spotDbService = spotDbService;
         this.last40DaysSampleFetchService = last40DaysSampleFetchService;
         this.last40DaysDao = last40DaysDao;
+        this.notificationService = notificationService;
     }
 
     public List<Sample> fetchForStationId(Integer stationId) throws NoSampleAvailableException {
@@ -60,7 +63,8 @@ public class InputDataFetcherService {
         fetchAndWriteSamples(stationIds);
         fetchAndWriteForecasts(stationIds);
         fetchAndWriteLast40Days(stationIds);
-        spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+        var spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+        notificationService.sendNotificationsForSpots(spotsThatImproved);
     }
 
     private void fetchAndWriteSamples(Set<Integer> stationIds) throws IOException, URISyntaxException {

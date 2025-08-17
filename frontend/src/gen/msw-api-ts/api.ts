@@ -266,6 +266,12 @@ export interface ApiSpot {
      * @memberof ApiSpot
      */
     'station': ApiStation;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ApiSpot
+     */
+    'withNotification': boolean;
 }
 
 export const ApiSpotSpotTypeEnum = {
@@ -331,6 +337,12 @@ export interface ApiSpotInformation {
     'station': ApiStation;
     /**
      * 
+     * @type {boolean}
+     * @memberof ApiSpotInformation
+     */
+    'withNotification': boolean;
+    /**
+     * 
      * @type {ApiSample}
      * @memberof ApiSpotInformation
      */
@@ -393,6 +405,19 @@ export interface EditPrivateSpotRequest {
      * @memberof EditPrivateSpotRequest
      */
     'spot': ApiSpot;
+}
+/**
+ * 
+ * @export
+ * @interface PushNotificationSubscription
+ */
+export interface PushNotificationSubscription {
+    /**
+     * 
+     * @type {string}
+     * @memberof PushNotificationSubscription
+     */
+    'token': string;
 }
 /**
  * 
@@ -718,6 +743,178 @@ export class HistoricalApi extends BaseAPI {
      */
     public getHistoricalData(options?: RawAxiosRequestConfig) {
         return HistoricalApiFp(this.configuration).getHistoricalData(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * NotificationsApi - axios parameter creator
+ * @export
+ */
+export const NotificationsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Register for Push-Notifications
+         * @param {PushNotificationSubscription} pushNotificationSubscription The Subscription.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        registerForPushNotifications: async (pushNotificationSubscription: PushNotificationSubscription, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pushNotificationSubscription' is not null or undefined
+            assertParamExists('registerForPushNotifications', 'pushNotificationSubscription', pushNotificationSubscription)
+            const localVarPath = `/api/v1/notifications/register`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(pushNotificationSubscription, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Trigger test notifications to all subscribed clients
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        triggerTestNotifications: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1/notifications/triggerTestNotifications`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * NotificationsApi - functional programming interface
+ * @export
+ */
+export const NotificationsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = NotificationsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Register for Push-Notifications
+         * @param {PushNotificationSubscription} pushNotificationSubscription The Subscription.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async registerForPushNotifications(pushNotificationSubscription: PushNotificationSubscription, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.registerForPushNotifications(pushNotificationSubscription, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['NotificationsApi.registerForPushNotifications']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Trigger test notifications to all subscribed clients
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async triggerTestNotifications(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.triggerTestNotifications(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['NotificationsApi.triggerTestNotifications']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * NotificationsApi - factory interface
+ * @export
+ */
+export const NotificationsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = NotificationsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Register for Push-Notifications
+         * @param {PushNotificationSubscription} pushNotificationSubscription The Subscription.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        registerForPushNotifications(pushNotificationSubscription: PushNotificationSubscription, options?: any): AxiosPromise<void> {
+            return localVarFp.registerForPushNotifications(pushNotificationSubscription, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Trigger test notifications to all subscribed clients
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        triggerTestNotifications(options?: any): AxiosPromise<void> {
+            return localVarFp.triggerTestNotifications(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * NotificationsApi - object-oriented interface
+ * @export
+ * @class NotificationsApi
+ * @extends {BaseAPI}
+ */
+export class NotificationsApi extends BaseAPI {
+    /**
+     * 
+     * @summary Register for Push-Notifications
+     * @param {PushNotificationSubscription} pushNotificationSubscription The Subscription.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NotificationsApi
+     */
+    public registerForPushNotifications(pushNotificationSubscription: PushNotificationSubscription, options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).registerForPushNotifications(pushNotificationSubscription, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Trigger test notifications to all subscribed clients
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NotificationsApi
+     */
+    public triggerTestNotifications(options?: RawAxiosRequestConfig) {
+        return NotificationsApiFp(this.configuration).triggerTestNotifications(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

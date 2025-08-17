@@ -38,10 +38,10 @@ public class SpotDbService {
     }
 
     @Transactional
-    public void addPrivateSpot(Spot spot, int position) {
+    public void addPrivateSpot(Spot spot, int position, boolean withNotification) {
         spotDao.persist(spot);
-        persistUserToSpot(spot, position);
-        updateSpotCurrentInfo(spot);
+        persistUserToSpot(spot, position, withNotification);
+        updateSpotCurrentInfo(spot, getCurrentFlowStatusEnum(spot));
     }
 
     @Transactional
@@ -50,12 +50,12 @@ public class SpotDbService {
         if (!existingSpot.isPublic() && userToSpotDao.userHasSpot(existingSpot.getId())) {
             spotDao.update(updatedSpot);
         }
-        updateSpotCurrentInfo(updatedSpot);
+        updateSpotCurrentInfo(updatedSpot, getCurrentFlowStatusEnum(updatedSpot));
     }
 
     @Transactional
-    public void updateSpotCurrentInfo(Spot spot) {
-        spotCurrentInfoDao.updateCurrentInfo(spot.spotId(), getCurrentFlowStatusEnum(spot));
+    public void updateSpotCurrentInfo(Spot spot, FlowStatusEnum currentFlowStatusEnum) {
+        spotCurrentInfoDao.updateCurrentInfo(spot.spotId(), currentFlowStatusEnum);
     }
 
     @Transactional
@@ -66,35 +66,57 @@ public class SpotDbService {
 
         for (Spot publicSpot : publicSpots) {
             if (!mappedSpotIds.contains(publicSpot)) {
-                persistUserToSpot(publicSpot, 0);
+                persistUserToSpot(publicSpot, 0, false);
             }
         }
     }
 
     @Transactional
-    public void updateCurrentInfoForAllSpotsOfStations(Set<Integer> stationIds) {
+    public Set<Spot> updateCurrentInfoForAllSpotsOfStations(Set<Integer> stationIds) {
+        Set<Spot> spotsThatImproved = new HashSet<>();
         for (Integer stationId : stationIds) {
-            updateCurrentInfoForAllSpotsOfStation(stationId);
+            spotsThatImproved.addAll(updateCurrentInfoForAllSpotsOfStation(stationId));
         }
+        return spotsThatImproved;
     }
 
     @Transactional
-    public void updateCurrentInfoForAllSpotsOfStation(Integer stationId) {
+    public Set<Spot> updateCurrentInfoForAllSpotsOfStation(Integer stationId) {
         Set<Spot> spots = spotDao.getSpotsWithStationId(stationId);
+        Set<Spot> spotsThatImproved = new HashSet<>();
         for (Spot spot : spots) {
-            updateSpotCurrentInfo(spot);
+            FlowStatusEnum updatedFlowStatusEnum = getCurrentFlowStatusEnum(spot);
+            if (hasCurrentInfoImprovedForSpot(spot, updatedFlowStatusEnum)) {
+                spotsThatImproved.add(spot);
+            }
+            updateSpotCurrentInfo(spot, updatedFlowStatusEnum);
         }
+        return spotsThatImproved;
+    }
+
+    private boolean hasCurrentInfoImprovedForSpot(Spot spot, FlowStatusEnum updatedFlowStatusEnum) {
+        SpotCurrentInfo spotCurrentInfo = spotCurrentInfoDao.get(spot.getId());
+        if (spotCurrentInfo == null || spotCurrentInfo.currentFlowStatusEnum() == null) {
+            return true;
+        }
+        FlowStatusEnum oldFlowStatus = spotCurrentInfo.currentFlowStatusEnum();
+        boolean hasChanged = oldFlowStatus != updatedFlowStatusEnum;
+        boolean wasBad = oldFlowStatus == FlowStatusEnum.BAD;
+        boolean wasOrangeIsGreen = oldFlowStatus == FlowStatusEnum.TENDENCY_TO_BECOME_GOOD && updatedFlowStatusEnum == FlowStatusEnum.GOOD;
+        boolean hasImproved = wasBad || wasOrangeIsGreen;
+        return hasChanged && hasImproved;
     }
 
     @Transactional
-    protected void persistUserToSpot(Spot spot, int position) {
+    protected void persistUserToSpot(Spot spot, int position, boolean withNotification) {
         increasePositionOfAllSpotsOfTypeByOne(spot.type());
         userToSpotDao.persist(
                 new UserToSpot(
                         new UserToSpotId(),
                         UserContext.getCurrentUser().userId(),
                         spot.spotId(),
-                        position
+                        position,
+                        withNotification
                 )
         );
     }
