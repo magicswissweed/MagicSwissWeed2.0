@@ -1,6 +1,5 @@
 package com.aa.msw.source;
 
-import com.aa.msw.NotificationService;
 import com.aa.msw.database.exceptions.NoSampleAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.database.repository.dao.Last40DaysDao;
@@ -11,6 +10,8 @@ import com.aa.msw.model.Forecast;
 import com.aa.msw.model.Last40Days;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
+import com.aa.msw.notifications.NotificationService;
+import com.aa.msw.notifications.NotificationSpotInfo;
 import com.aa.msw.source.existenz.sample.SampleFetchService;
 import com.aa.msw.source.hydrodaten.forecast.ForecastFetchService;
 import com.aa.msw.source.hydrodaten.historical.lastfourty.Last40DaysSampleFetchService;
@@ -63,7 +64,7 @@ public class InputDataFetcherService {
         fetchAndWriteSamples(stationIds);
         fetchAndWriteForecasts(stationIds);
         fetchAndWriteLast40Days(stationIds);
-        var spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+        Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
         notificationService.sendNotificationsForSpots(spotsThatImproved);
     }
 

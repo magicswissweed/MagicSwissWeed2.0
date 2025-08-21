@@ -6,6 +6,7 @@ import com.aa.msw.database.helpers.UserToSpot;
 import com.aa.msw.database.helpers.id.UserToSpotId;
 import com.aa.msw.database.repository.dao.*;
 import com.aa.msw.model.*;
+import com.aa.msw.notifications.NotificationSpotInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,8 +73,8 @@ public class SpotDbService {
     }
 
     @Transactional
-    public Set<Spot> updateCurrentInfoForAllSpotsOfStations(Set<Integer> stationIds) {
-        Set<Spot> spotsThatImproved = new HashSet<>();
+    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStations(Set<Integer> stationIds) {
+        Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
         for (Integer stationId : stationIds) {
             spotsThatImproved.addAll(updateCurrentInfoForAllSpotsOfStation(stationId));
         }
@@ -81,13 +82,18 @@ public class SpotDbService {
     }
 
     @Transactional
-    public Set<Spot> updateCurrentInfoForAllSpotsOfStation(Integer stationId) {
+    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStation(Integer stationId) {
         Set<Spot> spots = spotDao.getSpotsWithStationId(stationId);
-        Set<Spot> spotsThatImproved = new HashSet<>();
+        Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
         for (Spot spot : spots) {
             FlowStatusEnum updatedFlowStatusEnum = getCurrentFlowStatusEnum(spot);
             if (hasCurrentInfoImprovedForSpot(spot, updatedFlowStatusEnum)) {
-                spotsThatImproved.add(spot);
+                spotsThatImproved.add(
+                        new NotificationSpotInfo(
+                                spot,
+                                updatedFlowStatusEnum,
+                                userToSpotDao.get(spot.getId()))
+                );
             }
             updateSpotCurrentInfo(spot, updatedFlowStatusEnum);
         }

@@ -1,8 +1,8 @@
 package com.aa.msw.api.notification;
 
-import com.aa.msw.NotificationService;
 import com.aa.msw.database.repository.dao.NotificationDao;
 import com.aa.msw.gen.api.PushNotificationSubscription;
+import com.aa.msw.notifications.NotificationService;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -38,6 +38,6 @@ public class NotificationApiService {
                 "body", "This is a test notification sent by the server"
         );
         notificationDao.getAll().forEach(subscription ->
-                notificationService.sendNotification(subscription.subscriptionToken(), messageData));
+                notificationService.sendNotificationToSubscribedClient(subscription.subscriptionToken(), messageData));
     }
 }
