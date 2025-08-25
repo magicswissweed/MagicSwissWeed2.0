@@ -35,6 +35,17 @@
 
 }
 
+.info-box {
+  padding: 5px;
+  margin: 10px;
+  display: none;
+
+  @include small() {
+    display: block;
+    background-color: #f8ad4c;
+  }
+}
+
 .loginOrLogoutContainer {
   display: flex;
   position: absolute;

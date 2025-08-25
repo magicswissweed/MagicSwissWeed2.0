@@ -7,10 +7,11 @@ import {MswLoginModal} from "../user/login/MswLoginModal";
 import MswSignUpModal from "../user/signup/MswSignUp";
 import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
 import {useAuthModal} from '../user/AuthModalContext';
+import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
 
 export const MswHeader = () => {
     // @ts-ignore
-    const {user, logOut} = useUserAuth();
+    const {user, token, logOut} = useUserAuth();
     const {
         showLoginModal,
         showSignupModal,
@@ -19,6 +20,7 @@ export const MswHeader = () => {
         setShowSignupModal,
         setShowForgotPasswordModal
     } = useAuthModal();
+    const isPwaInstalled = usePwaInstalled();
 
     let loginOrLogout: JSX.Element;
 
@@ -53,6 +55,25 @@ export const MswHeader = () => {
             <div className="title">
                 <h1>MagicSwissWeed</h1>
                 <p>Know when the rivers flow</p>
+                {!isPwaInstalled && token &&
+                    <div className='info-box'>
+                        <p>
+                            ! Install this site as an app to get notifications on your mobile device !
+                        </p>
+                        <p>
+                            On iPhone (Safari):
+                        </p>
+                        <p>
+                            “Tap Share → Add to Home Screen”
+                        </p>
+                        <p>
+                            On Android (Chrome):
+                        </p>
+                        <p>
+                            “Tap ⋮ menu → Install App”
+                        </p>
+                    </div>
+                }
             </div>
         </header>
     </>;
