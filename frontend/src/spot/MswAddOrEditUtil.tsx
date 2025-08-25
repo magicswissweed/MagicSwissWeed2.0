@@ -152,7 +152,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                         {/*TODO: style me*/}
                         <Form>
                             <Row className="align-items-center">
-                                <Col className="text-end">Enable Notifications</Col>
+                                <Col className="text-start">Enable Notifications</Col>
                                 <Col xs="auto">
                                     <Form.Check
                                         type="switch"
