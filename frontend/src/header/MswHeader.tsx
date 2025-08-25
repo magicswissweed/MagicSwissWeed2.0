@@ -1,5 +1,5 @@
 import './MswHeader.scss'
-import React from 'react';
+import React, {JSX} from 'react';
 import {Button} from 'react-bootstrap';
 import {useUserAuth} from '../user/UserAuthContext';
 import {MswAddSpot} from "../spot/add/MswAddSpot";
@@ -10,7 +10,7 @@ import {useAuthModal} from '../user/AuthModalContext';
 
 export const MswHeader = () => {
     // @ts-ignore
-    const {user, token, logOut} = useUserAuth();
+    const {user, logOut} = useUserAuth();
     const {
         showLoginModal,
         showSignupModal,
