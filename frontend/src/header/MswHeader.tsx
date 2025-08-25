@@ -1,5 +1,5 @@
 import './MswHeader.scss'
-import React, {JSX} from 'react';
+import React from 'react';
 import {Button} from 'react-bootstrap';
 import {useUserAuth} from '../user/UserAuthContext';
 import {MswAddSpot} from "../spot/add/MswAddSpot";
