@@ -1,5 +1,5 @@
 import './MswHeader.scss'
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from 'react-bootstrap';
 import {useUserAuth} from '../user/UserAuthContext';
 import {MswAddSpot} from "../spot/add/MswAddSpot";
@@ -21,6 +21,7 @@ export const MswHeader = () => {
         setShowForgotPasswordModal
     } = useAuthModal();
     const isPwaInstalled = usePwaInstalled();
+    const [isIOS, setIsIOS] = useState(false);
 
     let loginOrLogout: JSX.Element;
 
@@ -47,6 +48,15 @@ export const MswHeader = () => {
         </>
     }
 
+    useEffect(() => {
+        // Detect iOS
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
+        setIsIOS(isIosDevice);
+    }, []);
+
+    let iosInstructions = 'Tap Share → Add to Home Screen';
+    let androidInstructions = 'Tap ⋮ menu → Install App';
     return <>
         <header className="App-header">
             <div className="loginOrLogoutContainer m-2">
@@ -60,18 +70,7 @@ export const MswHeader = () => {
                         <p>
                             ! Install this site as an app to get notifications on your mobile device !
                         </p>
-                        <p>
-                            On iPhone (Safari):
-                        </p>
-                        <p>
-                            “Tap Share → Add to Home Screen”
-                        </p>
-                        <p>
-                            On Android (Chrome):
-                        </p>
-                        <p>
-                            “Tap ⋮ menu → Install App”
-                        </p>
+                        <p>{isIOS ? iosInstructions : androidInstructions}</p>
                     </div>
                 }
             </div>
