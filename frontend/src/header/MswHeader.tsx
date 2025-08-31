@@ -7,7 +7,16 @@ import {MswLoginModal} from "../user/login/MswLoginModal";
 import MswSignUpModal from "../user/signup/MswSignUp";
 import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
 import {useAuthModal} from '../user/AuthModalContext';
-import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
+import '@khmyznikov/pwa-install';
+
+// Declare the custom element for TypeScript
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            'pwa-install': any;
+        }
+    }
+}
 
 export const MswHeader = () => {
     // @ts-ignore
@@ -20,8 +29,6 @@ export const MswHeader = () => {
         setShowSignupModal,
         setShowForgotPasswordModal
     } = useAuthModal();
-    const isPwaInstalled = usePwaInstalled();
-    const [isIOS, setIsIOS] = useState(false);
 
     let loginOrLogout: JSX.Element;
 
@@ -48,15 +55,6 @@ export const MswHeader = () => {
         </>
     }
 
-    useEffect(() => {
-        // Detect iOS
-        const userAgent = window.navigator.userAgent.toLowerCase();
-        const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
-        setIsIOS(isIosDevice);
-    }, []);
-
-    let iosInstructions = 'Tap Share → Add to Home Screen';
-    let androidInstructions = 'Tap ⋮ menu → Install App';
     return <>
         <header className="App-header">
             <div className="loginOrLogoutContainer m-2">
@@ -65,14 +63,20 @@ export const MswHeader = () => {
             <div className="title">
                 <h1>MagicSwissWeed</h1>
                 <p>Know when the rivers flow</p>
-                {!isPwaInstalled && token &&
-                    <div className='info-box'>
-                        <p>
-                            ! Install this site as an app to get notifications on your mobile device !
-                        </p>
-                        <p>{isIOS ? iosInstructions : androidInstructions}</p>
+                {token && (
+                    <div >
+
+                        {/* PWA Install Element - automatically shows install button when available */}
+                        <pwa-install 
+                            manifestpath="/manifest.json"
+                            name="MagicSwissWeed"
+                            description="Know when the rivers flow."
+                            install-description="Install as an app to enable notifications."
+                            icon="/logo512.png"
+                        />
+
                     </div>
-                }
+                )}
             </div>
         </header>
     </>;
