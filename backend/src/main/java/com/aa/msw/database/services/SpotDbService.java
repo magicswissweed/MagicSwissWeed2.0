@@ -87,16 +87,30 @@ public class SpotDbService {
         Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
         for (Spot spot : spots) {
             FlowStatusEnum updatedFlowStatusEnum = getCurrentFlowStatusEnum(spot);
-            if (hasCurrentInfoImprovedForSpot(spot, updatedFlowStatusEnum)) {
-                spotsThatImproved.add(
-                        new NotificationSpotInfo(
-                                spot,
-                                updatedFlowStatusEnum,
-                                userToSpotDao.get(spot.getId()))
-                );
-            }
+            spotsThatImproved = getSpotsThatImproved(spot, updatedFlowStatusEnum);
             updateSpotCurrentInfo(spot, updatedFlowStatusEnum);
         }
+        return spotsThatImproved;
+    }
+
+    private Set<NotificationSpotInfo> getSpotsThatImproved(Spot spot, FlowStatusEnum updatedFlowStatusEnum) {
+        Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
+        try {
+            if (hasCurrentInfoImprovedForSpot(spot, updatedFlowStatusEnum)) {
+                Set<UserToSpot> userToSpots = userToSpotDao.getUserToSpots(spot.getId());
+                for (UserToSpot userToSpot : userToSpots) {
+                    spotsThatImproved.add(
+                            new NotificationSpotInfo(
+                                    spot,
+                                    updatedFlowStatusEnum,
+                                    userToSpot)
+                    );
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Exception while trying to get the spots that improved " + e.getMessage());
+        }
+
         return spotsThatImproved;
     }
 

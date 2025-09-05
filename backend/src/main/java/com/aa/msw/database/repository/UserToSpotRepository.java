@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -43,12 +44,11 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 .fetch(this::mapRecord);
     }
 
-    // We can have multiple users mapped to a public spot, so this method could lead to unexpected results
     @Override
-    public UserToSpot get(SpotId spotId) {
+    public Set<UserToSpot> getUserToSpots(SpotId spotId) {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.SPOT_ID.eq(spotId.getId()))
-                .fetchOne(this::mapRecord);
+                .fetchSet(this::mapRecord);
     }
 
     @Override

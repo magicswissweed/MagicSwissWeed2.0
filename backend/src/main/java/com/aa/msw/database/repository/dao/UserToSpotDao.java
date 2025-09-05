@@ -6,10 +6,11 @@ import com.aa.msw.database.helpers.id.UserId;
 import com.aa.msw.database.helpers.id.UserToSpotId;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserToSpotDao extends Dao<UserToSpotId, UserToSpot> {
 
-    UserToSpot get(SpotId spotId);
+    Set<UserToSpot> getUserToSpots(SpotId spotId);
 
     UserToSpot get(UserId userId, SpotId spotId);
 
