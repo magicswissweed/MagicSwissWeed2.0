@@ -1,5 +1,5 @@
 import './MswHeader.scss'
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button} from 'react-bootstrap';
 import {useUserAuth} from '../user/UserAuthContext';
 import {MswAddSpot} from "../spot/add/MswAddSpot";
@@ -8,6 +8,7 @@ import MswSignUpModal from "../user/signup/MswSignUp";
 import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
 import {useAuthModal} from '../user/AuthModalContext';
 import '@khmyznikov/pwa-install';
+import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
 
 // Declare the custom element for TypeScript
 declare global {
@@ -29,6 +30,8 @@ export const MswHeader = () => {
         setShowSignupModal,
         setShowForgotPasswordModal
     } = useAuthModal();
+    const isPwaInstalled = usePwaInstalled();
+    const [shouldShowPwaInstallBrowserPopup, setShouldShowPwaInstallBrowserPopup] = useState<boolean>(false);
 
     let loginOrLogout: JSX.Element;
 
@@ -63,18 +66,27 @@ export const MswHeader = () => {
             <div className="title">
                 <h1>MagicSwissWeed</h1>
                 <p>Know when the rivers flow</p>
-                {token && (
-                    <div >
-
+                {!isPwaInstalled && token &&
+                    <div className='info-box'>
+                        <p>
+                            ! Install this site as an app to get notifications on your mobile device !
+                        </p>
+                        <div className='install-pwa-button'
+                             onClick={() => setShouldShowPwaInstallBrowserPopup(true)}>
+                            Install
+                        </div>
+                    </div>
+                }
+                {shouldShowPwaInstallBrowserPopup && (
+                    <div>
                         {/* PWA Install Element - automatically shows install button when available */}
-                        <pwa-install 
+                        <pwa-install
                             manifestpath="/manifest.json"
                             name="MagicSwissWeed"
                             description="Know when the rivers flow."
                             install-description="Install as an app to enable notifications."
                             icon="/logo512.png"
                         />
-
                     </div>
                 )}
             </div>
