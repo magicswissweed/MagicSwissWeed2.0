@@ -10,7 +10,6 @@ import edit_icon from "../../assets/edit.svg";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
 import {SpotModel} from "../../model/SpotModel";
-import {subscribeToPushNotifications} from "../../subscribeToPushNotifications";
 
 // specify the properties (inputs) for the MswEditSpot component
 interface MswEditSpotProps {
@@ -25,9 +24,6 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     }
     const handleEditSpotAndCloseModal = (e: { preventDefault: any; }) => {
         e.preventDefault();
-        if (withNotification) {
-            subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
-        }
         editSpot().then(() => setIsSubmitButtonDisabled(false));
     }
     const handleCancelEditSpotModal = () => setShowEditSpotModal(false);

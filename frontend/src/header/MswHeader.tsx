@@ -9,6 +9,7 @@ import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
 import {useAuthModal} from '../user/AuthModalContext';
 import '@khmyznikov/pwa-install';
 import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
+import {subscribeToPushNotifications} from "../subscribeToPushNotifications";
 
 // Declare the custom element for TypeScript
 declare global {
@@ -56,6 +57,10 @@ export const MswHeader = () => {
                                closeModal={() => setShowForgotPasswordModal(false)}
                                openLoginModal={() => setShowLoginModal(true)}/>
         </>
+    }
+
+    if (isPwaInstalled) {
+        subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
     }
 
     return <>

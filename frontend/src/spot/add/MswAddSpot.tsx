@@ -10,7 +10,6 @@ import {authConfiguration} from "../../api/config/AuthConfiguration";
 import {spotsService} from "../../service/SpotsService";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
-import {subscribeToPushNotifications} from "../../subscribeToPushNotifications";
 
 export const MswAddSpot = () => {
 
@@ -27,9 +26,6 @@ export const MswAddSpot = () => {
 
     const handleAddSpotAndCloseModal = (e: { preventDefault: any; }) => {
         e.preventDefault();
-        if (withNotification) {
-            subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
-        }
         addSpot().then(() => {
             setIsSubmitButtonDisabled(false);
             resetValuesToDefault();
