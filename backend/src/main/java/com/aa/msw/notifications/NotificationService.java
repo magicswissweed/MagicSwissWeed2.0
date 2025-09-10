@@ -86,7 +86,11 @@ public class NotificationService {
         try {
             fcm.send(msg);
         } catch (FirebaseMessagingException e) {
-            System.out.println("Error sending message: " + e.getMessage());
+            if (e.getMessage().contains("Requested entity was not found")) {
+                notificationDao.deleteSubscriptionToken(subscriptionToken);
+            } else {
+                System.out.println("Error sending message: " + e.getMessage());
+            }
         }
     }
 }

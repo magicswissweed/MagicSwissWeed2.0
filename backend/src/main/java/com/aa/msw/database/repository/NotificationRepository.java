@@ -52,6 +52,13 @@ public class NotificationRepository extends AbstractRepository<NotificationId, N
     }
 
     @Override
+    public void deleteSubscriptionToken(String subscriptionToken) {
+        dsl.deleteFrom(TABLE)
+                .where(TABLE.SUBSCRIPTION_TOKEN.eq(subscriptionToken))
+                .execute();
+    }
+
+    @Override
     protected NotificationSubscription mapRecord(NotificationSubscriptionTableRecord record) {
         return new NotificationSubscription(
                 new NotificationId(record.getId()),

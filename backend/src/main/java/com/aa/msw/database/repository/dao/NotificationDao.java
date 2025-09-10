@@ -10,4 +10,6 @@ public interface NotificationDao extends Dao<NotificationId, NotificationSubscri
     void persistSubscriptionIfNotExists(String subscriptionToken);
 
     Set<NotificationSubscription> getSubscriptionsForUser(UserId userId);
+
+    void deleteSubscriptionToken(String subscriptionToken);
 }
