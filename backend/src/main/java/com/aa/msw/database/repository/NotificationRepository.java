@@ -29,19 +29,13 @@ public class NotificationRepository extends AbstractRepository<NotificationId, N
     @Override
     @Transactional
     public void persistSubscriptionIfNotExists(String subscriptionToken) {
-        boolean doesNotExist = getAll().stream()
-                .filter(s -> s.subscriptionToken().equals(subscriptionToken))
-                .collect(Collectors.toSet())
-                .isEmpty();
-        if (doesNotExist) {
-            persist(
-                    new NotificationSubscription(
-                            new NotificationId(),
-                            UserContext.getCurrentUser().userId(),
-                            subscriptionToken
-                    )
-            );
-        }
+        persist(
+                new NotificationSubscription(
+                        new NotificationId(),
+                        UserContext.getCurrentUser().userId(),
+                        subscriptionToken
+                )
+        );
     }
 
     @Override
