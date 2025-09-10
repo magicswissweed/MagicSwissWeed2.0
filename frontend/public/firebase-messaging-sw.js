@@ -21,9 +21,8 @@ self.addEventListener("push", function (event) {
     );
 });
 
-self.addEventListener("message", (event) => {
-    if (event.data?.type === "SHOW_NOTIFICATION") {
-        const {title, options} = event.data.payload;
-        self.registration.showNotification(title, options);
-    }
+self.addEventListener("notificationclick", function (event) {
+    event.notification.close(); // Close the notification when clicked
+
+    self.clients.openWindow(self.location.origin);
 });
