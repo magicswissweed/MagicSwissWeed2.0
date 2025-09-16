@@ -1,5 +1,5 @@
 import './MswHeader.scss'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from 'react-bootstrap';
 import {useUserAuth} from '../user/UserAuthContext';
 import {MswAddSpot} from "../spot/add/MswAddSpot";
@@ -36,6 +36,12 @@ export const MswHeader = () => {
 
     let loginOrLogout: JSX.Element;
 
+    useEffect(() => {
+        if (token && isPwaInstalled) {
+            subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
+        }
+    }, [token])
+
     if (user) {
         loginOrLogout = <>
             <MswAddSpot/>
@@ -57,10 +63,6 @@ export const MswHeader = () => {
                                closeModal={() => setShowForgotPasswordModal(false)}
                                openLoginModal={() => setShowLoginModal(true)}/>
         </>
-    }
-
-    if (isPwaInstalled) {
-        subscribeToPushNotifications(token) // no .then, because we don't want to be blocking
     }
 
     return <>
