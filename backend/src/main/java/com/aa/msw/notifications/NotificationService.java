@@ -49,14 +49,14 @@ public class NotificationService {
                 .map(i -> i.spot().name())
                 .collect(Collectors.toSet());
         String newlySurfableSpotsMessage = hasNewlySurfableSpots ?
-                "You can now surf at: " + String.join(",", newlySurfableSpotNames) : "";
+                "🟢 You can now surf at: " + String.join(",", newlySurfableSpotNames) : "";
 
         Set<String> improvedForecastsSpotNames = spotInfos.stream()
                 .filter(i -> i.flowStatus().equals(FlowStatusEnum.TENDENCY_TO_BECOME_GOOD))
                 .map(i -> i.spot().name())
                 .collect(Collectors.toSet());
         String improvedForecastsSpotsMessage = hasImprovedForecasts ?
-                "Improved forecasts at: " + String.join(",", improvedForecastsSpotNames) : "";
+                "🟠 Improved forecasts at: " + String.join(",", improvedForecastsSpotNames) : "";
 
         Set<String> messageBodyLines = Set.of(newlySurfableSpotsMessage, improvedForecastsSpotsMessage);
 
