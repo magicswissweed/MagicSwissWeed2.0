@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -44,6 +45,13 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
     }
 
     @Override
+    public Set<UserToSpot> getUserToSpots(SpotId spotId) {
+        return dsl.selectFrom(TABLE)
+                .where(TABLE.SPOT_ID.eq(spotId.getId()))
+                .fetchSet(this::mapRecord);
+    }
+
+    @Override
     public UserToSpot get(UserId userId, SpotId spotId) {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.USER_ID.eq(userId.getId()))
@@ -57,6 +65,17 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
 
         dsl.update(TABLE)
                 .set(TABLE.POSITION, position)
+                .where(TABLE.USER_ID.eq(userId.getId())
+                        .and(TABLE.SPOT_ID.eq(spotId.getId())))
+                .execute();
+    }
+
+    @Override
+    public void setWithNotification(SpotId spotId, boolean withNotification) {
+        UserId userId = UserContext.getCurrentUser().userId();
+
+        dsl.update(TABLE)
+                .set(TABLE.WITHNOTIFICATION, withNotification)
                 .where(TABLE.USER_ID.eq(userId.getId())
                         .and(TABLE.SPOT_ID.eq(spotId.getId())))
                 .execute();
@@ -78,7 +97,8 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 new UserToSpotId(record.getId()),
                 new UserId(record.getUserId()),
                 new SpotId(record.getSpotId()),
-                record.getPosition()
+                record.getPosition(),
+                record.getWithnotification()
         );
     }
 
@@ -89,6 +109,7 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
         record.setUserId(userToSpot.userId().getId());
         record.setSpotId(userToSpot.spotId().getId());
         record.setPosition(userToSpot.position());
+        record.setWithnotification(userToSpot.withNotification());
         return record;
     }
 
@@ -98,7 +119,8 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 new UserToSpotId(userToSpotTable.getId()),
                 new UserId(userToSpotTable.getUserId()),
                 new SpotId(userToSpotTable.getSpotId()),
-                userToSpotTable.getPosition()
+                userToSpotTable.getPosition(),
+                userToSpotTable.getWithnotification()
         );
     }
 }

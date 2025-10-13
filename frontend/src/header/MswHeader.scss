@@ -35,6 +35,26 @@
 
 }
 
+.info-box {
+  padding: 5px;
+  margin: 10px;
+  display: none;
+
+  @include small() {
+    display: block;
+    background-color: #f8ad4c;
+    border-radius: 5px;
+  }
+}
+
+.install-pwa-button {
+  margin: auto;
+  width: 70px;
+  font-size: medium;
+  border: 1px black solid;
+  border-radius: 5px;
+}
+
 .loginOrLogoutContainer {
   display: flex;
   position: absolute;

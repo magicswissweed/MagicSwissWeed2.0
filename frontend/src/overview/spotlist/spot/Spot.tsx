@@ -60,7 +60,7 @@ export const Spot = (props: SpotProps) => {
                     </div>
                 }
             </div>
-            <div className="spotContainer">
+            <div className="spotContainer" onClick={() => setIsSpotOpen(!isSpotOpen)}>
                 <div className="spot-title">
                     {spot.name}
                 </div>

@@ -24,6 +24,7 @@ export class SpotModel {
     last40DaysLoaded: boolean;
     last40Days: Array<ApiFlowSample> | undefined;
     historical: ApiHistoricalYears | undefined;
+    withNotification: boolean;
 
     constructor(
         id: string,
@@ -40,7 +41,8 @@ export class SpotModel {
         forecast: ApiForecast | undefined,
         last40DaysLoaded: boolean,
         last40Days: Array<ApiFlowSample> | undefined,
-        historical: ApiHistoricalYears | undefined) {
+        historical: ApiHistoricalYears | undefined,
+        withNotification: boolean) {
         this.id = id;
         this.name = name;
         this.stationId = stationId;
@@ -56,6 +58,7 @@ export class SpotModel {
         this.last40Days = last40Days;
         this.forecast = forecast;
         this.historical = historical;
+        this.withNotification = withNotification;
     }
 }
 

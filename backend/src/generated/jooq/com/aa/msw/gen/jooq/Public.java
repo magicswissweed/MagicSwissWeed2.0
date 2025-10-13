@@ -8,6 +8,7 @@ import com.aa.msw.gen.jooq.tables.FlywaySchemaHistory;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
+import com.aa.msw.gen.jooq.tables.NotificationSubscriptionTable;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable;
 import com.aa.msw.gen.jooq.tables.SpotTable;
@@ -55,6 +56,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.last_40_days_samples_table</code>.
      */
     public final Last_40DaysSamplesTable LAST_40_DAYS_SAMPLES_TABLE = Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE;
+
+    /**
+     * The table <code>public.notification_subscription_table</code>.
+     */
+    public final NotificationSubscriptionTable NOTIFICATION_SUBSCRIPTION_TABLE = NotificationSubscriptionTable.NOTIFICATION_SUBSCRIPTION_TABLE;
 
     /**
      * The table <code>public.sample_table</code>.
@@ -106,6 +112,7 @@ public class Public extends SchemaImpl {
             ForecastTable.FORECAST_TABLE,
             HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE,
             Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE,
+            NotificationSubscriptionTable.NOTIFICATION_SUBSCRIPTION_TABLE,
             SampleTable.SAMPLE_TABLE,
             SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE,
             SpotTable.SPOT_TABLE,

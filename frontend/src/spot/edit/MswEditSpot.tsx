@@ -34,6 +34,7 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     const [stationId, setStationId] = useState<number | undefined>(spot.stationId);
     const [minFlow, setMinFlow] = useState<number | undefined>(spot.minFlow);
     const [maxFlow, setMaxFlow] = useState<number | undefined>(spot.maxFlow);
+    const [withNotification, setWithNotification] = useState(spot.withNotification);
     const [stations, setStations] = useState<ApiStation[]>([])
     const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
     const [stationSelectionError, setStationSelectionError] = useState('');
@@ -68,7 +69,8 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             isPublic: false,
             minFlow: minFlow!,
             maxFlow: maxFlow!,
-            station: stations.filter(s => s.id === stationId).pop()!
+            station: stations.filter(s => s.id === stationId).pop()!,
+            withNotification: withNotification
         };
 
         // wrap spot object in request object and send to API
@@ -108,6 +110,8 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             setMinFlow,
             maxFlow,
             setMaxFlow,
+            withNotification,
+            setWithNotification,
             isSubmitButtonDisabled,
             setIsSubmitButtonDisabled,
             isEditMode)}

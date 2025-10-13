@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-09T13:29:56.518144+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-17T20:54:42.033051+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;
@@ -77,6 +77,8 @@ public class ApiSpotInformation {
 
   private ApiStation station;
 
+  private Boolean withNotification;
+
   private ApiSample currentSample;
 
   private ApiFlowStatusEnum flowStatusEnum;
@@ -88,7 +90,7 @@ public class ApiSpotInformation {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpotInformation(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, ApiSample currentSample, ApiFlowStatusEnum flowStatusEnum) {
+  public ApiSpotInformation(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, Boolean withNotification, ApiSample currentSample, ApiFlowStatusEnum flowStatusEnum) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
@@ -97,6 +99,7 @@ public class ApiSpotInformation {
     this.minFlow = minFlow;
     this.maxFlow = maxFlow;
     this.station = station;
+    this.withNotification = withNotification;
     this.currentSample = currentSample;
     this.flowStatusEnum = flowStatusEnum;
   }
@@ -261,6 +264,26 @@ public class ApiSpotInformation {
     this.station = station;
   }
 
+  public ApiSpotInformation withNotification(Boolean withNotification) {
+    this.withNotification = withNotification;
+    return this;
+  }
+
+  /**
+   * Get withNotification
+   * @return withNotification
+  */
+  @NotNull 
+  @Schema(name = "withNotification", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("withNotification")
+  public Boolean getWithNotification() {
+    return withNotification;
+  }
+
+  public void setWithNotification(Boolean withNotification) {
+    this.withNotification = withNotification;
+  }
+
   public ApiSpotInformation currentSample(ApiSample currentSample) {
     this.currentSample = currentSample;
     return this;
@@ -318,13 +341,14 @@ public class ApiSpotInformation {
         Objects.equals(this.minFlow, apiSpotInformation.minFlow) &&
         Objects.equals(this.maxFlow, apiSpotInformation.maxFlow) &&
         Objects.equals(this.station, apiSpotInformation.station) &&
+        Objects.equals(this.withNotification, apiSpotInformation.withNotification) &&
         Objects.equals(this.currentSample, apiSpotInformation.currentSample) &&
         Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, currentSample, flowStatusEnum);
+    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification, currentSample, flowStatusEnum);
   }
 
   @Override
@@ -339,6 +363,7 @@ public class ApiSpotInformation {
     sb.append("    minFlow: ").append(toIndentedString(minFlow)).append("\n");
     sb.append("    maxFlow: ").append(toIndentedString(maxFlow)).append("\n");
     sb.append("    station: ").append(toIndentedString(station)).append("\n");
+    sb.append("    withNotification: ").append(toIndentedString(withNotification)).append("\n");
     sb.append("    currentSample: ").append(toIndentedString(currentSample)).append("\n");
     sb.append("    flowStatusEnum: ").append(toIndentedString(flowStatusEnum)).append("\n");
     sb.append("}");

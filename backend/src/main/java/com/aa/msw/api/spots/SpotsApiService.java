@@ -66,12 +66,12 @@ public class SpotsApiService {
         }
     }
 
-    public void addPrivateSpot(Spot spot, int position) throws NoSampleAvailableException {
+    public void addPrivateSpot(Spot spot, int position, boolean withNotification) throws NoSampleAvailableException {
         fetchSamplesAndPersistIfExists(spot.stationId());
-        spotDbService.addPrivateSpot(spot, position);
+        spotDbService.addPrivateSpot(spot, position, withNotification);
     }
 
-    public void editSpot(Spot updatedSpot) throws NoSampleAvailableException {
+    public void editSpot(Spot updatedSpot, boolean withNotification) throws NoSampleAvailableException {
         if (spotDao.isPublicSpot(updatedSpot.spotId())) {
             Spot newPrivateSpot = new Spot(
                     new SpotId(), // needs new ID - not the same as the old spot
@@ -84,9 +84,10 @@ public class SpotsApiService {
             );
             UserToSpot oldUserToPublicSpotMapping = userToSpotDao.get(UserContext.getCurrentUser().userId(), updatedSpot.spotId());
             deleteMapping(oldUserToPublicSpotMapping);
-            addPrivateSpot(newPrivateSpot, oldUserToPublicSpotMapping.position());
+            addPrivateSpot(newPrivateSpot, oldUserToPublicSpotMapping.position(), withNotification);
         } else {
             editPrivateSpot(updatedSpot);
+            userToSpotDao.setWithNotification(updatedSpot.spotId(), withNotification);
         }
     }
 
@@ -122,6 +123,7 @@ public class SpotsApiService {
                 ApiStation apiStation = new ApiStation(station.stationId(), station.label(), station.latitude(), station.longitude());
 
                 try {
+                    boolean withNotification = !spot.isPublic() && userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
                     spotInformationList.add(
                             new ApiSpotInformation()
                                     .id(spot.spotId().getId())
@@ -134,6 +136,7 @@ public class SpotsApiService {
                                     .currentSample(sampleApiService.getCurrentSample(spot.stationId()))
                                     .station(apiStation)
                                     .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
+                                    .withNotification(withNotification)
                     );
                 } catch (NoDataAvailableException e) {
                     // should never happen, but if it does, we just don't return this one spot

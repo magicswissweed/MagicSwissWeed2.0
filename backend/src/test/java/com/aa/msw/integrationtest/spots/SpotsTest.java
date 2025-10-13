@@ -42,7 +42,8 @@ public class SpotsTest extends IntegrationTest {
                                                 false,
                                                 20,
                                                 30,
-                                                null
+                                                null,
+                                                false
                                         ),
                                         0
                                 )

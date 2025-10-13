@@ -84,8 +84,9 @@ export const SpotList = (props: SpotListProps) => {
                                                 <img src={curved_arrow} alt=""/>
                                             </div>
                                             <h3>
-                                                <span className='black'>Wanna add your own surf spots? </span>
-                                                Simply {signUpLink}
+                                                <span className='black'>
+                                                    Wanna add your own surf spots and receive notifications?
+                                                </span> Simply {signUpLink}
                                             </h3>
                                         </div>
                                     </div>

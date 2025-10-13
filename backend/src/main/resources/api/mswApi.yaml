@@ -230,6 +230,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiStationList'
 
+  /api/v1/notifications/triggerTestNotifications:
+    get:
+      summary: Trigger test notifications to all subscribed clients
+      security:
+        - bearerAuth: [ ]
+      operationId: triggerTestNotifications
+      tags:
+        - notifications
+      responses:
+        '200':
+          description: Triggered test notifications successfully.
+  /api/v1/notifications/register:
+    post:
+      summary: Register for Push-Notifications
+      security:
+        - bearerAuth: [ ]
+      operationId: registerForPushNotifications
+      tags:
+        - notifications
+      requestBody:
+        description: The Subscription.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationSubscription'
+      responses:
+        '200':
+          description: Subscribed successfully.
 
 components:
   schemas:
@@ -239,7 +268,7 @@ components:
         $ref: '#/components/schemas/ApiSpotInformation'
     ApiSpot:
       type: object
-      required: [ id, name, stationId, spotType, isPublic, minFlow, maxFlow, station ]
+      required: [ id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification ]
       properties:
         id:
           type: string
@@ -261,6 +290,8 @@ components:
           type: integer
         station:
           $ref: '#/components/schemas/ApiStation'
+        withNotification:
+          type: boolean
     ApiSpotInformation:
       allOf:
         - $ref: '#/components/schemas/ApiSpot'
@@ -433,3 +464,10 @@ components:
         longitude:
           type: number
           format: double
+    PushNotificationSubscription:
+      type: object
+      required: [ token ]
+      properties:
+        token:
+          type: string
+

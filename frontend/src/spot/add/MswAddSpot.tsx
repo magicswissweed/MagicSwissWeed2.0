@@ -41,6 +41,7 @@ export const MswAddSpot = () => {
     const [stationId, setStationId] = useState<number | undefined>(undefined);
     const [minFlow, setMinFlow] = useState<number | undefined>(undefined);
     const [maxFlow, setMaxFlow] = useState<number | undefined>(undefined);
+    const [withNotification, setWithNotification] = useState(false);
     const [stations, setStations] = useState<ApiStation[]>([])
     const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
     const [stationSelectionError, setStationSelectionError] = useState('');
@@ -73,7 +74,8 @@ export const MswAddSpot = () => {
             isPublic: false,
             minFlow: minFlow!,
             maxFlow: maxFlow!,
-            station: stations.filter(s => s.id === stationId).pop()!
+            station: stations.filter(s => s.id === stationId).pop()!,
+            withNotification: withNotification
         };
         let response: AxiosResponse<void, any> = await new SpotsApi(config).addPrivateSpot({spot: apiSpot, position: 0})
         if (response.status === 200) {
@@ -104,6 +106,8 @@ export const MswAddSpot = () => {
             setMinFlow,
             maxFlow,
             setMaxFlow,
+            withNotification,
+            setWithNotification,
             isSubmitButtonDisabled,
             setIsSubmitButtonDisabled,
             isEditMode)}

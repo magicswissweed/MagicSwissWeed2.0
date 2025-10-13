@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.tables.NotificationSubscriptionTable.NotificationSubscriptionTablePath;
 import com.aa.msw.gen.jooq.tables.UserToSpotTable.UserToSpotTablePath;
 import com.aa.msw.gen.jooq.tables.records.UserTableRecord;
 
@@ -150,6 +151,19 @@ public class UserTable extends TableImpl<UserTableRecord> {
     @Override
     public List<UniqueKey<UserTableRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.UNIQUE_EXTID, Keys.UNIQUE_EMAIL);
+    }
+
+    private transient NotificationSubscriptionTablePath _notificationSubscriptionTable;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.notification_subscription_table</code> table
+     */
+    public NotificationSubscriptionTablePath notificationSubscriptionTable() {
+        if (_notificationSubscriptionTable == null)
+            _notificationSubscriptionTable = new NotificationSubscriptionTablePath(this, null, Keys.NOTIFICATION_SUBSCRIPTION_TABLE__NOTIFICATION_SUBSCRIPTION_TABLE_USER_ID_FKEY.getInverseKey());
+
+        return _notificationSubscriptionTable;
     }
 
     private transient UserToSpotTablePath _userToSpotTable;
