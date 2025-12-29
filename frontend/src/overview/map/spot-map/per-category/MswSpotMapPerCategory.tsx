@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {GoogleMap, InfoWindow, useLoadScript} from "@react-google-maps/api";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import './MswSpotMapPerCategory.scss';
-import {SpotModel} from "../../../../model/SpotModel";
+import {FlowColorEnum, SpotModel} from "../../../../model/SpotModel";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
 
@@ -33,9 +33,11 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
         const colors = markers.map((m: any) => m.customColor);
         const uniqueColors = new Set<string>(colors);
 
-        let color = "blue"; // default color for clustered spots if not all spots have the same color
-        if (uniqueColors.size === 1) {
-            color = [...uniqueColors][0];
+        let color = FlowColorEnum.RED;
+        if (uniqueColors.has(FlowColorEnum.GREEN)) {
+            color = FlowColorEnum.GREEN;
+        } else if (uniqueColors.has(FlowColorEnum.ORANGE)) {
+            color = FlowColorEnum.ORANGE;
         }
 
         return new google.maps.Marker({
