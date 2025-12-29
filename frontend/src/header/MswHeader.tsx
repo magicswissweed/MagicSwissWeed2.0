@@ -13,7 +13,7 @@ import {subscribeToPushNotifications} from "../subscribeToPushNotifications";
 
 // Declare the custom element for TypeScript
 declare global {
-    namespace JSX {
+    namespace React.JSX {
         interface IntrinsicElements {
             'pwa-install': any;
         }
@@ -34,7 +34,7 @@ export const MswHeader = () => {
     const isPwaInstalled = usePwaInstalled();
     const [shouldShowPwaInstallBrowserPopup, setShouldShowPwaInstallBrowserPopup] = useState<boolean>(false);
 
-    let loginOrLogout: JSX.Element;
+    let loginOrLogout: React.JSX.Element;
 
     useEffect(() => {
         if (token && isPwaInstalled) {
