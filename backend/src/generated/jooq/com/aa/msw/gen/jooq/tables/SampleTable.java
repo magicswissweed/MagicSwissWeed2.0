@@ -9,7 +9,9 @@ import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.jooq.Condition;
@@ -113,6 +115,11 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     @Override
     public UniqueKey<SampleTableRecord> getPrimaryKey() {
         return Keys.SAMPLE_TABLE_PKEY;
+    }
+
+    @Override
+    public List<UniqueKey<SampleTableRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.UNIQUE_SAMPLE);
     }
 
     @Override

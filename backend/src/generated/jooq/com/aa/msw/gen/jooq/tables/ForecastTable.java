@@ -9,7 +9,9 @@ import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.jooq.Condition;
@@ -134,6 +136,11 @@ public class ForecastTable extends TableImpl<ForecastTableRecord> {
     @Override
     public UniqueKey<ForecastTableRecord> getPrimaryKey() {
         return Keys.FORECAST_TABLE_PKEY;
+    }
+
+    @Override
+    public List<UniqueKey<ForecastTableRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.UNIQUE_FORECAST);
     }
 
     @Override

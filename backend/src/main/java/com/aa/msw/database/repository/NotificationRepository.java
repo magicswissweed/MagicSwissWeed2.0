@@ -29,13 +29,17 @@ public class NotificationRepository extends AbstractRepository<NotificationId, N
     @Override
     @Transactional
     public void persistSubscriptionIfNotExists(String subscriptionToken) {
-        persist(
-                new NotificationSubscription(
-                        new NotificationId(),
-                        UserContext.getCurrentUser().userId(),
-                        subscriptionToken
-                )
+        NotificationSubscription notificationSubscription = new NotificationSubscription(
+                new NotificationId(),
+                UserContext.getCurrentUser().userId(),
+                subscriptionToken
         );
+        var record = mapDomain(notificationSubscription);
+        dsl.insertInto(TABLE)
+                .set(record)
+                .onConflict(TABLE.USER_ID, TABLE.SUBSCRIPTION_TOKEN)
+                .doNothing()
+                .execute();
     }
 
     @Override

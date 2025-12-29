@@ -150,19 +150,12 @@ public class ForecastRepository extends AbstractTimestampedRepository
     @Transactional
     public void persistForecastsIfNotExist(List<Forecast> forecasts) {
         for (Forecast forecast : forecasts) {
-            persistForecastIfNotExists(forecast);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void persistForecastIfNotExists(Forecast forecast) {
-        try {
-            if (!getCurrentForecast(forecast.getStationId()).getTimestamp().equals(forecast.getTimestamp())) {
-                persist(forecast);
-            }
-        } catch (NoDataAvailableException e) {
-            persist(forecast);
+            ForecastTableRecord record = mapDomain(forecast);
+            dsl.insertInto(TABLE)
+                    .set(record)
+                    .onConflict(TABLE.TIMESTAMP, TABLE.STATIONID)
+                    .doNothing()
+                    .execute();
         }
     }
 }

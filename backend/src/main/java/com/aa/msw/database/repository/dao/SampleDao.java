@@ -12,7 +12,4 @@ public interface SampleDao extends TimestampedDao, Dao<SampleId, Sample> {
 
     @Transactional
     void persistSamplesIfNotExist(List<Sample> samples);
-
-    @Transactional
-    void persistSampleIfNotExists(Sample sample);
 }

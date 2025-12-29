@@ -82,19 +82,12 @@ public class SampleRepository extends AbstractTimestampedRepository
     @Transactional
     public void persistSamplesIfNotExist(List<Sample> samples) {
         for (Sample sample : samples) {
-            persistSampleIfNotExists(sample);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void persistSampleIfNotExists(Sample sample) {
-        try {
-            if (!getCurrentSample(sample.getStationId()).timestamp().equals(sample.getTimestamp())) {
-                persist(sample);
-            }
-        } catch (NoDataAvailableException e) {
-            persist(sample);
+            SampleTableRecord record = mapDomain(sample);
+            dsl.insertInto(TABLE)
+                    .set(record)
+                    .onConflict(TABLE.TIMESTAMP, TABLE.STATIONID)
+                    .doNothing()
+                    .execute();
         }
     }
 }

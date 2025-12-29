@@ -12,7 +12,4 @@ public interface ForecastDao extends TimestampedDao, Dao<ForecastId, Forecast> {
 
     @Transactional
     void persistForecastsIfNotExist(List<Forecast> forecasts);
-
-    @Transactional
-    void persistForecastIfNotExists(Forecast forecast);
 }

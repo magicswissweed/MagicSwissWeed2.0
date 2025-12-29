@@ -148,6 +148,11 @@ public class NotificationSubscriptionTable extends TableImpl<NotificationSubscri
     }
 
     @Override
+    public List<UniqueKey<NotificationSubscriptionTableRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.UNIQUE_USER_SUBSCRIPTION);
+    }
+
+    @Override
     public List<ForeignKey<NotificationSubscriptionTableRecord, ?>> getReferences() {
         return Arrays.asList(Keys.NOTIFICATION_SUBSCRIPTION_TABLE__NOTIFICATION_SUBSCRIPTION_TABLE_USER_ID_FKEY);
     }
