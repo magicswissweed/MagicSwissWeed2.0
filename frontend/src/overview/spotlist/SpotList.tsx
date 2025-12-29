@@ -1,6 +1,5 @@
 import './SpotList.scss';
 import React, {useCallback, useEffect, useState} from 'react';
-import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
 import {SpotsApi} from '../../gen/msw-api-ts';
 import {authConfiguration} from '../../api/config/AuthConfiguration';
 import {useUserAuth} from '../../user/UserAuthContext';
@@ -9,6 +8,7 @@ import {GraphTypeEnum} from "../MswOverviewPage";
 import {SpotModel} from "../../model/SpotModel";
 import curved_arrow from '../../assets/curved_arrow.svg';
 import {useAuthModal} from '../../user/AuthModalContext';
+import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 
 interface SpotListProps {
     title: string,

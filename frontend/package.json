@@ -22,7 +22,7 @@
     "luxon": "^3.7.1",
     "plotly.js-basic-dist-min": "^3.0.1",
     "react": "^18.3.1",
-    "react-beautiful-dnd": "^13.1.1",
+    "@hello-pangea/dnd": "^18.0.1",
     "react-bootstrap": "^2.10.2",
     "react-bootstrap-typeahead": "^6.3.2",
     "react-cookie": "^7.1.4",
@@ -64,7 +64,6 @@
   },
   "devDependencies": {
     "@types/luxon": "^3.6.2",
-    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-plotly.js": "^2.6.3"
   }
 }
