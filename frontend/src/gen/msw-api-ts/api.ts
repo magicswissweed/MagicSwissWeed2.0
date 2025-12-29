@@ -790,36 +790,6 @@ export const NotificationsApiAxiosParamCreator = function (configuration?: Confi
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @summary Trigger test notifications to all subscribed clients
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        triggerTestNotifications: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/v1/notifications/triggerTestNotifications`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -843,18 +813,6 @@ export const NotificationsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['NotificationsApi.registerForPushNotifications']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
-        /**
-         * 
-         * @summary Trigger test notifications to all subscribed clients
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async triggerTestNotifications(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.triggerTestNotifications(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['NotificationsApi.triggerTestNotifications']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
     }
 };
 
@@ -874,15 +832,6 @@ export const NotificationsApiFactory = function (configuration?: Configuration, 
          */
         registerForPushNotifications(pushNotificationSubscription: PushNotificationSubscription, options?: any): AxiosPromise<void> {
             return localVarFp.registerForPushNotifications(pushNotificationSubscription, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Trigger test notifications to all subscribed clients
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        triggerTestNotifications(options?: any): AxiosPromise<void> {
-            return localVarFp.triggerTestNotifications(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -904,17 +853,6 @@ export class NotificationsApi extends BaseAPI {
      */
     public registerForPushNotifications(pushNotificationSubscription: PushNotificationSubscription, options?: RawAxiosRequestConfig) {
         return NotificationsApiFp(this.configuration).registerForPushNotifications(pushNotificationSubscription, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Trigger test notifications to all subscribed clients
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof NotificationsApi
-     */
-    public triggerTestNotifications(options?: RawAxiosRequestConfig) {
-        return NotificationsApiFp(this.configuration).triggerTestNotifications(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -1,5 +1,0 @@
-###
-# @name Trigger test notifications
-#
-GET {{base-path}}/notifications/triggerTestNotifications
-

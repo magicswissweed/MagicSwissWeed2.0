@@ -39,8 +39,6 @@ public class SecurityConfiguration {
                 new AntPathRequestMatcher("/api/v1/forecasts", HttpMethod.GET.toString()),
                 new AntPathRequestMatcher("/api/v1/spots", HttpMethod.GET.toString()),
                 new AntPathRequestMatcher("/api/v1/sample/last40Days/*", HttpMethod.GET.toString()),
-                // TODO: remove after testing phase is done
-                new AntPathRequestMatcher("/api/v1/notifications/triggerTestNotifications", HttpMethod.GET.toString()),
         };
     }
 }

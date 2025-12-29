@@ -229,18 +229,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiStationList'
-
-  /api/v1/notifications/triggerTestNotifications:
-    get:
-      summary: Trigger test notifications to all subscribed clients
-      security:
-        - bearerAuth: [ ]
-      operationId: triggerTestNotifications
-      tags:
-        - notifications
-      responses:
-        '200':
-          description: Triggered test notifications successfully.
   /api/v1/notifications/register:
     post:
       summary: Register for Push-Notifications

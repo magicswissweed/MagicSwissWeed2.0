@@ -149,7 +149,6 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                             )}
                         </Form>
 
-                        {/*TODO: style me*/}
                         <Form>
                             <Row className="align-items-center">
                                 <Col className="text-start">Enable Notifications</Col>
