@@ -18,7 +18,6 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     render() {
         return <>
             <div className="measurements"
-                 title={'Measured at: ' + this.convertTimeStampToDisplayableString(this.spot.currentSample!.timestamp!)}
                  tabIndex={0}>
                 <div className="measurement_row meas flow">
                     {this.getFlow()}
@@ -49,10 +48,5 @@ export class MswMeasurement extends Component<MeasurementsProps> {
             <div>{temp}</div>
             <div className="unit">°C</div>
         </>;
-    }
-
-    private convertTimeStampToDisplayableString(timestampString: string) {
-        let date = new Date(timestampString);
-        return date.getHours() + ":" + ((date.getMinutes() === 0) ? "00" : date.getMinutes());
     }
 }

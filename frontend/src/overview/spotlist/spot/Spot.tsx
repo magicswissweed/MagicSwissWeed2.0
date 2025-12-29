@@ -43,11 +43,31 @@ export const Spot = (props: SpotProps) => {
             </div>
             {isSpotOpen &&
                 <div className="collapsibleContent">
+                    <div className="timestamps">
+                        {props.spot.currentSample?.timestamp &&
+                            <div className="forecast-timestamp">Sample
+                                from: {formatTimestamp(props.spot.currentSample?.timestamp)}</div>}
+                        {props.spot.forecast?.timestamp &&
+                            <div className="sample-timestamp">Forecast
+                                from: {formatTimestamp(props.spot.forecast?.timestamp)}</div>}
+                    </div>
                     {getGraph(props.spot, false)}
                 </div>
             }
         </div>
     </>;
+
+    function formatTimestamp(timestamp: string): string {
+        const formatted = new Intl.DateTimeFormat("de-CH", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }).format(new Date(timestamp));
+
+        return formatted.replace(",", "");
+    }
 
     function getSpotSummaryContent(spot: SpotModel) {
         let link = "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/" + spot.stationId;

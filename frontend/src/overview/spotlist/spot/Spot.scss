@@ -77,11 +77,27 @@ $icons-container-width: 40px;
 
 .collapsibleContent {
   display: flex;
+  flex-direction: column;
   margin-bottom: 10px;
   height: 400px;
 
   @include small() {
     height: 200px;
+  }
+
+  .timestamps {
+    display: flex;
+    flex-direction: row;
+
+    .forecast-timestamp {
+      flex: min-content;
+      font-size: 70%;
+    }
+
+    .sample-timestamp {
+      flex: min-content;
+      font-size: 70%;
+    }
   }
 }
 
