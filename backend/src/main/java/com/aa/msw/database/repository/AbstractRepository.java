@@ -5,6 +5,7 @@ import com.aa.msw.database.helpers.id.DbSyncedId;
 import com.aa.msw.database.helpers.id.HasId;
 import com.aa.msw.database.repository.dao.Dao;
 import org.jooq.*;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,10 +84,14 @@ public abstract class AbstractRepository<ID extends DbSyncedId,
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public DOMAIN persist(DOMAIN entity) {
-        if (entity.getId().isDbSynced()) {
-            return update(entity);
-        } else {
-            return insert(entity);
+        try {
+            if (entity.getId().isDbSynced()) {
+                return update(entity);
+            } else {
+                return insert(entity);
+            }
+        } catch (DuplicateKeyException e) {
+            return get(entity.getId());
         }
     }
 
