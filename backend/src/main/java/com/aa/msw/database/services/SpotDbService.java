@@ -120,11 +120,9 @@ public class SpotDbService {
             return true;
         }
         FlowStatusEnum oldFlowStatus = spotCurrentInfo.currentFlowStatusEnum();
-        boolean hasChanged = oldFlowStatus != updatedFlowStatusEnum;
-        boolean wasBad = oldFlowStatus == FlowStatusEnum.BAD;
-        boolean wasOrangeIsGreen = oldFlowStatus == FlowStatusEnum.TENDENCY_TO_BECOME_GOOD && updatedFlowStatusEnum == FlowStatusEnum.GOOD;
-        boolean hasImproved = wasBad || wasOrangeIsGreen;
-        return hasChanged && hasImproved;
+        boolean changedFromBadToOrange = oldFlowStatus == FlowStatusEnum.BAD && updatedFlowStatusEnum == FlowStatusEnum.TENDENCY_TO_BECOME_GOOD;
+        boolean changedToGreen = oldFlowStatus != FlowStatusEnum.GOOD && updatedFlowStatusEnum == FlowStatusEnum.GOOD;
+        return changedFromBadToOrange || changedToGreen;
     }
 
     @Transactional
