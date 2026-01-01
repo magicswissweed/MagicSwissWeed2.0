@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.records.Last_40DaysSamplesTableRecord;
 
 import java.util.Collection;
@@ -59,13 +60,18 @@ public class Last_40DaysSamplesTable extends TableImpl<Last_40DaysSamplesTableRe
     /**
      * The column <code>public.last_40_days_samples_table.station_id</code>.
      */
-    public final TableField<Last_40DaysSamplesTableRecord, Integer> STATION_ID = createField(DSL.name("station_id"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<Last_40DaysSamplesTableRecord, String> STATION_ID = createField(DSL.name("station_id"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column
      * <code>public.last_40_days_samples_table.last40dayssamples</code>.
      */
     public final TableField<Last_40DaysSamplesTableRecord, JSONB> LAST40DAYSSAMPLES = createField(DSL.name("last40dayssamples"), SQLDataType.JSONB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.last_40_days_samples_table.country</code>.
+     */
+    public final TableField<Last_40DaysSamplesTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
 
     private Last_40DaysSamplesTable(Name alias, Table<Last_40DaysSamplesTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

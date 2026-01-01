@@ -70,7 +70,8 @@ export const Spot = (props: SpotProps) => {
     }
 
     function getSpotSummaryContent(spot: SpotModel) {
-        let link = "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/" + spot.stationId;
+        // TODO: other link for other country
+        let link = "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/" + spot.stationId.externalId;
 
         return <>
             <div className='icons-container'>

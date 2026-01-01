@@ -6,43 +6,21 @@ info:
 servers:
   - url: 'http://localhost:8080/'
 paths:
-  /api/v1/sample/current/{stationId}:
-    get:
-      summary: Get current Flow and Temperature of a specific Station
-      security:
-        - bearerAuth: [ ]
-      operationId: getCurrentSample
-      parameters:
-        - name: stationId
-          description: The id of the station to get the sample from.
-          in: path
-          schema:
-            type: integer
-          required: true
-      tags:
-        - sample
-      responses:
-        '200':
-          description: Returns the last measured Sample from the station.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiSample'
-  /api/v1/sample/last40Days/{stationIds}:
-    get:
+  /api/v1/sample/last40Days:
+    post:
       summary: Get Samples from last 40 Days for this station.
       security:
         - bearerAuth: [ ]
       operationId: getLast40DaysSamples
-      parameters:
-        - name: stationIds
-          description: The ids of the stations to get the sample from.
-          in: path
-          schema:
-            type: array
-            items:
-              type: integer
-          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: The ids of the stations to get the sample from.
+              type: array
+              items:
+                $ref: '#/components/schemas/ApiStationId'
       tags:
         - sample
       responses:
@@ -52,28 +30,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiLast40DaysList'
-  /api/v1/forecast/{stationId}:
-    get:
-      summary: Get Forecast for specific Station
-      security:
-        - bearerAuth: [ ]
-      operationId: getForecast
-      parameters:
-        - name: stationId
-          description: The id of the station to get the sample from.
-          in: path
-          schema:
-            type: integer
-          required: true
-      tags:
-        - forecast
-      responses:
-        '200':
-          description: Returns the forecast for the station.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiForecast'
   /api/v1/forecasts:
     get:
       summary: Get All Forecasts for user
@@ -264,7 +220,7 @@ components:
         name:
           type: string
         stationId:
-          type: integer
+          $ref: '#/components/schemas/ApiStationId'
         spotType:
           type: string
           enum:
@@ -297,6 +253,20 @@ components:
         - GOOD
         - BAD
         - TENDENCY_TO_BECOME_GOOD
+    CountryEnum:
+      type: string
+      nullable: false
+      enum:
+        - CH
+        - FR
+    ApiStationId:
+      type: object
+      required: [ country, externalId ]
+      properties:
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        externalId:
+          type: string
     SpotOrderList:
       type: array
       required: [ type, format ]
@@ -369,7 +339,7 @@ components:
       required: [ station, forecast ]
       properties:
         station:
-          type: integer
+          $ref: '#/components/schemas/ApiStationId'
         forecast:
           $ref: '#/components/schemas/ApiForecast'
     ApiLast40DaysList:
@@ -381,7 +351,7 @@ components:
       required: [ station, last40Days ]
       properties:
         station:
-          type: integer
+          $ref: '#/components/schemas/ApiStationId'
         last40Days:
           $ref: '#/components/schemas/ApiLast40DaysSamples'
     ApiHistoricalYearsList:
@@ -393,7 +363,7 @@ components:
       required: [ station, historical ]
       properties:
         station:
-          type: integer
+          $ref: '#/components/schemas/ApiStationId'
         historical:
           $ref: '#/components/schemas/ApiHistoricalYears'
     ApiHistoricalYears:
@@ -443,7 +413,7 @@ components:
       required: [ id, label, latitude, longitude ]
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/ApiStationId'
         label:
           type: string
         latitude:

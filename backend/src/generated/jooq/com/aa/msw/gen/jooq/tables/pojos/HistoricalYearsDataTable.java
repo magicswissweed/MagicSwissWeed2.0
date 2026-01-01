@@ -4,6 +4,8 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -19,13 +21,14 @@ public class HistoricalYearsDataTable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final UUID dbId;
-    private final Integer stationId;
+    private final String stationId;
     private final JSONB median;
     private final JSONB twentyFivePercentile;
     private final JSONB seventyFivePercentile;
     private final JSONB max;
     private final JSONB min;
     private final JSONB currentYear;
+    private final Country country;
 
     public HistoricalYearsDataTable(HistoricalYearsDataTable value) {
         this.dbId = value.dbId;
@@ -36,17 +39,19 @@ public class HistoricalYearsDataTable implements Serializable {
         this.max = value.max;
         this.min = value.min;
         this.currentYear = value.currentYear;
+        this.country = value.country;
     }
 
     public HistoricalYearsDataTable(
         UUID dbId,
-        Integer stationId,
+        String stationId,
         JSONB median,
         JSONB twentyFivePercentile,
         JSONB seventyFivePercentile,
         JSONB max,
         JSONB min,
-        JSONB currentYear
+        JSONB currentYear,
+        Country country
     ) {
         this.dbId = dbId;
         this.stationId = stationId;
@@ -56,6 +61,7 @@ public class HistoricalYearsDataTable implements Serializable {
         this.max = max;
         this.min = min;
         this.currentYear = currentYear;
+        this.country = country;
     }
 
     /**
@@ -68,7 +74,7 @@ public class HistoricalYearsDataTable implements Serializable {
     /**
      * Getter for <code>public.historical_years_data_table.station_id</code>.
      */
-    public Integer getStationId() {
+    public String getStationId() {
         return this.stationId;
     }
 
@@ -114,6 +120,13 @@ public class HistoricalYearsDataTable implements Serializable {
      */
     public JSONB getCurrentYear() {
         return this.currentYear;
+    }
+
+    /**
+     * Getter for <code>public.historical_years_data_table.country</code>.
+     */
+    public Country getCountry() {
+        return this.country;
     }
 
     @Override
@@ -173,6 +186,12 @@ public class HistoricalYearsDataTable implements Serializable {
         }
         else if (!this.currentYear.equals(other.currentYear))
             return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        }
+        else if (!this.country.equals(other.country))
+            return false;
         return true;
     }
 
@@ -188,6 +207,7 @@ public class HistoricalYearsDataTable implements Serializable {
         result = prime * result + ((this.max == null) ? 0 : this.max.hashCode());
         result = prime * result + ((this.min == null) ? 0 : this.min.hashCode());
         result = prime * result + ((this.currentYear == null) ? 0 : this.currentYear.hashCode());
+        result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         return result;
     }
 
@@ -203,6 +223,7 @@ public class HistoricalYearsDataTable implements Serializable {
         sb.append(", ").append(max);
         sb.append(", ").append(min);
         sb.append(", ").append(currentYear);
+        sb.append(", ").append(country);
 
         sb.append(")");
         return sb.toString();

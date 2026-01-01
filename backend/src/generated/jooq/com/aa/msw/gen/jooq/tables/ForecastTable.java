@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
 
 import java.time.OffsetDateTime;
@@ -62,7 +63,7 @@ public class ForecastTable extends TableImpl<ForecastTableRecord> {
     /**
      * The column <code>public.forecast_table.stationid</code>.
      */
-    public final TableField<ForecastTableRecord, Integer> STATIONID = createField(DSL.name("stationid"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<ForecastTableRecord, String> STATIONID = createField(DSL.name("stationid"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.forecast_table.measureddata</code>.
@@ -98,6 +99,11 @@ public class ForecastTable extends TableImpl<ForecastTableRecord> {
      * The column <code>public.forecast_table.seventyfivepercentile</code>.
      */
     public final TableField<ForecastTableRecord, JSONB> SEVENTYFIVEPERCENTILE = createField(DSL.name("seventyfivepercentile"), SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.forecast_table.country</code>.
+     */
+    public final TableField<ForecastTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
 
     private ForecastTable(Name alias, Table<ForecastTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

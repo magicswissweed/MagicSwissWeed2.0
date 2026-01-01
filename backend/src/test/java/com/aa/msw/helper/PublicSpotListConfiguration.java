@@ -2,6 +2,7 @@ package com.aa.msw.helper;
 
 import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SpotDao;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.model.Spot;
 import com.aa.msw.model.SpotTypeEnum;
 import com.aa.msw.source.InputDataFetcherService;
@@ -14,15 +15,17 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+
 @Component
 public class PublicSpotListConfiguration {
     public static final Set<Spot> PUBLIC_RIVER_SURF_SPOTS = Set.of();
     public static final Set<Spot> PUBLIC_BUNGEE_SURF_SPOTS = Set.of(
-            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Zürich", 2243, 75, 350),
-            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Bern", 2135, 80, 360),
-            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Luzern", 2152, 80, 350),
-            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Basel", 2091, 850, 2500),
-            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "St. Gallen", 2473, 130, 1300)
+            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Zürich", apiStationId(Country.CH, "2243"), 75, 350),
+            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Bern", apiStationId(Country.CH, "2135"), 80, 360),
+            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Luzern", apiStationId(Country.CH, "2152"), 80, 350),
+            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "Basel", apiStationId(Country.CH, "2091"), 850, 2500),
+            new Spot(new SpotId(), true, SpotTypeEnum.BUNGEE_SURF, "St. Gallen", apiStationId(Country.CH, "2473"), 130, 1300)
     );
     private static final Logger LOG = LoggerFactory.getLogger(PublicSpotListConfiguration.class);
     public final SpotDao spotDao;

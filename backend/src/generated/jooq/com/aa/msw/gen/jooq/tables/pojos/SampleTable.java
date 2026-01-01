@@ -4,6 +4,8 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
+
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -18,10 +20,11 @@ public class SampleTable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final UUID id;
-    private final Integer stationid;
+    private final String stationid;
     private final OffsetDateTime timestamp;
     private final Float temperature;
     private final Integer flow;
+    private final Country country;
 
     public SampleTable(SampleTable value) {
         this.id = value.id;
@@ -29,20 +32,23 @@ public class SampleTable implements Serializable {
         this.timestamp = value.timestamp;
         this.temperature = value.temperature;
         this.flow = value.flow;
+        this.country = value.country;
     }
 
     public SampleTable(
         UUID id,
-        Integer stationid,
+        String stationid,
         OffsetDateTime timestamp,
         Float temperature,
-        Integer flow
+        Integer flow,
+        Country country
     ) {
         this.id = id;
         this.stationid = stationid;
         this.timestamp = timestamp;
         this.temperature = temperature;
         this.flow = flow;
+        this.country = country;
     }
 
     /**
@@ -55,7 +61,7 @@ public class SampleTable implements Serializable {
     /**
      * Getter for <code>public.sample_table.stationid</code>.
      */
-    public Integer getStationid() {
+    public String getStationid() {
         return this.stationid;
     }
 
@@ -78,6 +84,13 @@ public class SampleTable implements Serializable {
      */
     public Integer getFlow() {
         return this.flow;
+    }
+
+    /**
+     * Getter for <code>public.sample_table.country</code>.
+     */
+    public Country getCountry() {
+        return this.country;
     }
 
     @Override
@@ -119,6 +132,12 @@ public class SampleTable implements Serializable {
         }
         else if (!this.flow.equals(other.flow))
             return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        }
+        else if (!this.country.equals(other.country))
+            return false;
         return true;
     }
 
@@ -131,6 +150,7 @@ public class SampleTable implements Serializable {
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
         result = prime * result + ((this.temperature == null) ? 0 : this.temperature.hashCode());
         result = prime * result + ((this.flow == null) ? 0 : this.flow.hashCode());
+        result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         return result;
     }
 
@@ -143,6 +163,7 @@ public class SampleTable implements Serializable {
         sb.append(", ").append(timestamp);
         sb.append(", ").append(temperature);
         sb.append(", ").append(flow);
+        sb.append(", ").append(country);
 
         sb.append(")");
         return sb.toString();

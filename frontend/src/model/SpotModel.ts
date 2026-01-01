@@ -5,13 +5,14 @@ import {
     ApiHistoricalYears,
     ApiSample,
     ApiSpotInformationSpotTypeEnum,
-    ApiStation
+    ApiStation,
+    ApiStationId
 } from "../gen/msw-api-ts";
 
 export class SpotModel {
     id: string;
     name: string;
-    stationId: number;
+    stationId: ApiStationId;
     spotType: ApiSpotInformationSpotTypeEnum;
     isPublic: boolean;
     minFlow: number;
@@ -29,7 +30,7 @@ export class SpotModel {
     constructor(
         id: string,
         name: string,
-        stationId: number,
+        stationId: ApiStationId,
         spotType: ApiSpotInformationSpotTypeEnum,
         isPublic: boolean,
         minFlow: number,

@@ -3,6 +3,7 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.database.repository.dao.SampleDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.daos.SampleTableDao;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
@@ -15,6 +16,9 @@ import java.text.DecimalFormat;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
 
 @Component
@@ -39,7 +43,7 @@ public class SampleRepository extends AbstractTimestampedRepository
 
         return new Sample(
                 new SampleId(record.getId()),
-                record.getStationid(),
+                apiStationId(record.getCountry(), record.getStationid()),
                 record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
                 optionalTemp,
                 record.getFlow());
@@ -49,7 +53,8 @@ public class SampleRepository extends AbstractTimestampedRepository
     protected SampleTableRecord mapDomain(Sample sample) {
         final SampleTableRecord record = dsl.newRecord(table);
         record.setId(sample.sampleId().getId());
-        record.setStationid(sample.getStationId());
+        record.setCountry(country(sample.getStationId().getCountry()));
+        record.setStationid(sample.getStationId().getExternalId());
         record.setTimestamp(sample.getTimestamp());
         record.setTemperature(sample.getTemperature().map(Double::floatValue).orElse(null));
         record.setFlow(sample.getFlow());
@@ -61,7 +66,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         Float temperature = sampleTable.getTemperature();
         return new Sample(
                 new SampleId(sampleTable.getId()),
-                sampleTable.getStationid(),
+                apiStationId(sampleTable.getCountry(), sampleTable.getStationid()),
                 sampleTable.getTimestamp(),
                 temperature == null ? Optional.empty() : Optional.of(temperature.doubleValue()),
                 sampleTable.getFlow()
@@ -69,13 +74,14 @@ public class SampleRepository extends AbstractTimestampedRepository
     }
 
     @Override
-    public Sample getCurrentSample(int stationId) throws NoDataAvailableException {
+    public Sample getCurrentSample(ApiStationId stationId) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.STATIONID.eq(stationId))
+                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                        .and(TABLE.STATIONID.eq(stationId.getExternalId())))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)
-                .orElseThrow(() -> new NoDataAvailableException("No current sample found for station " + stationId));
+                .orElseThrow(() -> new NoDataAvailableException("No current sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
     }
 
     @Override

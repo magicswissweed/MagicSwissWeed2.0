@@ -2,6 +2,7 @@ package com.aa.msw.database.repository;
 
 import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SpotDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.daos.SpotTableDao;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Set;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 
@@ -35,7 +38,7 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
                 record.getIspublic(),
                 mapDbToDomainEnum(record.getType()),
                 record.getName(),
-                record.getStationid(),
+                apiStationId(record.getCountry(), record.getStationid()),
                 record.getMinflow(),
                 record.getMaxflow()
         );
@@ -47,7 +50,8 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
         record.setId(spot.getId().getId());
         record.setIspublic(spot.isPublic());
         record.setType(mapDomainToDbEnum(spot.type()));
-        record.setStationid(spot.stationId());
+        record.setCountry(country(spot.stationId().getCountry()));
+        record.setStationid(spot.stationId().getExternalId());
         record.setName(spot.name());
         record.setMinflow(spot.minFlow());
         record.setMaxflow(spot.maxFlow());
@@ -61,7 +65,7 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
                 spotTable.getIspublic(),
                 mapDbToDomainEnum(spotTable.getType()),
                 spotTable.getName(),
-                spotTable.getStationid(),
+                apiStationId(spotTable.getCountry(), spotTable.getStationid()),
                 spotTable.getMinflow(),
                 spotTable.getMaxflow()
         );
@@ -94,9 +98,10 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
     }
 
     @Override
-    public Set<Spot> getSpotsWithStationId(Integer stationId) {
+    public Set<Spot> getSpotsWithStationId(ApiStationId stationId) {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.STATIONID.eq(stationId))
+                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                        .and(TABLE.STATIONID.eq(stationId.getExternalId())))
                 .fetch(this::mapRecord)
                 .stream()
                 .collect(toUnmodifiableSet());

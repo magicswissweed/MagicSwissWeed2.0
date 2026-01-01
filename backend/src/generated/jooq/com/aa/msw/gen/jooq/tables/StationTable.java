@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.records.StationTableRecord;
 
 import java.util.Collection;
@@ -58,7 +59,7 @@ public class StationTable extends TableImpl<StationTableRecord> {
     /**
      * The column <code>public.station_table.stationid</code>.
      */
-    public final TableField<StationTableRecord, Integer> STATIONID = createField(DSL.name("stationid"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<StationTableRecord, String> STATIONID = createField(DSL.name("stationid"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.station_table.label</code>.
@@ -74,6 +75,11 @@ public class StationTable extends TableImpl<StationTableRecord> {
      * The column <code>public.station_table.longitude</code>.
      */
     public final TableField<StationTableRecord, Double> LONGITUDE = createField(DSL.name("longitude"), SQLDataType.DOUBLE, this, "");
+
+    /**
+     * The column <code>public.station_table.country</code>.
+     */
+    public final TableField<StationTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
 
     private StationTable(Name alias, Table<StationTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

@@ -1,6 +1,7 @@
 package com.aa.msw.database.repository.dao;
 
 import com.aa.msw.database.helpers.id.SpotId;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Spot;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public interface SpotDao extends Dao<SpotId, Spot> {
 
     List<Spot> getPublicSpots();
 
-    Set<Spot> getSpotsWithStationId(Integer stationId);
+    Set<Spot> getSpotsWithStationId(ApiStationId stationId);
 }

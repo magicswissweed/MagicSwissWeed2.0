@@ -5,6 +5,7 @@ import com.aa.msw.api.spots.SpotsApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.gen.api.ApiForecast;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.StationToApiForecasts;
 import com.aa.msw.model.Forecast;
 import org.springframework.context.annotation.Profile;
@@ -37,14 +38,14 @@ public class ForecastApiServiceImpl extends AbstractGraphLineApiService implemen
         return apiForecast;
     }
 
-    public ApiForecast getCurrentForecast(Integer stationId) throws NoDataAvailableException {
+    public ApiForecast getCurrentForecast(ApiStationId stationId) throws NoDataAvailableException {
         return mapForecast(forecastDao.getCurrentForecast(stationId));
     }
 
     @Override
     public List<StationToApiForecasts> getAllForecasts() {
         List<StationToApiForecasts> apiForecastsList = new ArrayList<>();
-        for (Integer station : spotsApiService.getStations()) {
+        for (ApiStationId station : spotsApiService.getStations()) {
 
             try {
                 apiForecastsList.add(new StationToApiForecasts(station, getCurrentForecast(station)));

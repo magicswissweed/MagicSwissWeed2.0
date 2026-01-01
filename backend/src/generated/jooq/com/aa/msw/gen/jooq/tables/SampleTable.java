@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 
 import java.time.OffsetDateTime;
@@ -61,7 +62,7 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     /**
      * The column <code>public.sample_table.stationid</code>.
      */
-    public final TableField<SampleTableRecord, Integer> STATIONID = createField(DSL.name("stationid"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<SampleTableRecord, String> STATIONID = createField(DSL.name("stationid"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.sample_table.timestamp</code>.
@@ -77,6 +78,11 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
      * The column <code>public.sample_table.flow</code>.
      */
     public final TableField<SampleTableRecord, Integer> FLOW = createField(DSL.name("flow"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>public.sample_table.country</code>.
+     */
+    public final TableField<SampleTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
 
     private SampleTable(Name alias, Table<SampleTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

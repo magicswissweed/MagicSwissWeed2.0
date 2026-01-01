@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
 
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class Last_40DaysSamplesTableRecord extends UpdatableRecordImpl<Last_40Da
     /**
      * Setter for <code>public.last_40_days_samples_table.station_id</code>.
      */
-    public Last_40DaysSamplesTableRecord setStationId(Integer value) {
+    public Last_40DaysSamplesTableRecord setStationId(String value) {
         set(1, value);
         return this;
     }
@@ -47,8 +48,8 @@ public class Last_40DaysSamplesTableRecord extends UpdatableRecordImpl<Last_40Da
     /**
      * Getter for <code>public.last_40_days_samples_table.station_id</code>.
      */
-    public Integer getStationId() {
-        return (Integer) get(1);
+    public String getStationId() {
+        return (String) get(1);
     }
 
     /**
@@ -66,6 +67,21 @@ public class Last_40DaysSamplesTableRecord extends UpdatableRecordImpl<Last_40Da
      */
     public JSONB getLast40dayssamples() {
         return (JSONB) get(2);
+    }
+
+    /**
+     * Setter for <code>public.last_40_days_samples_table.country</code>.
+     */
+    public Last_40DaysSamplesTableRecord setCountry(Country value) {
+        set(3, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.last_40_days_samples_table.country</code>.
+     */
+    public Country getCountry() {
+        return (Country) get(3);
     }
 
     // -------------------------------------------------------------------------
@@ -91,12 +107,13 @@ public class Last_40DaysSamplesTableRecord extends UpdatableRecordImpl<Last_40Da
     /**
      * Create a detached, initialised Last_40DaysSamplesTableRecord
      */
-    public Last_40DaysSamplesTableRecord(UUID dbId, Integer stationId, JSONB last40dayssamples) {
+    public Last_40DaysSamplesTableRecord(UUID dbId, String stationId, JSONB last40dayssamples, Country country) {
         super(Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE);
 
         setDbId(dbId);
         setStationId(stationId);
         setLast40dayssamples(last40dayssamples);
+        setCountry(country);
         resetChangedOnNotNull();
     }
 
@@ -110,6 +127,7 @@ public class Last_40DaysSamplesTableRecord extends UpdatableRecordImpl<Last_40Da
             setDbId(value.getDbId());
             setStationId(value.getStationId());
             setLast40dayssamples(value.getLast40dayssamples());
+            setCountry(value.getCountry());
             resetChangedOnNotNull();
         }
     }

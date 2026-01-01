@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.Spottype;
 
 import java.io.Serializable;
@@ -20,11 +21,12 @@ public class SpotTable implements Serializable {
 
     private final UUID id;
     private final Spottype type;
-    private final Integer stationid;
+    private final String stationid;
     private final String name;
     private final Integer minflow;
     private final Integer maxflow;
     private final Boolean ispublic;
+    private final Country country;
 
     public SpotTable(SpotTable value) {
         this.id = value.id;
@@ -34,16 +36,18 @@ public class SpotTable implements Serializable {
         this.minflow = value.minflow;
         this.maxflow = value.maxflow;
         this.ispublic = value.ispublic;
+        this.country = value.country;
     }
 
     public SpotTable(
         UUID id,
         Spottype type,
-        Integer stationid,
+        String stationid,
         String name,
         Integer minflow,
         Integer maxflow,
-        Boolean ispublic
+        Boolean ispublic,
+        Country country
     ) {
         this.id = id;
         this.type = type;
@@ -52,6 +56,7 @@ public class SpotTable implements Serializable {
         this.minflow = minflow;
         this.maxflow = maxflow;
         this.ispublic = ispublic;
+        this.country = country;
     }
 
     /**
@@ -71,7 +76,7 @@ public class SpotTable implements Serializable {
     /**
      * Getter for <code>public.spot_table.stationid</code>.
      */
-    public Integer getStationid() {
+    public String getStationid() {
         return this.stationid;
     }
 
@@ -101,6 +106,13 @@ public class SpotTable implements Serializable {
      */
     public Boolean getIspublic() {
         return this.ispublic;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.country</code>.
+     */
+    public Country getCountry() {
+        return this.country;
     }
 
     @Override
@@ -154,6 +166,12 @@ public class SpotTable implements Serializable {
         }
         else if (!this.ispublic.equals(other.ispublic))
             return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        }
+        else if (!this.country.equals(other.country))
+            return false;
         return true;
     }
 
@@ -168,6 +186,7 @@ public class SpotTable implements Serializable {
         result = prime * result + ((this.minflow == null) ? 0 : this.minflow.hashCode());
         result = prime * result + ((this.maxflow == null) ? 0 : this.maxflow.hashCode());
         result = prime * result + ((this.ispublic == null) ? 0 : this.ispublic.hashCode());
+        result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         return result;
     }
 
@@ -182,6 +201,7 @@ public class SpotTable implements Serializable {
         sb.append(", ").append(minflow);
         sb.append(", ").append(maxflow);
         sb.append(", ").append(ispublic);
+        sb.append(", ").append(country);
 
         sb.append(")");
         return sb.toString();

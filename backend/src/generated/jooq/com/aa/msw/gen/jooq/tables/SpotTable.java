@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable.SpotCurrentInfoTablePath;
 import com.aa.msw.gen.jooq.tables.UserToSpotTable.UserToSpotTablePath;
@@ -70,7 +71,7 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
     /**
      * The column <code>public.spot_table.stationid</code>.
      */
-    public final TableField<SpotTableRecord, Integer> STATIONID = createField(DSL.name("stationid"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<SpotTableRecord, String> STATIONID = createField(DSL.name("stationid"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.spot_table.name</code>.
@@ -91,6 +92,11 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
      * The column <code>public.spot_table.ispublic</code>.
      */
     public final TableField<SpotTableRecord, Boolean> ISPUBLIC = createField(DSL.name("ispublic"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.spot_table.country</code>.
+     */
+    public final TableField<SpotTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
 
     private SpotTable(Name alias, Table<SpotTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

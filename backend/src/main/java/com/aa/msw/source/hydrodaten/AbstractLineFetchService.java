@@ -1,5 +1,6 @@
 package com.aa.msw.source.hydrodaten;
 
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.hydrodaten.model.line.HydroLine;
 import com.aa.msw.source.hydrodaten.model.line.HydroResponse;
@@ -62,8 +63,8 @@ public abstract class AbstractLineFetchService extends AbstractFetchService {
         return line;
     }
 
-    protected HydroResponse fetchFromHydro(int stationId) throws IOException, URISyntaxException {
-        String response = fetchAsString(fetchUrlPrefix + stationId + fetchUrlSuffix);
+    protected HydroResponse fetchFromHydro(ApiStationId stationId) throws IOException, URISyntaxException {
+        String response = fetchAsString(fetchUrlPrefix + stationId.getExternalId() + fetchUrlSuffix);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper.readValue(response, new TypeReference<>() {

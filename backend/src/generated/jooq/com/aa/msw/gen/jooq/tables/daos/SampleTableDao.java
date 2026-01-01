@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 
@@ -74,14 +75,14 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
      * Fetch records that have <code>stationid BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfStationid(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfStationid(String lowerInclusive, String upperInclusive) {
         return fetchRange(SampleTable.SAMPLE_TABLE.STATIONID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>stationid IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByStationid(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByStationid(String... values) {
         return fetch(SampleTable.SAMPLE_TABLE.STATIONID, values);
     }
 
@@ -128,5 +129,20 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByFlow(Integer... values) {
         return fetch(SampleTable.SAMPLE_TABLE.FLOW, values);
+    }
+
+    /**
+     * Fetch records that have <code>country BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+        return fetchRange(SampleTable.SAMPLE_TABLE.COUNTRY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>country IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByCountry(Country... values) {
+        return fetch(SampleTable.SAMPLE_TABLE.COUNTRY, values);
     }
 }

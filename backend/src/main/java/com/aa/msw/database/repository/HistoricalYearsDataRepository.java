@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static com.aa.msw.database.helpers.EnumConverterHelper.country;
+
 @Component
 public class HistoricalYearsDataRepository extends AbstractRepository
         <HistoricalYearsDataId, HistoricalYearsData, HistoricalYearsDataTableRecord, com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable, HistoricalYearsDataTableDao>
@@ -77,7 +80,7 @@ public class HistoricalYearsDataRepository extends AbstractRepository
     protected HistoricalYearsData mapRecord(HistoricalYearsDataTableRecord record) {
         return new HistoricalYearsData(
                 new HistoricalYearsDataId(record.getDbId()),
-                record.getStationId(),
+                apiStationId(record.getCountry(), record.getStationId()),
                 jsonbToOrderedMap(record.getMedian()),
                 jsonbToOrderedMap(record.getTwentyFivePercentile()),
                 jsonbToOrderedMap(record.getSeventyFivePercentile()),
@@ -92,7 +95,8 @@ public class HistoricalYearsDataRepository extends AbstractRepository
         final HistoricalYearsDataTableRecord record = dsl.newRecord(table);
 
         record.setDbId(historicalYearsData.getDatabaseId().getId());
-        record.setStationId(historicalYearsData.getStationId());
+        record.setCountry(country(historicalYearsData.getStationId().getCountry()));
+        record.setStationId(historicalYearsData.getStationId().getExternalId());
         record.setMedian(orderedMapToJsonb(historicalYearsData.getMedian()));
         record.setTwentyFivePercentile(orderedMapToJsonb(historicalYearsData.getTwentyFivePercentile()));
         record.setSeventyFivePercentile(orderedMapToJsonb(historicalYearsData.getSeventyFivePercentile()));
@@ -106,7 +110,7 @@ public class HistoricalYearsDataRepository extends AbstractRepository
     protected HistoricalYearsData mapEntity(com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable historicalYearsDataTable) {
         return new HistoricalYearsData(
                 new HistoricalYearsDataId(historicalYearsDataTable.getDbId()),
-                historicalYearsDataTable.getStationId(),
+                apiStationId(historicalYearsDataTable.getCountry(), historicalYearsDataTable.getStationId()),
                 jsonbToOrderedMap(historicalYearsDataTable.getMedian()),
                 jsonbToOrderedMap(historicalYearsDataTable.getTwentyFivePercentile()),
                 jsonbToOrderedMap(historicalYearsDataTable.getSeventyFivePercentile()),

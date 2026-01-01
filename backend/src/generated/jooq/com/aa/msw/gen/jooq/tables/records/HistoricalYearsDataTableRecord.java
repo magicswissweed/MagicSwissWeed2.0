@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Setter for <code>public.historical_years_data_table.station_id</code>.
      */
-    public HistoricalYearsDataTableRecord setStationId(Integer value) {
+    public HistoricalYearsDataTableRecord setStationId(String value) {
         set(1, value);
         return this;
     }
@@ -47,8 +48,8 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Getter for <code>public.historical_years_data_table.station_id</code>.
      */
-    public Integer getStationId() {
-        return (Integer) get(1);
+    public String getStationId() {
+        return (String) get(1);
     }
 
     /**
@@ -145,6 +146,21 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
         return (JSONB) get(7);
     }
 
+    /**
+     * Setter for <code>public.historical_years_data_table.country</code>.
+     */
+    public HistoricalYearsDataTableRecord setCountry(Country value) {
+        set(8, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.historical_years_data_table.country</code>.
+     */
+    public Country getCountry() {
+        return (Country) get(8);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -168,7 +184,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Create a detached, initialised HistoricalYearsDataTableRecord
      */
-    public HistoricalYearsDataTableRecord(UUID dbId, Integer stationId, JSONB median, JSONB twentyFivePercentile, JSONB seventyFivePercentile, JSONB max, JSONB min, JSONB currentYear) {
+    public HistoricalYearsDataTableRecord(UUID dbId, String stationId, JSONB median, JSONB twentyFivePercentile, JSONB seventyFivePercentile, JSONB max, JSONB min, JSONB currentYear, Country country) {
         super(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE);
 
         setDbId(dbId);
@@ -179,6 +195,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
         setMax(max);
         setMin(min);
         setCurrentYear(currentYear);
+        setCountry(country);
         resetChangedOnNotNull();
     }
 
@@ -197,6 +214,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
             setMax(value.getMax());
             setMin(value.getMin());
             setCurrentYear(value.getCurrentYear());
+            setCountry(value.getCountry());
             resetChangedOnNotNull();
         }
     }

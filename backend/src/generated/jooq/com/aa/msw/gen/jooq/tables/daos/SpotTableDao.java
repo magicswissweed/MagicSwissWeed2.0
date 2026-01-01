@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.records.SpotTableRecord;
@@ -89,14 +90,14 @@ public class SpotTableDao extends DAOImpl<SpotTableRecord, com.aa.msw.gen.jooq.t
      * Fetch records that have <code>stationid BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfStationid(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfStationid(String lowerInclusive, String upperInclusive) {
         return fetchRange(SpotTable.SPOT_TABLE.STATIONID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>stationid IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByStationid(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByStationid(String... values) {
         return fetch(SpotTable.SPOT_TABLE.STATIONID, values);
     }
 
@@ -158,5 +159,20 @@ public class SpotTableDao extends DAOImpl<SpotTableRecord, com.aa.msw.gen.jooq.t
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByIspublic(Boolean... values) {
         return fetch(SpotTable.SPOT_TABLE.ISPUBLIC, values);
+    }
+
+    /**
+     * Fetch records that have <code>country BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+        return fetchRange(SpotTable.SPOT_TABLE.COUNTRY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>country IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByCountry(Country... values) {
+        return fetch(SpotTable.SPOT_TABLE.COUNTRY, values);
     }
 }

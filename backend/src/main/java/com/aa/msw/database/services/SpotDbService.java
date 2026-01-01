@@ -5,6 +5,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.UserToSpot;
 import com.aa.msw.database.helpers.id.UserToSpotId;
 import com.aa.msw.database.repository.dao.*;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.*;
 import com.aa.msw.notifications.NotificationSpotInfo;
 import org.springframework.stereotype.Service;
@@ -73,16 +74,16 @@ public class SpotDbService {
     }
 
     @Transactional
-    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStations(Set<Integer> stationIds) {
+    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStations(Set<ApiStationId> stationIds) {
         Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
-        for (Integer stationId : stationIds) {
+        for (ApiStationId stationId : stationIds) {
             spotsThatImproved.addAll(updateCurrentInfoForAllSpotsOfStation(stationId));
         }
         return spotsThatImproved;
     }
 
     @Transactional
-    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStation(Integer stationId) {
+    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStation(ApiStationId stationId) {
         Set<Spot> spots = spotDao.getSpotsWithStationId(stationId);
         Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
         for (Spot spot : spots) {

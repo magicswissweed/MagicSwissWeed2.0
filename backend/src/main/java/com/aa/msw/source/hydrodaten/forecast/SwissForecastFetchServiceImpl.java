@@ -1,6 +1,7 @@
 package com.aa.msw.source.hydrodaten.forecast;
 
 import com.aa.msw.database.helpers.id.ForecastId;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Forecast;
 import com.aa.msw.source.hydrodaten.AbstractLineFetchService;
 import com.aa.msw.source.hydrodaten.model.line.HydroResponse;
@@ -16,8 +17,8 @@ import java.util.Set;
 
 @Profile("!test")
 @Service
-public class ForecastFetchServiceImpl extends AbstractLineFetchService implements ForecastFetchService {
-    ForecastFetchServiceImpl() {
+public class SwissForecastFetchServiceImpl extends AbstractLineFetchService implements SwissForecastFetchService {
+    SwissForecastFetchServiceImpl() {
         super("https://www.hydrodaten.admin.ch/plots/q_forecast/", "_q_forecast_de.json");
     }
 
@@ -29,9 +30,9 @@ public class ForecastFetchServiceImpl extends AbstractLineFetchService implement
         return OffsetDateTime.parse(datetimeString);
     }
 
-    public List<Forecast> fetchForecasts(Set<Integer> stationIds) throws URISyntaxException {
+    public List<Forecast> fetchForecasts(Set<ApiStationId> stationIds) throws URISyntaxException {
         List<Forecast> forecasts = new ArrayList<>();
-        for (int stationId : stationIds) {
+        for (ApiStationId stationId : stationIds) {
             try {
                 forecasts.add(fetchForecast(stationId));
             } catch (IOException e) {
@@ -41,7 +42,7 @@ public class ForecastFetchServiceImpl extends AbstractLineFetchService implement
         return forecasts;
     }
 
-    public Forecast fetchForecast(int stationId) throws IOException, URISyntaxException {
+    public Forecast fetchForecast(ApiStationId stationId) throws IOException, URISyntaxException {
         HydroResponse hydroResponse = fetchFromHydro(stationId);
 
         TwentyFiveToSeventyFivePercentile twentyFiveToSeventyFivePercentile = getTwentyFiveToSeventyFivePercentile(hydroResponse);

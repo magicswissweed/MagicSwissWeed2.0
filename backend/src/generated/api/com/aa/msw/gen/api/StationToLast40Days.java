@@ -3,6 +3,7 @@ package com.aa.msw.gen.api;
 import java.net.URI;
 import java.util.Objects;
 import com.aa.msw.gen.api.ApiFlowSample;
+import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
@@ -22,10 +23,10 @@ import jakarta.annotation.Generated;
  * StationToLast40Days
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-29T11:28:08.103650+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-31T15:33:14.273869+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class StationToLast40Days {
 
-  private Integer station;
+  private ApiStationId station;
 
   @Valid
   private List<@Valid ApiFlowSample> last40Days = new ArrayList<>();
@@ -37,12 +38,12 @@ public class StationToLast40Days {
   /**
    * Constructor with only required parameters
    */
-  public StationToLast40Days(Integer station, List<@Valid ApiFlowSample> last40Days) {
+  public StationToLast40Days(ApiStationId station, List<@Valid ApiFlowSample> last40Days) {
     this.station = station;
     this.last40Days = last40Days;
   }
 
-  public StationToLast40Days station(Integer station) {
+  public StationToLast40Days station(ApiStationId station) {
     this.station = station;
     return this;
   }
@@ -51,14 +52,14 @@ public class StationToLast40Days {
    * Get station
    * @return station
   */
-  @NotNull 
+  @NotNull @Valid 
   @Schema(name = "station", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("station")
-  public Integer getStation() {
+  public ApiStationId getStation() {
     return station;
   }
 
-  public void setStation(Integer station) {
+  public void setStation(ApiStationId station) {
     this.station = station;
   }
 

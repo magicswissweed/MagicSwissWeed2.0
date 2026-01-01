@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 
 import java.time.OffsetDateTime;
@@ -40,7 +41,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Setter for <code>public.forecast_table.stationid</code>.
      */
-    public ForecastTableRecord setStationid(Integer value) {
+    public ForecastTableRecord setStationid(String value) {
         set(1, value);
         return this;
     }
@@ -48,8 +49,8 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Getter for <code>public.forecast_table.stationid</code>.
      */
-    public Integer getStationid() {
-        return (Integer) get(1);
+    public String getStationid() {
+        return (String) get(1);
     }
 
     /**
@@ -157,6 +158,21 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
         return (JSONB) get(8);
     }
 
+    /**
+     * Setter for <code>public.forecast_table.country</code>.
+     */
+    public ForecastTableRecord setCountry(Country value) {
+        set(9, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.forecast_table.country</code>.
+     */
+    public Country getCountry() {
+        return (Country) get(9);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -180,7 +196,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Create a detached, initialised ForecastTableRecord
      */
-    public ForecastTableRecord(UUID id, Integer stationid, JSONB measureddata, JSONB median, JSONB max, JSONB min, OffsetDateTime timestamp, JSONB twentyfivepercentile, JSONB seventyfivepercentile) {
+    public ForecastTableRecord(UUID id, String stationid, JSONB measureddata, JSONB median, JSONB max, JSONB min, OffsetDateTime timestamp, JSONB twentyfivepercentile, JSONB seventyfivepercentile, Country country) {
         super(ForecastTable.FORECAST_TABLE);
 
         setId(id);
@@ -192,6 +208,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
         setTimestamp(timestamp);
         setTwentyfivepercentile(twentyfivepercentile);
         setSeventyfivepercentile(seventyfivepercentile);
+        setCountry(country);
         resetChangedOnNotNull();
     }
 
@@ -211,6 +228,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
             setTimestamp(value.getTimestamp());
             setTwentyfivepercentile(value.getTwentyfivepercentile());
             setSeventyfivepercentile(value.getSeventyfivepercentile());
+            setCountry(value.getCountry());
             resetChangedOnNotNull();
         }
     }

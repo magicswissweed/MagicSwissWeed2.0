@@ -1,12 +1,14 @@
 ###
-# @name Get Current Sample
-#
-GET {{base-path}}/sample/current/{{stationId}}
-Authorization: Bearer {{auth_token}}
-
-###
 # @name Get Samples of last 40 days for multiple stations
 # make sure the stationIds do not not have a forecast (-> this probably means, there is a last40Days available)
 #
-GET {{base-path}}/sample/last40Days/{{stationId}},2243
+POST {{base-path}}/sample/last40Days
+Content-Type: application/json
 Authorization: Bearer {{auth_token}}
+
+[
+  {
+    "country": "CH",
+    "externalId": "2243"
+  }
+]

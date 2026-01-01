@@ -1,6 +1,8 @@
 package com.aa.msw.source.existenz.sample;
 
 import com.aa.msw.database.helpers.id.SampleId;
+import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.existenz.exception.IncorrectDataReceivedException;
@@ -24,18 +26,19 @@ import java.util.stream.Collectors;
 
 @Profile("!test")
 @Service
-public class SampleFetchServiceImpl extends AbstractFetchService implements SampleFetchService {
-
-    private static String getExistenzUrl(Set<Integer> stationIds) {
+// TODO: this is only for CH. Handle this for france
+public class SwissSampleFetchServiceImpl extends AbstractFetchService implements SwissSampleFetchService {
+    private static String getExistenzUrl(Set<ApiStationId> stationIds) {
         String locationsString = stationIds.stream()
+                .map(ApiStationId::getExternalId)
                 .map(Object::toString)
                 .collect(Collectors.joining("%2C"));
         return "https://api.existenz.ch/apiv1/hydro/latest?locations=" + locationsString + "&parameters=flow%2C%20temperature&app=MagicSwissWeed&version=0.2.0";
     }
 
-    private static Sample extractSampleForStationId(List<ExistenzSample> samples, Integer stationId) throws IncorrectDataReceivedException {
+    private static Sample extractSampleForStationId(List<ExistenzSample> samples, String stationId) throws IncorrectDataReceivedException {
         List<ExistenzSample> stationSamples = samples.stream()
-                .filter(sample -> sample.stationId().equals(stationId.toString()))
+                .filter(sample -> sample.stationId().equals(stationId))
                 .toList();
 
         Integer flow = null;
@@ -51,24 +54,24 @@ public class SampleFetchServiceImpl extends AbstractFetchService implements Samp
         }
 
         if (flow == null) {
-            throw new IncorrectDataReceivedException("Unable to extract flow and temp for the station " + stationId);
+            throw new IncorrectDataReceivedException("Unable to extract flow and temp for the station " + stationId + " in " + CountryEnum.CH.getValue());
         }
 
         return new Sample(
                 new SampleId(),
-                stationId,
+                new ApiStationId(CountryEnum.CH, stationId),
                 timestamp,
                 temp,
                 flow);
     }
 
-    public List<Sample> fetchSamples(Set<Integer> stationIds) throws IOException, URISyntaxException {
+    public List<Sample> fetchSamples(Set<ApiStationId> stationIds) throws IOException, URISyntaxException {
         String fetchUrl = getExistenzUrl(stationIds);
         List<ExistenzSample> existenzSamples = fetchData(fetchUrl).payload();
         List<Sample> samples = new ArrayList<>();
-        for (Integer stationId : stationIds) {
+        for (ApiStationId stationId : stationIds) {
             try {
-                samples.add(extractSampleForStationId(existenzSamples, stationId));
+                samples.add(extractSampleForStationId(existenzSamples, stationId.getExternalId()));
             } catch (IncorrectDataReceivedException e) {
                 // ignore -> dont fetch sample
             }

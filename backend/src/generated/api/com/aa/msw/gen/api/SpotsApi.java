@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-29T11:28:08.103650+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-31T15:33:14.273869+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "spots", description = "the spots API")
 public interface SpotsApi {
@@ -156,7 +156,7 @@ public interface SpotsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"minFlow\" : 6, \"name\" : \"name\", \"station\" : { \"latitude\" : 5.637376656633329, \"id\" : 5, \"label\" : \"label\", \"longitude\" : 2.3021358869347655 }, \"spotType\" : \"RIVER_SURF\", \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"maxFlow\" : 1, \"currentSample\" : { \"temperature\" : 0.8008281904610115, \"flow\" : 6, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"withNotification\" : true, \"stationId\" : 0 }, { \"minFlow\" : 6, \"name\" : \"name\", \"station\" : { \"latitude\" : 5.637376656633329, \"id\" : 5, \"label\" : \"label\", \"longitude\" : 2.3021358869347655 }, \"spotType\" : \"RIVER_SURF\", \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"maxFlow\" : 1, \"currentSample\" : { \"temperature\" : 0.8008281904610115, \"flow\" : 6, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"withNotification\" : true, \"stationId\" : 0 } ]";
+                    String exampleString = "[ { \"minFlow\" : 0, \"name\" : \"name\", \"station\" : { \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 }, \"spotType\" : \"RIVER_SURF\", \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"maxFlow\" : 6, \"currentSample\" : { \"temperature\" : 5.637376656633329, \"flow\" : 2, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"withNotification\" : true, \"stationId\" : { \"externalId\" : \"externalId\" } }, { \"minFlow\" : 0, \"name\" : \"name\", \"station\" : { \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 }, \"spotType\" : \"RIVER_SURF\", \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"maxFlow\" : 6, \"currentSample\" : { \"temperature\" : 5.637376656633329, \"flow\" : 2, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"withNotification\" : true, \"stationId\" : { \"externalId\" : \"externalId\" } } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

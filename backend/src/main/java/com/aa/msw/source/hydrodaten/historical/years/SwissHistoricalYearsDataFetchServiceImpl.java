@@ -1,6 +1,7 @@
 package com.aa.msw.source.hydrodaten.historical.years;
 
 import com.aa.msw.database.helpers.id.HistoricalYearsDataId;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.HistoricalYearsData;
 import com.aa.msw.source.hydrodaten.AbstractLineFetchService;
 import com.aa.msw.source.hydrodaten.model.line.HydroResponse;
@@ -14,15 +15,15 @@ import java.util.Set;
 
 @Profile("!test")
 @Service
-public class HistoricalYearsDataFetchServiceImpl
+public class SwissHistoricalYearsDataFetchServiceImpl
         extends AbstractLineFetchService
-        implements HistoricalYearsDataFetchService {
+        implements SwissHistoricalYearsDataFetchService {
 
-    HistoricalYearsDataFetchServiceImpl() {
+    SwissHistoricalYearsDataFetchServiceImpl() {
         super("https://www.hydrodaten.admin.ch/web/hydro/de/q_annual/", "/2023/plot.json");
     }
 
-    public HistoricalYearsData fetchHistoricalYearsData(int stationId) throws IOException, URISyntaxException {
+    public HistoricalYearsData fetchHistoricalYearsData(ApiStationId stationId) throws IOException, URISyntaxException {
         HydroResponse hydroResponse = fetchFromHydro(stationId);
 
         TwentyFiveToSeventyFivePercentile twentyFiveToSeventyFivePercentile = getTwentyFiveToSeventyFivePercentile(hydroResponse);
@@ -39,9 +40,9 @@ public class HistoricalYearsDataFetchServiceImpl
         );
     }
 
-    public Set<HistoricalYearsData> fetchHistoricalYearsData(Set<Integer> stationIds) throws URISyntaxException {
+    public Set<HistoricalYearsData> fetchHistoricalYearsData(Set<ApiStationId> stationIds) throws URISyntaxException {
         Set<HistoricalYearsData> historicalYearsData = new HashSet<>();
-        for (int stationId : stationIds) {
+        for (ApiStationId stationId : stationIds) {
             try {
                 historicalYearsData.add(fetchHistoricalYearsData(stationId));
             } catch (IOException e) {

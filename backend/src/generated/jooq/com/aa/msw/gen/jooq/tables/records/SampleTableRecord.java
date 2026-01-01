@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 
 import java.time.OffsetDateTime;
@@ -39,7 +40,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Setter for <code>public.sample_table.stationid</code>.
      */
-    public SampleTableRecord setStationid(Integer value) {
+    public SampleTableRecord setStationid(String value) {
         set(1, value);
         return this;
     }
@@ -47,8 +48,8 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Getter for <code>public.sample_table.stationid</code>.
      */
-    public Integer getStationid() {
-        return (Integer) get(1);
+    public String getStationid() {
+        return (String) get(1);
     }
 
     /**
@@ -96,6 +97,21 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
         return (Integer) get(4);
     }
 
+    /**
+     * Setter for <code>public.sample_table.country</code>.
+     */
+    public SampleTableRecord setCountry(Country value) {
+        set(5, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.sample_table.country</code>.
+     */
+    public Country getCountry() {
+        return (Country) get(5);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -119,7 +135,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Create a detached, initialised SampleTableRecord
      */
-    public SampleTableRecord(UUID id, Integer stationid, OffsetDateTime timestamp, Float temperature, Integer flow) {
+    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float temperature, Integer flow, Country country) {
         super(SampleTable.SAMPLE_TABLE);
 
         setId(id);
@@ -127,6 +143,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
         setTimestamp(timestamp);
         setTemperature(temperature);
         setFlow(flow);
+        setCountry(country);
         resetChangedOnNotNull();
     }
 
@@ -142,6 +159,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
             setTimestamp(value.getTimestamp());
             setTemperature(value.getTemperature());
             setFlow(value.getFlow());
+            setCountry(value.getCountry());
             resetChangedOnNotNull();
         }
     }

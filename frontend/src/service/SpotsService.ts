@@ -36,8 +36,10 @@ class SpotsService {
                     .filter(s => !s.forecast)
                     .map(s => s.stationId)
                 if (stationsWithoutForecast.length > 0) {
-                    new SampleApi().getLast40DaysSamples(stationsWithoutForecast)
-                        .then(this.addLast40DaysToState.bind(this))
+                    if (config) {
+                        new SampleApi(config).getLast40DaysSamples(stationsWithoutForecast)
+                            .then(this.addLast40DaysToState.bind(this))
+                    }
                 }
             })
             .then(() =>
@@ -88,7 +90,8 @@ class SpotsService {
     private addLast40DaysToState(res: AxiosResponse<StationToLast40Days[], any>) {
         if (res && res.data) {
             const updatedSpots = this.spots.map(s => {
-                const filteredListByStationId = res.data.filter(i => i.station === s.stationId);
+                const filteredListByStationId = res.data.filter(i =>
+                    i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
                 const newLast40Days = DateTimeConverter.utcLast40DaysToLocalTime(filteredListByStationId[0]?.last40Days)
                 // create new SpotModel so that react can see that something changed (updating a field is not enough)
                 return {
@@ -105,7 +108,8 @@ class SpotsService {
     private addForecastsToState(res: AxiosResponse<StationToApiForecasts[], any>) {
         if (res && res.data) {
             const updatedSpots = this.spots.map(s => {
-                const filteredListByStationId = res.data.filter(i => i.station === s.stationId);
+                const filteredListByStationId = res.data.filter(i =>
+                    i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
                 const newForecast = DateTimeConverter.utcForecastToLocalTime(filteredListByStationId[0]?.forecast);
                 // create new SpotModel so that react can see that something changed (updating a field is not enough)
                 return {
@@ -123,7 +127,8 @@ class SpotsService {
         if (res && res.data) {
             let updatedSpots = this.spots.map(s => {
                 let filteredListByStationId =
-                    res.data.filter(i => i.station === s.stationId);
+                    res.data.filter(i =>
+                        i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
                 const historical = DateTimeConverter.utcHistoricalToLocalTime(filteredListByStationId[0]?.historical);
                 // create new SpotModel so that react can see that something changed (updating a field is not enough)
                 return {

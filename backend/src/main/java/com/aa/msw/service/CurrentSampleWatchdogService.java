@@ -2,6 +2,8 @@ package com.aa.msw.service;
 
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
+import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,7 +27,7 @@ public class CurrentSampleWatchdogService {
     // event and save the time and don't execute the method in the first 10 minutes or so...
     @Scheduled(fixedRate = 10 * 60 * 1000) // 10 minutes in milliseconds
     public void shutdownIfCurrentSampleIsOlderThan30Minutes() {
-        int anyStation = 2018;
+        ApiStationId anyStation = new ApiStationId(CountryEnum.CH, "2018");
         try {
             Sample currentSample = sampleDao.getCurrentSample(anyStation);
             if (currentSample.getTimestamp().isBefore(OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(30))) {
