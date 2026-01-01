@@ -1,6 +1,7 @@
 package com.aa.msw.source.hydrodaten.historical.lastfourty;
 
 import com.aa.msw.database.helpers.id.Last40DaysId;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Last40Days;
 import com.aa.msw.source.hydrodaten.AbstractLineFetchService;
 import com.aa.msw.source.hydrodaten.model.line.HydroLine;
@@ -24,7 +25,7 @@ public class Last40DaysSampleFetchServiceImpl extends AbstractLineFetchService i
         super("https://www.hydrodaten.admin.ch/plots/p_q_40days/", "_p_q_40days_de.json");
     }
 
-    private Last40Days fetchLast40DaysSamples(int stationId) throws IOException, URISyntaxException {
+    private Last40Days fetchLast40DaysSamples(ApiStationId stationId) throws IOException, URISyntaxException {
         HydroResponse hydroResponse = fetchFromHydro(stationId);
         Map<OffsetDateTime, Double> line;
         // Check for flow measurement
@@ -50,9 +51,9 @@ public class Last40DaysSampleFetchServiceImpl extends AbstractLineFetchService i
     }
 
     @Override
-    public Set<Last40Days> fetchLast40DaysSamples(Set<Integer> stationIds) throws URISyntaxException {
+    public Set<Last40Days> fetchLast40DaysSamples(Set<ApiStationId> stationIds) throws URISyntaxException {
         Set<Last40Days> result = new HashSet<>();
-        for (Integer stationId : stationIds) {
+        for (ApiStationId stationId : stationIds) {
             try {
                 result.add(fetchLast40DaysSamples(stationId));
             } catch (IOException e) {

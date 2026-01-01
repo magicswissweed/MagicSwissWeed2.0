@@ -4,6 +4,8 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -19,23 +21,27 @@ public class Last_40DaysSamplesTable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final UUID dbId;
-    private final Integer stationId;
+    private final String stationId;
     private final JSONB last40dayssamples;
+    private final Country country;
 
     public Last_40DaysSamplesTable(Last_40DaysSamplesTable value) {
         this.dbId = value.dbId;
         this.stationId = value.stationId;
         this.last40dayssamples = value.last40dayssamples;
+        this.country = value.country;
     }
 
     public Last_40DaysSamplesTable(
         UUID dbId,
-        Integer stationId,
-        JSONB last40dayssamples
+        String stationId,
+        JSONB last40dayssamples,
+        Country country
     ) {
         this.dbId = dbId;
         this.stationId = stationId;
         this.last40dayssamples = last40dayssamples;
+        this.country = country;
     }
 
     /**
@@ -48,7 +54,7 @@ public class Last_40DaysSamplesTable implements Serializable {
     /**
      * Getter for <code>public.last_40_days_samples_table.station_id</code>.
      */
-    public Integer getStationId() {
+    public String getStationId() {
         return this.stationId;
     }
 
@@ -58,6 +64,13 @@ public class Last_40DaysSamplesTable implements Serializable {
      */
     public JSONB getLast40dayssamples() {
         return this.last40dayssamples;
+    }
+
+    /**
+     * Getter for <code>public.last_40_days_samples_table.country</code>.
+     */
+    public Country getCountry() {
+        return this.country;
     }
 
     @Override
@@ -87,6 +100,12 @@ public class Last_40DaysSamplesTable implements Serializable {
         }
         else if (!this.last40dayssamples.equals(other.last40dayssamples))
             return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        }
+        else if (!this.country.equals(other.country))
+            return false;
         return true;
     }
 
@@ -97,6 +116,7 @@ public class Last_40DaysSamplesTable implements Serializable {
         result = prime * result + ((this.dbId == null) ? 0 : this.dbId.hashCode());
         result = prime * result + ((this.stationId == null) ? 0 : this.stationId.hashCode());
         result = prime * result + ((this.last40dayssamples == null) ? 0 : this.last40dayssamples.hashCode());
+        result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         return result;
     }
 
@@ -107,6 +127,7 @@ public class Last_40DaysSamplesTable implements Serializable {
         sb.append(dbId);
         sb.append(", ").append(stationId);
         sb.append(", ").append(last40dayssamples);
+        sb.append(", ").append(country);
 
         sb.append(")");
         return sb.toString();

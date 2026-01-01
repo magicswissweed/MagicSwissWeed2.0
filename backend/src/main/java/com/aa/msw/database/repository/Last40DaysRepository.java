@@ -3,6 +3,7 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.Last40DaysId;
 import com.aa.msw.database.repository.dao.Last40DaysDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.daos.Last_40DaysSamplesTableDao;
 import com.aa.msw.gen.jooq.tables.records.Last_40DaysSamplesTableRecord;
@@ -17,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
 @Component
 public class Last40DaysRepository extends AbstractRepository
@@ -76,7 +80,7 @@ public class Last40DaysRepository extends AbstractRepository
     protected Last40Days mapRecord(Last_40DaysSamplesTableRecord record) {
         return new Last40Days(
                 new Last40DaysId(record.getDbId()),
-                record.getStationId(),
+                apiStationId(record.getCountry(), record.getStationId()),
                 jsonbToOrderedMap(record.getLast40dayssamples())
         );
     }
@@ -86,7 +90,8 @@ public class Last40DaysRepository extends AbstractRepository
         final Last_40DaysSamplesTableRecord record = dsl.newRecord(table);
 
         record.setDbId(last40Days.getDatabaseId().getId());
-        record.setStationId(last40Days.getStationId());
+        record.setCountry(country(last40Days.getStationId().getCountry()));
+        record.setStationId(last40Days.getStationId().getExternalId());
         record.setLast40dayssamples(orderedMapToJsonb(last40Days.getLast40DaysSamples()));
 
         return record;
@@ -97,7 +102,7 @@ public class Last40DaysRepository extends AbstractRepository
     ) {
         return new Last40Days(
                 new Last40DaysId(last40DaysSamplesTable.getDbId()),
-                last40DaysSamplesTable.getStationId(),
+                apiStationId(last40DaysSamplesTable.getCountry(), last40DaysSamplesTable.getStationId()),
                 jsonbToOrderedMap(last40DaysSamplesTable.getLast40dayssamples())
         );
     }
@@ -106,7 +111,9 @@ public class Last40DaysRepository extends AbstractRepository
     @Transactional
     public void persistLast40DaysSamples(Set<Last40Days> fetchedLast40DaysSamples) {
         fetchedLast40DaysSamples.stream()
-                .sorted(Comparator.comparingInt(Last40Days::stationId))
+                // sorting the collection to ensure consistent lock acquisition order and prevent deadlocks
+                .sorted(Comparator.comparing((Last40Days l) -> l.stationId().getCountry().toString())
+                        .thenComparing(l -> l.stationId().getExternalId()))
                 .forEach(last40Days -> {
                     deleteIfExists(last40Days.stationId());
                     insert(last40Days);
@@ -114,17 +121,19 @@ public class Last40DaysRepository extends AbstractRepository
     }
 
     @Override
-    public Last40Days getForStation(Integer stationId) throws NoDataAvailableException {
+    public Last40Days getForStation(ApiStationId stationId) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.STATION_ID.eq(stationId))
+                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                        .and(TABLE.STATION_ID.eq(stationId.getExternalId())))
                 .limit(1)
                 .fetchOptional(this::mapRecord)
-                .orElseThrow(() -> new NoDataAvailableException("No current Last40DaysSamples found for station " + stationId));
+                .orElseThrow(() -> new NoDataAvailableException("No current Last40DaysSamples found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
     }
 
-    private void deleteIfExists(int stationId) {
+    private void deleteIfExists(ApiStationId stationId) {
         dsl.deleteFrom(TABLE)
-                .where(TABLE.STATION_ID.eq(stationId))
+                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                        .and(TABLE.STATION_ID.eq(stationId.getExternalId())))
                 .execute();
     }
 }

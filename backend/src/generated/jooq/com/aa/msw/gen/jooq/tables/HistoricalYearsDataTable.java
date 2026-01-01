@@ -6,6 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.records.HistoricalYearsDataTableRecord;
 
 import java.util.Collection;
@@ -59,7 +60,7 @@ public class HistoricalYearsDataTable extends TableImpl<HistoricalYearsDataTable
     /**
      * The column <code>public.historical_years_data_table.station_id</code>.
      */
-    public final TableField<HistoricalYearsDataTableRecord, Integer> STATION_ID = createField(DSL.name("station_id"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<HistoricalYearsDataTableRecord, String> STATION_ID = createField(DSL.name("station_id"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.historical_years_data_table.median</code>.
@@ -92,6 +93,11 @@ public class HistoricalYearsDataTable extends TableImpl<HistoricalYearsDataTable
      * The column <code>public.historical_years_data_table.current_year</code>.
      */
     public final TableField<HistoricalYearsDataTableRecord, JSONB> CURRENT_YEAR = createField(DSL.name("current_year"), SQLDataType.JSONB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.historical_years_data_table.country</code>.
+     */
+    public final TableField<HistoricalYearsDataTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
 
     private HistoricalYearsDataTable(Name alias, Table<HistoricalYearsDataTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.records.StationTableRecord;
 
@@ -73,14 +74,14 @@ public class StationTableDao extends DAOImpl<StationTableRecord, com.aa.msw.gen.
      * Fetch records that have <code>stationid BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfStationid(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfStationid(String lowerInclusive, String upperInclusive) {
         return fetchRange(StationTable.STATION_TABLE.STATIONID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>stationid IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByStationid(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByStationid(String... values) {
         return fetch(StationTable.STATION_TABLE.STATIONID, values);
     }
 
@@ -127,5 +128,20 @@ public class StationTableDao extends DAOImpl<StationTableRecord, com.aa.msw.gen.
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByLongitude(Double... values) {
         return fetch(StationTable.STATION_TABLE.LONGITUDE, values);
+    }
+
+    /**
+     * Fetch records that have <code>country BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+        return fetchRange(StationTable.STATION_TABLE.COUNTRY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>country IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByCountry(Country... values) {
+        return fetch(StationTable.STATION_TABLE.COUNTRY, values);
     }
 }

@@ -3,6 +3,7 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.ForecastId;
 import com.aa.msw.database.repository.dao.ForecastDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.daos.ForecastTableDao;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
@@ -21,6 +22,9 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
 
 @Component
@@ -49,7 +53,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
     protected Forecast mapRecord(ForecastTableRecord record) {
         return getForecast(
                 record.getId(),
-                record.getStationid(),
+                apiStationId(record.getCountry(), record.getStationid()),
                 record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
                 record.getMeasureddata(),
                 record.getMedian(),
@@ -81,7 +85,8 @@ public class ForecastRepository extends AbstractTimestampedRepository
         }
 
         record.setId(forecast.forecastId().getId());
-        record.setStationid(forecast.getStationId());
+        record.setCountry(country(forecast.getStationId().getCountry()));
+        record.setStationid(forecast.getStationId().getExternalId());
         record.setTimestamp(forecast.getTimestamp());
         record.setMeasureddata(measuredData);
         record.setMedian(median);
@@ -96,7 +101,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
     protected Forecast mapEntity(com.aa.msw.gen.jooq.tables.pojos.ForecastTable forecastTable) {
         return getForecast(
                 forecastTable.getId(),
-                forecastTable.getStationid(),
+                apiStationId(forecastTable.getCountry(), forecastTable.getStationid()),
                 forecastTable.getTimestamp(),
                 forecastTable.getMeasureddata(),
                 forecastTable.getMedian(),
@@ -106,7 +111,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
                 forecastTable.getMax());
     }
 
-    private Forecast getForecast(UUID forecastId, Integer stationid, OffsetDateTime timestamp, JSONB jsonMeasured, JSONB jsonMedian, JSONB jsonTwentyFivePercentile, JSONB jsonSeventyFivePercentile, JSONB jsonMin, JSONB jsonMax) {
+    private Forecast getForecast(UUID forecastId, ApiStationId stationid, OffsetDateTime timestamp, JSONB jsonMeasured, JSONB jsonMedian, JSONB jsonTwentyFivePercentile, JSONB jsonSeventyFivePercentile, JSONB jsonMin, JSONB jsonMax) {
         Map<OffsetDateTime, Double> measuredData;
         Map<OffsetDateTime, Double> median;
         Map<OffsetDateTime, Double> twentyFivePercentile;
@@ -137,9 +142,10 @@ public class ForecastRepository extends AbstractTimestampedRepository
     }
 
     @Override
-    public Forecast getCurrentForecast(int stationId) throws NoDataAvailableException {
+    public Forecast getCurrentForecast(ApiStationId stationId) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.STATIONID.eq(stationId))
+                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                        .and(TABLE.STATIONID.eq(stationId.getExternalId())))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)

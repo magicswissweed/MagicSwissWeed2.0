@@ -1,6 +1,8 @@
 package com.aa.msw.source.hydrodaten.forecast;
 
 import com.aa.msw.database.helpers.id.ForecastId;
+import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.model.Forecast;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.context.annotation.Profile;
@@ -12,18 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+
 @Profile("test")
 @Service
-class ForecastFetchServiceMock implements ForecastFetchService {
+class SwissForecastFetchServiceMock implements SwissForecastFetchService {
 
     private final List<Forecast> forecasts = List.of(
-            forecast(2018),
-            forecast(2243),
-            forecast(2174)
+            forecast(apiStationId(Country.CH, "2018")),
+            forecast(apiStationId(Country.CH, "2243")),
+            forecast(apiStationId(Country.CH, "2174"))
     );
 
     @Override
-    public List<Forecast> fetchForecasts(Set<Integer> stationIds) {
+    public List<Forecast> fetchForecasts(Set<ApiStationId> stationIds) {
         return forecasts;
     }
 
@@ -32,16 +36,16 @@ class ForecastFetchServiceMock implements ForecastFetchService {
     }
 
     @Override
-    public Forecast fetchForecast(int stationId) {
+    public Forecast fetchForecast(ApiStationId stationId) {
         for (Forecast forecast : forecasts) {
-            if (forecast.stationId() == stationId) {
+            if (forecast.stationId().equals(stationId.getExternalId())) {
                 return forecast;
             }
         }
         throw new NotImplementedException("Add the forecast with this stationId to the ForecastFetchServiceMock");
     }
 
-    private Forecast forecast(int stationId) {
+    private Forecast forecast(ApiStationId stationId) {
         return new Forecast(
                 new ForecastId(),
                 stationId,

@@ -2,6 +2,7 @@ package com.aa.msw.integrationtest.spots;
 
 import com.aa.msw.gen.api.AddPrivateSpotRequest;
 import com.aa.msw.gen.api.ApiSpot;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.integrationtest.IntegrationTest;
 import com.aa.msw.integrationtest.TestUser;
 import com.google.gson.Gson;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 import static org.hamcrest.Matchers.hasSize;
 
 public class SpotsTest extends IntegrationTest {
@@ -37,7 +39,7 @@ public class SpotsTest extends IntegrationTest {
                                         new ApiSpot(
                                                 UUID.randomUUID(),
                                                 "someSpotName",
-                                                2018,
+                                                apiStationId(Country.CH, "2018"),
                                                 ApiSpot.SpotTypeEnum.RIVER_SURF,
                                                 false,
                                                 20,
@@ -45,6 +47,8 @@ public class SpotsTest extends IntegrationTest {
                                                 null,
                                                 false
                                         ),
+
+
                                         0
                                 )
                         )

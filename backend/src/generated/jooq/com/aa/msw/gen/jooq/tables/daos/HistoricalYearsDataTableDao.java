@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 import com.aa.msw.gen.jooq.tables.records.HistoricalYearsDataTableRecord;
 
@@ -74,14 +75,14 @@ public class HistoricalYearsDataTableDao extends DAOImpl<HistoricalYearsDataTabl
      * Fetch records that have <code>station_id BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchRangeOfStationId(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchRangeOfStationId(String lowerInclusive, String upperInclusive) {
         return fetchRange(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.STATION_ID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>station_id IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchByStationId(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchByStationId(String... values) {
         return fetch(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.STATION_ID, values);
     }
 
@@ -173,5 +174,20 @@ public class HistoricalYearsDataTableDao extends DAOImpl<HistoricalYearsDataTabl
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchByCurrentYear(JSONB... values) {
         return fetch(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.CURRENT_YEAR, values);
+    }
+
+    /**
+     * Fetch records that have <code>country BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+        return fetchRange(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.COUNTRY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>country IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchByCountry(Country... values) {
+        return fetch(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.COUNTRY, values);
     }
 }

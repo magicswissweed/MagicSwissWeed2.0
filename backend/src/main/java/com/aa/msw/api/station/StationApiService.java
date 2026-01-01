@@ -2,10 +2,11 @@ package com.aa.msw.api.station;
 
 import com.aa.msw.database.exceptions.NoSampleAvailableException;
 import com.aa.msw.database.repository.dao.StationDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.InputDataFetcherService;
-import com.aa.msw.source.hydrodaten.stations.StationFetchService;
+import com.aa.msw.source.hydrodaten.stations.SwissStationFetchService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +22,12 @@ public class StationApiService {
     // holds the stations in-memory for faster access - but also in db for fast startup (mostly for dev purposes)
 
     private final StationDao stationDao;
-    private final StationFetchService stationFetchService;
+    private final SwissStationFetchService swissStationFetchService;
     private final InputDataFetcherService inputDataFetcherService;
     private Set<Station> stations = new HashSet<>();
 
-    public StationApiService(StationFetchService stationFetchService, InputDataFetcherService inputDataFetcherService, StationDao stationDao) {
-        this.stationFetchService = stationFetchService;
+    public StationApiService(SwissStationFetchService swissStationFetchService, InputDataFetcherService inputDataFetcherService, StationDao stationDao) {
+        this.swissStationFetchService = swissStationFetchService;
         this.inputDataFetcherService = inputDataFetcherService;
         this.stationDao = stationDao;
     }
@@ -63,7 +64,7 @@ public class StationApiService {
     }
 
     private Set<Station> fetchStations() {
-        return stationFetchService
+        return swissStationFetchService
                 .fetchStations()
                 .stream()
                 .filter(this::isValidStation)
@@ -71,7 +72,7 @@ public class StationApiService {
     }
 
     @Transactional
-    public Station getStation(Integer id) throws NoSuchElementException {
+    public Station getStation(ApiStationId id) throws NoSuchElementException {
         return getStations().stream()
                 .filter(s -> s.stationId().equals(id))
                 .findFirst().orElseThrow();

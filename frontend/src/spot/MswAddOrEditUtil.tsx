@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {ApiSpotSpotTypeEnum, ApiStation} from "../gen/msw-api-ts";
+import {ApiSpotSpotTypeEnum, ApiStation, ApiStationId} from "../gen/msw-api-ts";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import Modal from "react-bootstrap/Modal";
@@ -8,7 +8,7 @@ import './MswAddOrEditUtil.scss';
 
 export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCancelModal: (() => void) | undefined, formRef: React.MutableRefObject<HTMLFormElement | null>, handleSaveAndCloseModal: (e: {
     preventDefault: any
-}) => void, spotName: string, setSpotName: (value: (((prevState: string) => string) | string)) => void, type: ApiSpotSpotTypeEnum, setType: (value: (((prevState: (ApiSpotSpotTypeEnum)) => (ApiSpotSpotTypeEnum)) | ApiSpotSpotTypeEnum)) => void, setStationId: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, setStationSelectionError: (value: (((prevState: string) => string) | string)) => void, stations: ApiStation[], stationId: number | undefined, stationSelectionError: string, minFlow: number | undefined, setMinFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, maxFlow: number | undefined, setMaxFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, withNotification: boolean, setWithNotification: (value: (((prevState: (boolean)) => (boolean)) | boolean)) => void, isSubmitButtonDisabled: boolean | undefined, setIsSubmitButtonDisabled: (value: (((prevState: boolean) => boolean) | boolean)) => void, isEditMode: boolean) {
+}) => void, spotName: string, setSpotName: (value: (((prevState: string) => string) | string)) => void, type: ApiSpotSpotTypeEnum, setType: (value: (((prevState: ApiSpotSpotTypeEnum) => ApiSpotSpotTypeEnum) | ApiSpotSpotTypeEnum)) => void, setStationId: (value: (((prevState: (ApiStationId | undefined)) => (ApiStationId | undefined)) | ApiStationId | undefined)) => void, setStationSelectionError: (value: (((prevState: string) => string) | string)) => void, stations: ApiStation[], stationId: ApiStationId | undefined, stationSelectionError: string, minFlow: number | undefined, setMinFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, maxFlow: number | undefined, setMaxFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, withNotification: boolean, setWithNotification: (value: (((prevState: boolean) => boolean) | boolean)) => void, isSubmitButtonDisabled: boolean | undefined, setIsSubmitButtonDisabled: (value: (((prevState: boolean) => boolean) | boolean)) => void, isEditMode: boolean) {
     // Validation effect for enabling/disabling submit button
     useEffect(() => {
         const flowsValid =
@@ -16,7 +16,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
             maxFlow !== undefined && maxFlow >= 0 &&
             maxFlow > minFlow;
         const nameValid = spotName.trim() !== "";
-        const stationValid = stations.some(station => station.id === stationId);
+        const stationValid = stations.some(station => station.id.country === stationId?.country && station.id.externalId === stationId.externalId);
 
         if (flowsValid && nameValid && stationValid) {
             setIsSubmitButtonDisabled(false);
@@ -97,7 +97,10 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                         }
                                     }}
                                     onBlur={() => {
-                                        const matchingStation = stations.find(station => station.id === stationId);
+                                        let matchingStation = undefined;
+                                        if (stationId) {
+                                            matchingStation = stations.find(s => s.id.country === stationId.country && s.id.externalId === stationId.externalId);
+                                        }
                                         if (!matchingStation) {
                                             setStationId(undefined);
                                             setStationSelectionError("Please select a valid option.");
@@ -106,7 +109,12 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                     }}
                                     options={stations}
                                     placeholder="Station"
-                                    selected={stations.filter(station => station.id === stationId)}
+                                    selected={stations.filter(s => {
+                                        if (stationId === undefined) {
+                                            return false;
+                                        }
+                                        return s.id.country === stationId.country && s.id.externalId === stationId.externalId;
+                                    })}
                                 />
                                 {stationSelectionError && <div style={{color: 'red'}}>{stationSelectionError}</div>}
                             </Form.Group>

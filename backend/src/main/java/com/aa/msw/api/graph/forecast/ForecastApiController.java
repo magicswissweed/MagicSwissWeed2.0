@@ -1,6 +1,5 @@
 package com.aa.msw.api.graph.forecast;
 
-import com.aa.msw.gen.api.ApiForecast;
 import com.aa.msw.gen.api.ForecastApi;
 import com.aa.msw.gen.api.StationToApiForecasts;
 import org.springframework.http.HttpStatus;
@@ -15,16 +14,6 @@ public class ForecastApiController implements ForecastApi {
 
     public ForecastApiController(ForecastApiService forecastApiService) {
         this.forecastApiService = forecastApiService;
-    }
-
-    @Override
-    public ResponseEntity<ApiForecast> getForecast(Integer stationId) {
-        try {
-            ApiForecast forecast = forecastApiService.getCurrentForecast(stationId);
-            return ResponseEntity.ok(forecast);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @Override

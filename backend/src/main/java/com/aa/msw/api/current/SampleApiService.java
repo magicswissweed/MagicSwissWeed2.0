@@ -5,6 +5,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiFlowSample;
 import com.aa.msw.gen.api.ApiSample;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Sample;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +29,11 @@ public class SampleApiService {
                 .flow(sample.flow());
     }
 
-    public ApiSample getCurrentSample(Integer stationId) throws NoDataAvailableException {
-        return mapSample(sampleDao.getCurrentSample(stationId));
+    public ApiSample getCurrentSample(ApiStationId apiStationId) throws NoDataAvailableException {
+        return mapSample(sampleDao.getCurrentSample(apiStationId));
     }
 
-    public List<ApiFlowSample> getLast40DaysSamples(Integer stationId) throws NoDataAvailableException {
+    public List<ApiFlowSample> getLast40DaysSamples(ApiStationId stationId) throws NoDataAvailableException {
         return last40daysApiService
                 .getLast40Days(stationId)
                 .last40DaysSamples()

@@ -3,6 +3,7 @@ package com.aa.msw.api.graph.historical;
 import com.aa.msw.api.graph.AbstractGraphLineApiService;
 import com.aa.msw.api.spots.SpotsApiService;
 import com.aa.msw.gen.api.ApiHistoricalYears;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.StationToApiHistoricalYears;
 import com.aa.msw.model.HistoricalYearsData;
 import org.springframework.context.annotation.Profile;
@@ -23,7 +24,7 @@ public class HistoricalYearsApiServiceImpl extends AbstractGraphLineApiService i
         this.spotsApiService = spotsApiService;
     }
 
-    public ApiHistoricalYears getApiHistoricalYearsData(Integer stationId) {
+    public ApiHistoricalYears getApiHistoricalYearsData(ApiStationId stationId) {
         HistoricalYearsData historicData = historicalYearsAccessorService.getHistoricalYearsData().get(stationId);
         if (historicData == null) {
             return null;
@@ -41,7 +42,7 @@ public class HistoricalYearsApiServiceImpl extends AbstractGraphLineApiService i
     @Override
     public List<StationToApiHistoricalYears> getAllApiHistoricalYearsData() {
         List<StationToApiHistoricalYears> apiHistoricalYearsList = new ArrayList<>();
-        for (Integer station : spotsApiService.getStations()) {
+        for (ApiStationId station : spotsApiService.getStations()) {
             apiHistoricalYearsList.add(new StationToApiHistoricalYears(station, getApiHistoricalYearsData(station)));
         }
         return apiHistoricalYearsList;

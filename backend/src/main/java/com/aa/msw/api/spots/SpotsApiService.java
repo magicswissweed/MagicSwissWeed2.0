@@ -15,6 +15,7 @@ import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiFlowStatusEnum;
 import com.aa.msw.gen.api.ApiSpotInformation;
 import com.aa.msw.gen.api.ApiStation;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.*;
 import com.aa.msw.source.InputDataFetcherService;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class SpotsApiService {
         this.spotDbService = spotDbService;
     }
 
-    public Set<Integer> getStations() {
+    public Set<ApiStationId> getStations() {
         return getSpots()
                 .stream()
                 .map(i -> i.getStation().getId())
@@ -168,7 +169,7 @@ public class SpotsApiService {
         spotDbService.updatePrivateSpot(updatedSpot);
     }
 
-    private void fetchSamplesAndPersistIfExists(Integer stationId) throws NoSampleAvailableException {
+    private void fetchSamplesAndPersistIfExists(ApiStationId stationId) throws NoSampleAvailableException {
         List<Sample> samples = inputDataFetcherService.fetchForStationId(stationId);
         sampleDao.persistSamplesIfNotExist(samples);
     }

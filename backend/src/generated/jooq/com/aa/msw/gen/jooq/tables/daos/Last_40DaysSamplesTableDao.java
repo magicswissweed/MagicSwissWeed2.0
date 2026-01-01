@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.records.Last_40DaysSamplesTableRecord;
 
@@ -74,14 +75,14 @@ public class Last_40DaysSamplesTableDao extends DAOImpl<Last_40DaysSamplesTableR
      * Fetch records that have <code>station_id BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchRangeOfStationId(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchRangeOfStationId(String lowerInclusive, String upperInclusive) {
         return fetchRange(Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE.STATION_ID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>station_id IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchByStationId(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchByStationId(String... values) {
         return fetch(Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE.STATION_ID, values);
     }
 
@@ -98,5 +99,20 @@ public class Last_40DaysSamplesTableDao extends DAOImpl<Last_40DaysSamplesTableR
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchByLast40dayssamples(JSONB... values) {
         return fetch(Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE.LAST40DAYSSAMPLES, values);
+    }
+
+    /**
+     * Fetch records that have <code>country BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+        return fetchRange(Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE.COUNTRY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>country IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.Last_40DaysSamplesTable> fetchByCountry(Country... values) {
+        return fetch(Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE.COUNTRY, values);
     }
 }

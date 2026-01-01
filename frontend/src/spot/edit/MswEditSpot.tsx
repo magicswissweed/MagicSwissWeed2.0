@@ -1,7 +1,14 @@
 import './MswEditSpot.scss';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import React, {useEffect, useRef, useState} from "react";
-import {ApiSpot, ApiSpotSpotTypeEnum, ApiStation, EditPrivateSpotRequest, SpotsApi} from '../../gen/msw-api-ts';
+import {
+    ApiSpot,
+    ApiSpotSpotTypeEnum,
+    ApiStation,
+    ApiStationId,
+    EditPrivateSpotRequest,
+    SpotsApi
+} from '../../gen/msw-api-ts';
 import {useUserAuth} from '../../user/UserAuthContext';
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../../api/config/AuthConfiguration";
@@ -32,7 +39,7 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     // define form states and use the current spot data as initial values
     const [spotName, setSpotName] = useState(spot.name || "");
     const [type, setType] = useState<ApiSpotSpotTypeEnum>(spot.spotType || ApiSpotSpotTypeEnum.RiverSurf);
-    const [stationId, setStationId] = useState<number | undefined>(spot.stationId);
+    const [stationId, setStationId] = useState<ApiStationId | undefined>(spot.stationId);
     const [minFlow, setMinFlow] = useState<number | undefined>(spot.minFlow);
     const [maxFlow, setMaxFlow] = useState<number | undefined>(spot.maxFlow);
     const [withNotification, setWithNotification] = useState(spot.withNotification);
@@ -62,15 +69,16 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
         let config = await authConfiguration(token);
 
         // create new spot object with the updated values
+        // TODO: country
         const apiSpot: ApiSpot = {
             id: spot.id,
             name: spotName,
-            stationId: stationId!,
+            stationId: stationId,
             spotType: type,
             isPublic: false,
             minFlow: minFlow!,
             maxFlow: maxFlow!,
-            station: stations.filter(s => s.id === stationId).pop()!,
+            station: stations.filter(s => s.id.country === stationId.country && s.id.externalId === stationId.externalId).pop()!,
             withNotification: withNotification
         };
 

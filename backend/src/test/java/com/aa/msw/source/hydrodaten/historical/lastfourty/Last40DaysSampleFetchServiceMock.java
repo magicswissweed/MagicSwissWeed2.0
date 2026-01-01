@@ -1,5 +1,6 @@
 package com.aa.msw.source.hydrodaten.historical.lastfourty;
 
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Last40Days;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.Set;
 class Last40DaysSampleFetchServiceMock implements Last40DaysSampleFetchService {
 
     @Override
-    public Set<Last40Days> fetchLast40DaysSamples(Set<Integer> stationIds) throws URISyntaxException {
+    public Set<Last40Days> fetchLast40DaysSamples(Set<ApiStationId> stationIds) throws URISyntaxException {
         return Set.of();
     }
 }

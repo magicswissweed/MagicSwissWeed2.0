@@ -2,9 +2,10 @@ package com.aa.msw.api.graph.historical;
 
 import com.aa.msw.api.station.StationApiService;
 import com.aa.msw.database.repository.dao.HistoricalYearsDataDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.HistoricalYearsData;
 import com.aa.msw.model.Station;
-import com.aa.msw.source.hydrodaten.historical.years.HistoricalYearsDataFetchService;
+import com.aa.msw.source.hydrodaten.historical.years.SwissHistoricalYearsDataFetchService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,21 +21,21 @@ import java.util.stream.Collectors;
 
 @Service
 public class HistoricalYearsAccessorService {
-    private final HistoricalYearsDataFetchService historicalYearsDataFetchService;
+    private final SwissHistoricalYearsDataFetchService swissHistoricalYearsDataFetchService;
     private final StationApiService stationApiService;
     private final HistoricalYearsDataDao hystoricalYearsDao;
 
-    private Map<Integer, HistoricalYearsData> historicalYearsData = new HashMap<>();
+    private Map<ApiStationId, HistoricalYearsData> historicalYearsData = new HashMap<>();
 
-    public HistoricalYearsAccessorService(HistoricalYearsDataFetchService historicalYearsDataFetchService, StationApiService stationApiService, HistoricalYearsDataDao hystoricalYearsDao) {
-        this.historicalYearsDataFetchService = historicalYearsDataFetchService;
+    public HistoricalYearsAccessorService(SwissHistoricalYearsDataFetchService swissHistoricalYearsDataFetchService, StationApiService stationApiService, HistoricalYearsDataDao hystoricalYearsDao) {
+        this.swissHistoricalYearsDataFetchService = swissHistoricalYearsDataFetchService;
         this.stationApiService = stationApiService;
         this.hystoricalYearsDao = hystoricalYearsDao;
     }
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
-    public Map<Integer, HistoricalYearsData> getHistoricalYearsData() {
+    public Map<ApiStationId, HistoricalYearsData> getHistoricalYearsData() {
         if (!historicalYearsData.isEmpty()) {
             return historicalYearsData;
         }
@@ -67,17 +68,17 @@ public class HistoricalYearsAccessorService {
     private Set<HistoricalYearsData> fetchHistoricalYears() {
         try {
             Set<Station> stations = stationApiService.getStations();
-            Set<Integer> stationIds = stations.stream()
+            Set<ApiStationId> stationIds = stations.stream()
                     .map(Station::stationId)
                     .collect(Collectors.toSet());
-            return historicalYearsDataFetchService.fetchHistoricalYearsData(stationIds);
+            return swissHistoricalYearsDataFetchService.fetchHistoricalYearsData(stationIds);
         } catch (URISyntaxException e) {
             // nop
         }
         return Collections.emptySet();
     }
 
-    private Map<Integer, HistoricalYearsData> setToMap(Set<HistoricalYearsData> historicalYearsSet) {
+    private Map<ApiStationId, HistoricalYearsData> setToMap(Set<HistoricalYearsData> historicalYearsSet) {
         return historicalYearsSet.stream()
                 .collect(Collectors.toMap(HistoricalYearsData::stationId, h -> h));
     }

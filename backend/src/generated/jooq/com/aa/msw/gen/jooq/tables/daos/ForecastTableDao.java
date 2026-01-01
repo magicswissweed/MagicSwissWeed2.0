@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
 
@@ -75,14 +76,14 @@ public class ForecastTableDao extends DAOImpl<ForecastTableRecord, com.aa.msw.ge
      * Fetch records that have <code>stationid BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchRangeOfStationid(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchRangeOfStationid(String lowerInclusive, String upperInclusive) {
         return fetchRange(ForecastTable.FORECAST_TABLE.STATIONID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>stationid IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchByStationid(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchByStationid(String... values) {
         return fetch(ForecastTable.FORECAST_TABLE.STATIONID, values);
     }
 
@@ -189,5 +190,20 @@ public class ForecastTableDao extends DAOImpl<ForecastTableRecord, com.aa.msw.ge
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchBySeventyfivepercentile(JSONB... values) {
         return fetch(ForecastTable.FORECAST_TABLE.SEVENTYFIVEPERCENTILE, values);
+    }
+
+    /**
+     * Fetch records that have <code>country BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+        return fetchRange(ForecastTable.FORECAST_TABLE.COUNTRY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>country IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchByCountry(Country... values) {
+        return fetch(ForecastTable.FORECAST_TABLE.COUNTRY, values);
     }
 }
