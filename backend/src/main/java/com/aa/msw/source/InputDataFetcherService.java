@@ -7,15 +7,16 @@ import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.database.repository.dao.StationDao;
 import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Forecast;
 import com.aa.msw.model.Last40Days;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.notifications.NotificationService;
 import com.aa.msw.notifications.NotificationSpotInfo;
-import com.aa.msw.source.existenz.sample.SwissSampleFetchService;
-import com.aa.msw.source.hydrodaten.forecast.SwissForecastFetchService;
-import com.aa.msw.source.hydrodaten.historical.lastfourty.Last40DaysSampleFetchService;
+import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
+import com.aa.msw.source.swiss.hydrodaten.forecast.SwissForecastFetchService;
+import com.aa.msw.source.swiss.hydrodaten.historical.lastfourty.Last40DaysSampleFetchService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -50,9 +51,12 @@ public class InputDataFetcherService {
     }
 
     public List<Sample> fetchForStationId(ApiStationId stationId) throws NoSampleAvailableException {
-        List<Sample> samples;
+        List<Sample> samples = List.of();
         try {
-            samples = swissSampleFetchService.fetchSamples(Set.of(stationId));
+            switch (stationId.getCountry()) {
+                case CH -> samples = swissSampleFetchService.fetchSamples(Set.of(stationId));
+                case FR -> System.out.println("TODO");
+            }
         } catch (IOException | URISyntaxException e) {
             throw new NoSampleAvailableException(e.getMessage());
         }
@@ -70,7 +74,11 @@ public class InputDataFetcherService {
     }
 
     private void fetchAndWriteSamples(Set<ApiStationId> stationIds) throws IOException, URISyntaxException {
-        List<Sample> samples = swissSampleFetchService.fetchSamples(stationIds);
+        List<Sample> samples = swissSampleFetchService.fetchSamples(
+                stationIds.stream()
+                        .filter(stationId -> stationId.getCountry().equals(CountryEnum.CH))
+                        .collect(Collectors.toSet())
+        );
         sampleDao.persistSamplesIfNotExist(samples);
     }
 

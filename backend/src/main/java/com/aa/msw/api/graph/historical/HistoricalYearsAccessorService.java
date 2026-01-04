@@ -5,7 +5,7 @@ import com.aa.msw.database.repository.dao.HistoricalYearsDataDao;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.HistoricalYearsData;
 import com.aa.msw.model.Station;
-import com.aa.msw.source.hydrodaten.historical.years.SwissHistoricalYearsDataFetchService;
+import com.aa.msw.source.swiss.hydrodaten.historical.years.SwissHistoricalYearsDataFetchService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;

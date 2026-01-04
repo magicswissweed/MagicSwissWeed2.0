@@ -20,6 +20,12 @@ public abstract class AbstractFetchService {
         }
         InputStreamReader in = new InputStreamReader(conn.getInputStream());
         BufferedReader br = new BufferedReader(in);
-        return br.readLine();
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            response.append(line);
+        }
+        br.close();
+        return response.toString();
     }
 }
