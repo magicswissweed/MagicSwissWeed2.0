@@ -4,9 +4,11 @@ interface AuthModalContextType {
     showLoginModal: boolean;
     showSignupModal: boolean;
     showForgotPasswordModal: boolean;
+    showProfileModal: boolean;
     setShowLoginModal: (show: boolean) => void;
     setShowSignupModal: (show: boolean) => void;
     setShowForgotPasswordModal: (show: boolean) => void;
+    setShowProfileModal: (show: boolean) => void;
 }
 
 const AuthModalContext = createContext<AuthModalContextType | undefined>(undefined);
@@ -23,14 +25,17 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignupModal, setShowSignupModal] = useState(false);
     const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
 
     const value = {
         showLoginModal,
         showSignupModal,
         showForgotPasswordModal,
+        showProfileModal,
         setShowLoginModal,
         setShowSignupModal,
-        setShowForgotPasswordModal
+        setShowForgotPasswordModal,
+        setShowProfileModal
     };
 
     return (

@@ -90,7 +90,7 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     let isEditMode = true;
     return <>
         <div className="icon" onClick={() => handleShowEditSpotModal()}>
-            <img alt="Edit this private spot." title="Edit this private spot." src={edit_icon}/>
+            <img className="button" alt="Edit this private spot." title="Edit this private spot." src={edit_icon}/>
         </div>
         {MswAddOrEditSpotModal(
             showEditSpotModal,

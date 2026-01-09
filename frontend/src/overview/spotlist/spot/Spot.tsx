@@ -102,7 +102,7 @@ export const Spot = (props: SpotProps) => {
                 }
                 {user &&
                     <div className="icon" onClick={() => handleShowConfirmationModal()}>
-                        <img alt="Delete this spot from your dashboard." title="Delete this spot from your dashboard."
+                        <img className="button" alt="Delete this spot from your dashboard." title="Delete this spot from your dashboard."
                              src={delete_icon}/>
                     </div>
                 }

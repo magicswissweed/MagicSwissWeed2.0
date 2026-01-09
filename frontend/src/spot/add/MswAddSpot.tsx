@@ -10,6 +10,7 @@ import {authConfiguration} from "../../api/config/AuthConfiguration";
 import {spotsService} from "../../service/SpotsService";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
+import plus_icon from '../../assets/plus_icon.svg';
 
 export const MswAddSpot = () => {
 
@@ -87,7 +88,10 @@ export const MswAddSpot = () => {
 
     let isEditMode = false;
     return <>
-        <Button variant='msw-outline me-2' size='sm' onClick={() => handleShowAddSpotModal()}>Add Spot</Button>
+        {/* <Button variant='msw-outline me-2' size='sm' onClick={() => handleShowAddSpotModal()}>Add Spot</Button> */}
+        <div className='icon' onClick={() => handleShowAddSpotModal()}>
+            <img className="button" alt="Add a new spot to your dashboard." title="Add a new spot to your dashboard." src={plus_icon}/>
+        </div>
         {MswAddOrEditSpotModal(
             showAddSpotModal,
             handleCancelAddSpotModal,

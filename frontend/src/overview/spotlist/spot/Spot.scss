@@ -59,6 +59,10 @@ $icons-container-width: 40px;
   }
 }
 
+.button {
+  cursor: pointer;
+}
+
 .spot > .spot-summary div.collapsible-icon {
   transition: all 1s;
   align-self: center;

@@ -6,10 +6,12 @@ import {MswAddSpot} from "../spot/add/MswAddSpot";
 import {MswLoginModal} from "../user/login/MswLoginModal";
 import MswSignUpModal from "../user/signup/MswSignUp";
 import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
+import {MswProfileModal} from "../user/profile/MswProfileModal";
 import {useAuthModal} from '../user/AuthModalContext';
 import '@khmyznikov/pwa-install';
 import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
 import {subscribeToPushNotifications} from "../subscribeToPushNotifications";
+import user_icon from '../assets/user_icon.svg';
 
 // Declare the custom element for TypeScript
 declare global {
@@ -27,9 +29,11 @@ export const MswHeader = () => {
         showLoginModal,
         showSignupModal,
         showForgotPasswordModal,
+        showProfileModal,
         setShowLoginModal,
         setShowSignupModal,
-        setShowForgotPasswordModal
+        setShowForgotPasswordModal,
+        setShowProfileModal
     } = useAuthModal();
     const isPwaInstalled = usePwaInstalled();
     const [shouldShowPwaInstallBrowserPopup, setShouldShowPwaInstallBrowserPopup] = useState<boolean>(false);
@@ -45,7 +49,12 @@ export const MswHeader = () => {
     if (user) {
         loginOrLogout = <>
             <MswAddSpot/>
-            <Button variant='danger' size='sm' onClick={logOut}>Log Out</Button>
+            {/* <Button variant='danger' size='sm' onClick={logOut}>Log Out</Button> */}
+            <div className='icon' onClick={() => setShowProfileModal(true)}>
+              <img className="button" alt="Show user information." title="Show user information." src={user_icon}/>
+            </div>
+            <MswProfileModal isOpen={showProfileModal}
+                             closeModal={() => setShowProfileModal(false)}/>
         </>
     } else {
         loginOrLogout = <>
