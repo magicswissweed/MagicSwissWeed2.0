@@ -75,9 +75,14 @@ export const Spot = (props: SpotProps) => {
         return <>
             <div className='icons-container'>
                 {user &&
-                    <div className={'icon drag-drop-icon arrow-icon'} {...props.dragHandleProps}>
-                        <img alt="Sort the spots on your dashboard." src={drag_drop_icon}/>
-                    </div>
+                    <Button
+                        variant="link"
+                        className={'icon drag-drop-icon arrow-icon'}
+                        {...props.dragHandleProps}
+                        aria-label="Sort the spots on your dashboard"
+                    >
+                        <img alt="" src={drag_drop_icon}/>
+                    </Button>
                 }
             </div>
             <div className="spotContainer" onClick={() => setIsSpotOpen(!isSpotOpen)}>
@@ -92,19 +97,29 @@ export const Spot = (props: SpotProps) => {
                 }
             </div>
             <div className="icons-container">
-                <div className="icon">
-                    <a href={link} target="_blank" rel="noreferrer">
-                        <img src={link_icon} alt="Link to the BAFU station" title="Link to the BAFU station"/>
-                    </a>
-                </div>
+                <Button
+                    variant="link"
+                    className="icon"
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Link to the BAFU station"
+                >
+                    <img src={link_icon} alt="" title="Link to the BAFU station"/>
+                </Button>
                 {user &&
                     <MswEditSpot spot={spot}/>
                 }
                 {user &&
-                    <div className="icon" onClick={() => handleShowConfirmationModal()}>
-                        <img className="button" alt="Delete this spot from your dashboard." title="Delete this spot from your dashboard."
+                    <Button
+                        variant="link"
+                        className="icon"
+                        onClick={() => handleShowConfirmationModal()}
+                        aria-label="Delete this spot from your dashboard"
+                    >
+                        <img className="button" alt="" title="Delete this spot from your dashboard."
                              src={delete_icon}/>
-                    </div>
+                    </Button>
                 }
                 <Modal show={showConfirmationModal} onHide={handleCancelConfirmationModal}>
                     <Modal.Header closeButton>
@@ -121,9 +136,14 @@ export const Spot = (props: SpotProps) => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <div className="collapsible-icon icon arrow-icon" onClick={() => setIsSpotOpen(!isSpotOpen)}>
-                    <img alt="extend forecast" src={arrow_down_icon}/>
-                </div>
+                <Button
+                    variant="link"
+                    className="collapsible-icon icon arrow-icon"
+                    onClick={() => setIsSpotOpen(!isSpotOpen)}
+                    aria-label="Toggle forecast details"
+                >
+                    <img alt="Toggle forecast details" src={arrow_down_icon}/>
+                </Button>
             </div>
         </>
     }

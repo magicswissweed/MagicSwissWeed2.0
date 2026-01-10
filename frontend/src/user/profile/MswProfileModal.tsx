@@ -1,27 +1,29 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button} from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {useUserAuth} from "../UserAuthContext";
+import user_icon from '../../assets/user_icon.svg';
 
-interface MswProfileModalProps {
-    isOpen: boolean,
-    closeModal: () => void
-}
+export const MswProfileModal = () => {
 
-export const MswProfileModal = (props: MswProfileModalProps) => {
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const handleShowProfileModal = () => setShowProfileModal(true);
+    const handleCloseProfileModal = () => setShowProfileModal(false);
 
     // @ts-ignore
     const {user, logOut} = useUserAuth();
 
-    const [showProfileModal, setShowProfileModal] = useState(props.isOpen);
-
-    useEffect(() => {
-        setShowProfileModal(props.isOpen);
-    }, [props.isOpen]);
-
     return (
         <>
-            <Modal show={showProfileModal} onHide={props.closeModal}>
+            <Button
+                variant="link"
+                className='icon'
+                onClick={() => handleShowProfileModal()}
+                aria-label="Show user information"
+            >
+                <img className="button" alt="" title="Show user information." src={user_icon}/>
+            </Button>
+            <Modal show={showProfileModal} onHide={handleCloseProfileModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>User Profile</Modal.Title>
                 </Modal.Header>
@@ -37,7 +39,7 @@ export const MswProfileModal = (props: MswProfileModalProps) => {
                   </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-dark" onClick={props.closeModal}>
+                    <Button variant="outline-dark" onClick={handleCloseProfileModal}>
                         Close
                     </Button>
                 </Modal.Footer>

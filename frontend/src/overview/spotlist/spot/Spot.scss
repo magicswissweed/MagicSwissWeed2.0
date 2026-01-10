@@ -41,10 +41,20 @@ $icons-container-width: 40px;
 }
 
 .icon {
+  cursor: pointer;
+}
+
+.icons-container .icon {
   flex: 1;
   align-content: center;
-
-  margin: 5px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5.5px 0;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0%;
+  min-width: 0;
 
   img {
     width: 60%;
@@ -59,17 +69,13 @@ $icons-container-width: 40px;
   }
 }
 
-.button {
-  cursor: pointer;
-}
-
-.spot > .spot-summary div.collapsible-icon {
+.spot > .spot-summary button.collapsible-icon {
   transition: all 1s;
   align-self: center;
   width: 100%;
 }
 
-.spot.open .spot-summary div.collapsible-icon {
+.spot.open .spot-summary button.collapsible-icon {
   transform: rotate(180deg);
 }
 
@@ -147,10 +153,10 @@ $icons-container-width: 40px;
   }
 }
 
-.arrow-icon {
-  img {
-    width: 40%;
-  }
+.icons-container .arrow-icon img {
+  width: 40%;
+  height: 24px;
+  object-fit: contain;
 }
 
 .last40days-graph-container {
