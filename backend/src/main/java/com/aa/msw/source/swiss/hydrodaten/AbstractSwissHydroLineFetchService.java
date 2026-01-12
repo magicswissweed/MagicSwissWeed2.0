@@ -21,12 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractLineFetchService extends AbstractFetchService {
+public abstract class AbstractSwissHydroLineFetchService extends AbstractFetchService {
 
     private final String fetchUrlPrefix;
     private final String fetchUrlSuffix;
 
-    protected AbstractLineFetchService(String fetchUrlPrefix, String fetchUrlSuffix) {
+    protected AbstractSwissHydroLineFetchService(String fetchUrlPrefix, String fetchUrlSuffix) {
         super();
         this.fetchUrlPrefix = fetchUrlPrefix;
         this.fetchUrlSuffix = fetchUrlSuffix;

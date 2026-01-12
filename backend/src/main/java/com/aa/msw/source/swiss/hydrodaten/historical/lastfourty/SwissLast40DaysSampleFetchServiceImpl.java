@@ -3,7 +3,7 @@ package com.aa.msw.source.swiss.hydrodaten.historical.lastfourty;
 import com.aa.msw.database.helpers.id.LastFewDaysId;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.LastFewDays;
-import com.aa.msw.source.swiss.hydrodaten.AbstractLineFetchService;
+import com.aa.msw.source.swiss.hydrodaten.AbstractSwissHydroLineFetchService;
 import com.aa.msw.source.swiss.hydrodaten.model.line.HydroLine;
 import com.aa.msw.source.swiss.hydrodaten.model.line.HydroResponse;
 import org.springframework.context.annotation.Profile;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Profile("!test")
 @Service
-public class SwissLast40DaysSampleFetchServiceImpl extends AbstractLineFetchService implements SwissLast40DaysSampleFetchService {
+public class SwissLast40DaysSampleFetchServiceImpl extends AbstractSwissHydroLineFetchService implements SwissLast40DaysSampleFetchService {
 
     SwissLast40DaysSampleFetchServiceImpl() {
         super("https://www.hydrodaten.admin.ch/plots/p_q_40days/", "_p_q_40days_de.json");

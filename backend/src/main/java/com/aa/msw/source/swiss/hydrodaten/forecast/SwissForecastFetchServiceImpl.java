@@ -3,7 +3,7 @@ package com.aa.msw.source.swiss.hydrodaten.forecast;
 import com.aa.msw.database.helpers.id.ForecastId;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Forecast;
-import com.aa.msw.source.swiss.hydrodaten.AbstractLineFetchService;
+import com.aa.msw.source.swiss.hydrodaten.AbstractSwissHydroLineFetchService;
 import com.aa.msw.source.swiss.hydrodaten.model.line.HydroResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Profile("!test")
 @Service
-public class SwissForecastFetchServiceImpl extends AbstractLineFetchService implements SwissForecastFetchService {
+public class SwissForecastFetchServiceImpl extends AbstractSwissHydroLineFetchService implements SwissForecastFetchService {
     SwissForecastFetchServiceImpl() {
         super("https://www.hydrodaten.admin.ch/plots/q_forecast/", "_q_forecast_de.json");
     }

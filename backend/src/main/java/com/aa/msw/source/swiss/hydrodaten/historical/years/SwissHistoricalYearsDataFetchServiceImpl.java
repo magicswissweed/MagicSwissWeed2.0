@@ -3,7 +3,7 @@ package com.aa.msw.source.swiss.hydrodaten.historical.years;
 import com.aa.msw.database.helpers.id.HistoricalYearsDataId;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.HistoricalYearsData;
-import com.aa.msw.source.swiss.hydrodaten.AbstractLineFetchService;
+import com.aa.msw.source.swiss.hydrodaten.AbstractSwissHydroLineFetchService;
 import com.aa.msw.source.swiss.hydrodaten.model.line.HydroResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Profile("!test")
 @Service
 public class SwissHistoricalYearsDataFetchServiceImpl
-        extends AbstractLineFetchService
+        extends AbstractSwissHydroLineFetchService
         implements SwissHistoricalYearsDataFetchService {
 
     SwissHistoricalYearsDataFetchServiceImpl() {

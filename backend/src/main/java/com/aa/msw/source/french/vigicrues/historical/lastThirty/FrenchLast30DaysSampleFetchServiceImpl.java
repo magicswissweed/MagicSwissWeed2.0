@@ -3,45 +3,50 @@ package com.aa.msw.source.french.vigicrues.historical.lastThirty;
 import com.aa.msw.database.helpers.id.LastFewDaysId;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.LastFewDays;
-import com.aa.msw.source.swiss.hydrodaten.AbstractLineFetchService;
-import com.aa.msw.source.swiss.hydrodaten.model.line.HydroLine;
-import com.aa.msw.source.swiss.hydrodaten.model.line.HydroResponse;
+import com.aa.msw.source.french.vigicrues.AbstractFrenchLineFetchService;
+import com.aa.msw.source.french.vigicrues.model.lastFewDays.VigicruesMeasurement;
+import com.aa.msw.source.french.vigicrues.model.lastFewDays.VigicruesResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.time.ZoneOffset;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Profile("!test")
 @Service
-public class FrenchLast30DaysSampleFetchServiceImpl extends AbstractLineFetchService implements FrenchLast30DaysSampleFetchService {
+public class FrenchLast30DaysSampleFetchServiceImpl extends AbstractFrenchLineFetchService implements FrenchLast30DaysSampleFetchService {
+    private static final Logger LOG = LoggerFactory.getLogger(FrenchLast30DaysSampleFetchServiceImpl.class);
 
     FrenchLast30DaysSampleFetchServiceImpl() {
-        super("https://www.hydrodaten.admin.ch/plots/p_q_40days/", "_p_q_40days_de.json"); // TODO - replace with vigicrues
+        super("https://www.vigicrues.gouv.fr/services/observations.json/index.php?CdStationHydro=", "&GrdSerie=Q&FormatSortie=simple");
     }
 
     private LastFewDays fetchLast30DaysSamples(ApiStationId stationId) throws IOException, URISyntaxException {
-        HydroResponse hydroResponse = fetchFromHydro(stationId);
+        VigicruesResponse vigicruesResponse = fetchFromVigicrues(stationId);
         Map<OffsetDateTime, Double> line;
         // Check for flow measurement
-        ArrayList<HydroLine> data = hydroResponse.plot().data();
+        List<VigicruesMeasurement> data = vigicruesResponse.serie().line();
         if (data.isEmpty()) {
             throw new IOException("No data available for flow measurement");
         }
-        if (data.size() < 2) {
-            if (!data.getFirst().name().equals("Abfluss")) {
-                throw new IOException("Flow measurement not available");
-            }
-            line = mapLine(data.getFirst());
-
-        } else {
-            line = mapLine(data.get(1));
-        }
+        line = data.stream()
+                .collect(Collectors.toMap(
+                        m -> OffsetDateTime.ofInstant(
+                                Instant.ofEpochMilli(m.timestamp()),
+                                ZoneOffset.UTC
+                        ),
+                        VigicruesMeasurement::value
+                ));
 
         return new LastFewDays(
                 new LastFewDaysId(),
@@ -56,8 +61,25 @@ public class FrenchLast30DaysSampleFetchServiceImpl extends AbstractLineFetchSer
         for (ApiStationId stationId : stationIds) {
             try {
                 result.add(fetchLast30DaysSamples(stationId));
-            } catch (IOException e) {
-                // ignore, there might not be data from last 30 days
+
+                // Random jittered delay between to avoid pattern detection
+                Thread.sleep(100 + (long) (Math.random() * 50));
+
+            } catch (InterruptedException e) {
+                break;
+            } catch (Exception e) {
+                // it's also possible that for a certain station the api does not provide the flow for example, then this would also log
+                // use the logger to see which stations don't provide the flow (only water height) and to see how many times we get a 503.
+                LOG.error("Error fetching station " + stationId.getExternalId() + ": " + e.getMessage());
+
+                // If we get a 503 even with retries, the server is likely blocking us.
+                // Wait 10 seconds before trying the next station in the set.
+                if (e.getMessage().contains("503")) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
             }
         }
         return result;

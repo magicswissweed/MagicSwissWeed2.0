@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Profile("!test")
 @Service
-// TODO: this is only for CH. Handle this for france
 public class SwissSampleFetchServiceImpl extends AbstractFetchService implements SwissSampleFetchService {
     private static String getExistenzUrl(Set<ApiStationId> stationIds) {
         String locationsString = stationIds.stream()
