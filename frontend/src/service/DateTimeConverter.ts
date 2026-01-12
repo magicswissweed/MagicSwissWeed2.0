@@ -17,11 +17,11 @@ export class DateTimeConverter {
         }
     }
 
-    public static utcLast40DaysToLocalTime(last40Days: Array<ApiFlowSample> | undefined): Array<ApiFlowSample> | undefined {
-        if (last40Days === undefined || last40Days === null || last40Days.length === 0) {
-            return last40Days;
+    public static utcLastFewDaysToLocalTime(lastFewDays: Array<ApiFlowSample> | undefined): Array<ApiFlowSample> | undefined {
+        if (lastFewDays === undefined || lastFewDays === null || lastFewDays.length === 0) {
+            return lastFewDays;
         }
-        return this.utcApiFlowSampleArrayToLocalTime(last40Days);
+        return this.utcApiFlowSampleArrayToLocalTime(lastFewDays);
     }
 
     public static utcHistoricalToLocalTime(historical: ApiHistoricalYears | undefined): ApiHistoricalYears | undefined {

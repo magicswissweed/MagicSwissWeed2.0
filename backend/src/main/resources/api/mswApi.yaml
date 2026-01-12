@@ -6,12 +6,12 @@ info:
 servers:
   - url: 'http://localhost:8080/'
 paths:
-  /api/v1/sample/last40Days:
+  /api/v1/sample/lastFewDays:
     post:
-      summary: Get Samples from last 40 Days for this station.
+      summary: Get Samples from last Few Days for this station.
       security:
         - bearerAuth: [ ]
-      operationId: getLast40DaysSamples
+      operationId: getLastFewDaysSamples
       requestBody:
         required: true
         content:
@@ -25,11 +25,11 @@ paths:
         - sample
       responses:
         '200':
-          description: Returns the Samples from the last 40 Days for the station.
+          description: Returns the Samples from the last Few Days for the station.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiLast40DaysList'
+                $ref: '#/components/schemas/ApiLastFewDaysList'
   /api/v1/forecasts:
     get:
       summary: Get All Forecasts for user
@@ -295,7 +295,7 @@ components:
         flow:
           type: number
           format: double
-    ApiLast40DaysSamples:
+    ApiLastFewDaysSamples:
       type: array
       items:
         $ref: '#/components/schemas/ApiFlowSample'
@@ -342,18 +342,18 @@ components:
           $ref: '#/components/schemas/ApiStationId'
         forecast:
           $ref: '#/components/schemas/ApiForecast'
-    ApiLast40DaysList:
+    ApiLastFewDaysList:
       type: array
       items:
-        $ref: '#/components/schemas/StationToLast40Days'
-    StationToLast40Days:
+        $ref: '#/components/schemas/StationToLastFewDays'
+    StationToLastFewDays:
       type: object
-      required: [ station, last40Days ]
+      required: [ station, lastFewDays ]
       properties:
         station:
           $ref: '#/components/schemas/ApiStationId'
-        last40Days:
-          $ref: '#/components/schemas/ApiLast40DaysSamples'
+        lastFewDays:
+          $ref: '#/components/schemas/ApiLastFewDaysSamples'
     ApiHistoricalYearsList:
       type: array
       items:

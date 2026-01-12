@@ -1,6 +1,6 @@
 package com.aa.msw.api.current;
 
-import com.aa.msw.api.graph.last40days.Last40DaysApiService;
+import com.aa.msw.api.graph.lastFewDays.LastFewDaysApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiFlowSample;
@@ -15,11 +15,11 @@ import java.util.List;
 public class SampleApiService {
 
     private final SampleDao sampleDao;
-    private final Last40DaysApiService last40daysApiService;
+    private final LastFewDaysApiService lastFewDaysApiService;
 
-    SampleApiService(final SampleDao sampleDao, Last40DaysApiService last40daysApiService) {
+    SampleApiService(final SampleDao sampleDao, LastFewDaysApiService lastFewDaysApiService) {
         this.sampleDao = sampleDao;
-        this.last40daysApiService = last40daysApiService;
+        this.lastFewDaysApiService = lastFewDaysApiService;
     }
 
     private static ApiSample mapSample(Sample sample) {
@@ -33,10 +33,10 @@ public class SampleApiService {
         return mapSample(sampleDao.getCurrentSample(apiStationId));
     }
 
-    public List<ApiFlowSample> getLast40DaysSamples(ApiStationId stationId) throws NoDataAvailableException {
-        return last40daysApiService
-                .getLast40Days(stationId)
-                .last40DaysSamples()
+    public List<ApiFlowSample> getLastFewDaysSamples(ApiStationId stationId) throws NoDataAvailableException {
+        return lastFewDaysApiService
+                .getLastFewDays(stationId)
+                .lastFewDaysSamples()
                 .entrySet()
                 .stream()
                 .map(sample -> new ApiFlowSample()

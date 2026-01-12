@@ -6,7 +6,7 @@
 package com.aa.msw.gen.api;
 
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.StationToLast40Days;
+import com.aa.msw.gen.api.StationToLastFewDays;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-31T15:33:14.273869+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-12T17:43:06.448035+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "sample", description = "the sample API")
 public interface SampleApi {
@@ -43,35 +43,35 @@ public interface SampleApi {
     }
 
     /**
-     * POST /api/v1/sample/last40Days : Get Samples from last 40 Days for this station.
+     * POST /api/v1/sample/lastFewDays : Get Samples from last Few Days for this station.
      *
      * @param apiStationId  (required)
-     * @return Returns the Samples from the last 40 Days for the station. (status code 200)
+     * @return Returns the Samples from the last Few Days for the station. (status code 200)
      */
     @Operation(
-        operationId = "getLast40DaysSamples",
-        summary = "Get Samples from last 40 Days for this station.",
+        operationId = "getLastFewDaysSamples",
+        summary = "Get Samples from last Few Days for this station.",
         tags = { "sample" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Returns the Samples from the last 40 Days for the station.", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StationToLast40Days.class)))
+            @ApiResponse(responseCode = "200", description = "Returns the Samples from the last Few Days for the station.", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StationToLastFewDays.class)))
             })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/api/v1/sample/last40Days",
+        value = "/api/v1/sample/lastFewDays",
         produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<List<StationToLast40Days>> getLast40DaysSamples(
+    default ResponseEntity<List<StationToLastFewDays>> getLastFewDaysSamples(
         @Parameter(name = "ApiStationId", description = "", required = true) @Valid @RequestBody List<@Valid ApiStationId> apiStationId
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"station\" : { \"externalId\" : \"externalId\" }, \"last40Days\" : [ { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] }, { \"station\" : { \"externalId\" : \"externalId\" }, \"last40Days\" : [ { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] } ]";
+                    String exampleString = "[ { \"station\" : { \"externalId\" : \"externalId\" }, \"lastFewDays\" : [ { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] }, { \"station\" : { \"externalId\" : \"externalId\" }, \"lastFewDays\" : [ { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"flow\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

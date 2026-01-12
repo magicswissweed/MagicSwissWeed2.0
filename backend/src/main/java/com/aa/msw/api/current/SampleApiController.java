@@ -2,7 +2,7 @@ package com.aa.msw.api.current;
 
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.SampleApi;
-import com.aa.msw.gen.api.StationToLast40Days;
+import com.aa.msw.gen.api.StationToLastFewDays;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,14 +19,14 @@ public class SampleApiController implements SampleApi {
     }
 
     @Override
-    public ResponseEntity<List<StationToLast40Days>> getLast40DaysSamples(List<ApiStationId> stationIds) {
+    public ResponseEntity<List<StationToLastFewDays>> getLastFewDaysSamples(List<ApiStationId> stationIds) {
         return ResponseEntity.ok(
                 stationIds.stream()
                         .map(stationId -> {
                             try {
-                                return new StationToLast40Days(
+                                return new StationToLastFewDays(
                                         stationId,
-                                        sampleApiService.getLast40DaysSamples(stationId)
+                                        sampleApiService.getLastFewDaysSamples(stationId)
                                 );
                             } catch (Exception e) {
                                 return null;

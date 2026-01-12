@@ -6,7 +6,7 @@ import {
     SpotsApi,
     StationToApiForecasts,
     StationToApiHistoricalYears,
-    StationToLast40Days
+    StationToLastFewDays
 } from "../gen/msw-api-ts";
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../api/config/AuthConfiguration";
@@ -37,8 +37,8 @@ class SpotsService {
                     .map(s => s.stationId)
                 if (stationsWithoutForecast.length > 0) {
                     if (config) {
-                        new SampleApi(config).getLast40DaysSamples(stationsWithoutForecast)
-                            .then(this.addLast40DaysToState.bind(this))
+                        new SampleApi(config).getLastFewDaysSamples(stationsWithoutForecast)
+                            .then(this.addLastFewDaysToState.bind(this))
                     }
                 }
             })
@@ -87,17 +87,17 @@ class SpotsService {
         }
     };
 
-    private addLast40DaysToState(res: AxiosResponse<StationToLast40Days[], any>) {
+    private addLastFewDaysToState(res: AxiosResponse<StationToLastFewDays[], any>) {
         if (res && res.data) {
             const updatedSpots = this.spots.map(s => {
                 const filteredListByStationId = res.data.filter(i =>
                     i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
-                const newLast40Days = DateTimeConverter.utcLast40DaysToLocalTime(filteredListByStationId[0]?.last40Days)
+                const newLastFewDays = DateTimeConverter.utcLastFewDaysToLocalTime(filteredListByStationId[0]?.lastFewDays)
                 // create new SpotModel so that react can see that something changed (updating a field is not enough)
                 return {
                     ...s,
-                    last40DaysLoaded: true,
-                    last40Days: newLast40Days,
+                    lastFewDaysLoaded: true,
+                    lastFewDays: newLastFewDays,
                 }
             });
 

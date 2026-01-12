@@ -7,7 +7,7 @@ package com.aa.msw.gen.jooq;
 import com.aa.msw.gen.jooq.tables.FlywaySchemaHistory;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
-import com.aa.msw.gen.jooq.tables.Last_40DaysSamplesTable;
+import com.aa.msw.gen.jooq.tables.LastFewDaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.NotificationSubscriptionTable;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable;
@@ -39,9 +39,9 @@ public class Tables {
     public static final HistoricalYearsDataTable HISTORICAL_YEARS_DATA_TABLE = HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE;
 
     /**
-     * The table <code>public.last_40_days_samples_table</code>.
+     * The table <code>public.last_few_days_samples_table</code>.
      */
-    public static final Last_40DaysSamplesTable LAST_40_DAYS_SAMPLES_TABLE = Last_40DaysSamplesTable.LAST_40_DAYS_SAMPLES_TABLE;
+    public static final LastFewDaysSamplesTable LAST_FEW_DAYS_SAMPLES_TABLE = LastFewDaysSamplesTable.LAST_FEW_DAYS_SAMPLES_TABLE;
 
     /**
      * The table <code>public.notification_subscription_table</code>.

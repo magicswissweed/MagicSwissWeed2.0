@@ -1,8 +1,8 @@
 ###
 # @name Get Samples of last 40 days for multiple stations
-# make sure the stationIds do not not have a forecast (-> this probably means, there is a last40Days available)
+# make sure the stationIds do not not have a forecast (-> this probably means, there is a lastFewDays available)
 #
-POST {{base-path}}/sample/last40Days
+POST {{base-path}}/sample/lastFewDays
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 

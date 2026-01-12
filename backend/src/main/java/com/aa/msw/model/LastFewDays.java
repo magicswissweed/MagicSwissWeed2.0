@@ -1,19 +1,19 @@
 package com.aa.msw.model;
 
 import com.aa.msw.database.helpers.id.HasId;
-import com.aa.msw.database.helpers.id.Last40DaysId;
+import com.aa.msw.database.helpers.id.LastFewDaysId;
 import com.aa.msw.gen.api.ApiStationId;
 import lombok.Getter;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-public record Last40Days(
-        @Getter Last40DaysId databaseId,
+public record LastFewDays(
+        @Getter LastFewDaysId databaseId,
         @Getter ApiStationId stationId,
-        @Getter Map<OffsetDateTime, Double> last40DaysSamples) implements HasId<Last40DaysId> {
+        @Getter Map<OffsetDateTime, Double> lastFewDaysSamples) implements HasId<LastFewDaysId> {
     @Override
-    public Last40DaysId getId() {
+    public LastFewDaysId getId() {
         return databaseId;
     }
 }

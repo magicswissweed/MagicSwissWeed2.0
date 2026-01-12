@@ -22,8 +22,8 @@ export class SpotModel {
     flowStatus: FlowColorEnum;
     forecastLoaded: boolean;
     forecast: ApiForecast | undefined;
-    last40DaysLoaded: boolean;
-    last40Days: Array<ApiFlowSample> | undefined;
+    lastFewDaysLoaded: boolean;
+    lastFewDays: Array<ApiFlowSample> | undefined;
     historical: ApiHistoricalYears | undefined;
     withNotification: boolean;
 
@@ -40,8 +40,8 @@ export class SpotModel {
         flowStatus: FlowColorEnum,
         forecastLoaded: boolean,
         forecast: ApiForecast | undefined,
-        last40DaysLoaded: boolean,
-        last40Days: Array<ApiFlowSample> | undefined,
+        lastFewDaysLoaded: boolean,
+        lastFewDays: Array<ApiFlowSample> | undefined,
         historical: ApiHistoricalYears | undefined,
         withNotification: boolean) {
         this.id = id;
@@ -55,8 +55,8 @@ export class SpotModel {
         this.currentSample = currentSample;
         this.flowStatus = flowStatus
         this.forecastLoaded = forecastLoaded;
-        this.last40DaysLoaded = last40DaysLoaded;
-        this.last40Days = last40Days;
+        this.lastFewDaysLoaded = lastFewDaysLoaded;
+        this.lastFewDays = lastFewDays;
         this.forecast = forecast;
         this.historical = historical;
         this.withNotification = withNotification;
