@@ -59,6 +59,19 @@ public class StationApiServiceImpl implements StationApiService {
     public void fetchStationsAndSaveToDb() {
         Set<Station> fetchedStations = fetchStations();
         if (!fetchedStations.isEmpty()) {
+            Set<Station> existingStations = stationDao.getStations();
+
+            // Remove stations that will be updated
+            existingStations.removeIf(existing ->
+                    fetchedStations.stream().anyMatch(fetched ->
+                            fetched.stationId().equals(existing.stationId())
+                    )
+            );
+
+            // Add remaining existing stations to fetched stations
+            fetchedStations.addAll(existingStations);
+
+            // Clear and save all stations
             stationDao.deleteAll();
             persistStationsToDb(fetchedStations);
             stations = fetchedStations;
