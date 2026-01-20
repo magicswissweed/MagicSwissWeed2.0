@@ -21,6 +21,8 @@ import com.aa.msw.model.SpotCurrentInfo;
 import com.aa.msw.model.Station;
 import com.aa.msw.model.UserSpot;
 import com.aa.msw.source.InputDataFetcherService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SpotsApiService {
+    private static final Logger LOG = LoggerFactory.getLogger(SpotsApiService.class);
+
     private final SampleApiService sampleApiService;
     private final SampleDao sampleDao;
     private final SpotDao spotDao;
@@ -66,6 +70,7 @@ public class SpotsApiService {
                 return getAllSpots();
             }
         } catch (Exception e) {
+            LOG.error("Error while fetching spots.", e);
             return List.of();
         }
     }
@@ -142,12 +147,11 @@ public class SpotsApiService {
                                     .withNotification(withNotification)
                     );
                 } catch (NoDataAvailableException e) {
-                    // should never happen, but if it does, we just don't return this one spot
+                    LOG.error("No data available for spot {}. Skipping this spot from the list of spots.", spot.spotId());
                 }
 
             } catch (NoSuchElementException e) {
-                // ignore for the moment and do not add this ApiSpotInformation to the list
-                break;
+                LOG.error("Station with ID {} does not exist. Skipping this spot from the list of spots.", spot.stationId());
             }
         }
         return spotInformationList;

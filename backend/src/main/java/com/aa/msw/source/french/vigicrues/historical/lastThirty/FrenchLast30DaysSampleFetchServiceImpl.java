@@ -66,18 +66,19 @@ public class FrenchLast30DaysSampleFetchServiceImpl extends AbstractFrenchLineFe
                 Thread.sleep(100 + (long) (Math.random() * 50));
 
             } catch (InterruptedException e) {
-                break;
+                LOG.error("wait was interrupted", e);
             } catch (Exception e) {
                 // it's also possible that for a certain station the api does not provide the flow for example, then this would also log
                 // use the logger to see which stations don't provide the flow (only water height) and to see how many times we get a 503.
-                LOG.error("Error fetching station " + stationId.getExternalId() + ": " + e.getMessage());
+                // LOG.error("Error fetching station " + stationId.getExternalId() + ": " + e.getMessage());
 
                 // If we get a 503 even with retries, the server is likely blocking us.
                 // Wait 10 seconds before trying the next station in the set.
                 if (e.getMessage().contains("503")) {
                     try {
                         Thread.sleep(5000);
-                    } catch (InterruptedException ignored) {
+                    } catch (InterruptedException i) {
+                        LOG.error("wait was interrupted", i);
                     }
                 }
             }

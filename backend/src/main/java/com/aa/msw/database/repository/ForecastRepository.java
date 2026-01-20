@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 public class ForecastRepository extends AbstractTimestampedRepository
         <ForecastId, Forecast, ForecastTableRecord, com.aa.msw.gen.jooq.tables.pojos.ForecastTable, ForecastTableDao>
         implements ForecastDao {
+    private static final Logger LOG = LoggerFactory.getLogger(ForecastRepository.class);
 
     private static final ForecastTable TABLE = ForecastTable.FORECAST_TABLE;
 
@@ -81,7 +84,8 @@ public class ForecastRepository extends AbstractTimestampedRepository
             min = toJsonB(forecast.getMin());
             max = toJsonB(forecast.getMax());
         } catch (JsonProcessingException e) {
-            return null; // Handle somehow
+            LOG.error("Error mapping forecast", e);
+            return null;
         }
 
         record.setId(forecast.forecastId().getId());
@@ -126,6 +130,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
             min = jsonbToMap(jsonMin);
             max = jsonbToMap(jsonMax);
         } catch (JsonProcessingException e) {
+            LOG.error("Error getting Forecast", e);
             return null;
         }
 

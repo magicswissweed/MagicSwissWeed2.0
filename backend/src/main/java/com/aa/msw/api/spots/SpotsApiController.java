@@ -5,6 +5,8 @@ import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.gen.api.*;
 import com.aa.msw.model.Spot;
 import com.aa.msw.model.SpotTypeEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @RestController
 public class SpotsApiController implements SpotsApi {
+    private static final Logger LOG = LoggerFactory.getLogger(SpotsApiController.class);
+
     private final SpotsApiService spotsApiService;
 
     public SpotsApiController(SpotsApiService spotsApiService) {
@@ -58,6 +62,7 @@ public class SpotsApiController implements SpotsApi {
                     addPrivateSpotRequest.getPosition(),
                     addPrivateSpotRequest.getSpot().getWithNotification());
         } catch (NoSampleAvailableException e) {
+            LOG.error("Error adding private spot", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -79,6 +84,7 @@ public class SpotsApiController implements SpotsApi {
         try {
             spotsApiService.editSpot(updatedSpot, apiSpot.getWithNotification());
         } catch (NoSampleAvailableException e) {
+            LOG.error("Error editing private spot", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 

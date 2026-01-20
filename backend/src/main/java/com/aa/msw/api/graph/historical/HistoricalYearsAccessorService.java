@@ -6,6 +6,8 @@ import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.HistoricalYearsData;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.swiss.hydrodaten.historical.years.SwissHistoricalYearsDataFetchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class HistoricalYearsAccessorService {
+    private static final Logger LOG = LoggerFactory.getLogger(HistoricalYearsAccessorService.class);
+
     private final SwissHistoricalYearsDataFetchService swissHistoricalYearsDataFetchService;
     private final StationApiService stationApiService;
     private final HistoricalYearsDataDao hystoricalYearsDao;
@@ -73,7 +77,7 @@ public class HistoricalYearsAccessorService {
                     .collect(Collectors.toSet());
             return swissHistoricalYearsDataFetchService.fetchHistoricalYearsData(stationIds);
         } catch (URISyntaxException e) {
-            // nop
+            LOG.error("Error while fetching historical years data from Swiss Hydrodaten.", e);
         }
         return Collections.emptySet();
     }
