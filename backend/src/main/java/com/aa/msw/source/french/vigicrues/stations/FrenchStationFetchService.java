@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.locationtech.proj4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class FrenchStationFetchService extends AbstractFetchService {
+    private static final Logger LOG = LoggerFactory.getLogger(FrenchStationFetchService.class);
 
     public static final String STATIONS_FETCH_URL = "https://www.vigicrues.gouv.fr/services/StaEntVigiCru.json";
     public static final String CERTAIN_STATION_FETCH_URL_PREFIX = "https://www.vigicrues.gouv.fr/services/station.json/index.php?CdStationHydro=";
@@ -55,12 +58,14 @@ public class FrenchStationFetchService extends AbstractFetchService {
                                     projCoordinates.y,
                                     projCoordinates.x);
                         } catch (Exception e) {
+                            LOG.error("Error fetching station details for station {} - skipping station.", vigicruesStation.id(), e);
                             return null;
                         }
                     })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
         } catch (Exception e) {
+            LOG.error("Error fetching stations from vigicrues - returning emptySet", e);
             return Collections.emptySet();
         }
     }
