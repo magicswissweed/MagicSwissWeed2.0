@@ -66,7 +66,7 @@ public class InputDataFetcherService {
         try {
             switch (stationId.getCountry()) {
                 case CH -> samples = swissSampleFetchService.fetchSamples(Set.of(stationId));
-                case FR -> System.out.println("TODO - Fetching data for France is not yet implemented.");
+                case FR -> LOG.error("TODO - Fetching data for France is not yet implemented.");
             }
         } catch (IOException | URISyntaxException e) {
             throw new NoSampleAvailableException(e.getMessage());
