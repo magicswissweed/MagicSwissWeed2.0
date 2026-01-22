@@ -43,6 +43,9 @@ public class FrenchStationFetchService extends AbstractFetchService {
             return vigicruesStationsResponse.stations().stream()
                     .map(vigicruesStation -> {
                         try {
+                            // Random jittered delay between to avoid pattern detection
+                            Thread.sleep(150 + (long) (Math.random() * 150));
+
                             VigicruesStationDetail stationDetail = fetchStationDetails(vigicruesStation.id());
                             if (stationDetail.communeCode().startsWith("97")) {
                                 // overseas station - unable to transform using french coordinates - each uses different system
