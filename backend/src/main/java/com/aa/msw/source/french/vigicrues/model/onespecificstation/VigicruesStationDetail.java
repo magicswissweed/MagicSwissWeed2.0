@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 // API: https://www.vigicrues.gouv.fr/services/station.json/index.php?CdStationHydro=U251201001
 public record VigicruesStationDetail(
-        @JsonProperty("CdCommune") long communeCode,
+        @JsonProperty("CdCommune") String communeCode,
         @JsonProperty("CoordStationHydro") VigicruesCoordinates coordinates) {
 }

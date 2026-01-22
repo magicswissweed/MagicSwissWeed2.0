@@ -44,7 +44,7 @@ public class FrenchStationFetchService extends AbstractFetchService {
                     .map(vigicruesStation -> {
                         try {
                             VigicruesStationDetail stationDetail = fetchStationDetails(vigicruesStation.id());
-                            if (((Long) stationDetail.communeCode()).toString().startsWith("97")) {
+                            if (stationDetail.communeCode().startsWith("97")) {
                                 // overseas station - unable to transform using french coordinates - each uses different system
                                 return null;
                             }
