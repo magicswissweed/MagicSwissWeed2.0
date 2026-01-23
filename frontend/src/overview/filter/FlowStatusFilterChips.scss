@@ -1,0 +1,88 @@
+@import "../../ReactiveMixins";
+@import "../../index";
+
+.flow-chip-container {
+  display: flex;
+  margin: 10px auto;
+}
+
+.flow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid #e1e5ea;
+  background-color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  color: #495057;
+  transition: 0.15s ease all;
+  cursor: pointer;
+  user-select: none;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+  }
+
+  &:hover {
+    background-color: #eef1f4;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &.active {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  &.green {
+    color: #1e7e34;
+
+    &.active {
+      background-color: #e6f4ea;
+      border-color: #b7e1c1;
+    }
+
+    .dot {
+      background-color: #2ecc71;
+    }
+  }
+
+  &.active {
+    border-width: 3px;
+  }
+
+  &.orange {
+    color: #d97706;
+
+    &.active {
+      background-color: #fff4e5;
+      border-color: #ffd8a8;
+    }
+
+    .dot {
+      background-color: #f59f00;
+    }
+  }
+
+  &.red {
+    color: #c92a2a;
+
+    &.active {
+      background-color: #fdecea;
+      border-color: #f5c2c0;
+    }
+
+    .dot {
+      background-color: #fa5252;
+    }
+  }
+}

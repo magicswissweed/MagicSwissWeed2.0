@@ -13,7 +13,8 @@ import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 interface SpotListProps {
     title: string,
     spots: Array<SpotModel>,
-    showGraphOfType: GraphTypeEnum
+    showGraphOfType: GraphTypeEnum,
+    isSavingNewOrderAllowed: boolean
 }
 
 export const SpotList = (props: SpotListProps) => {
@@ -29,12 +30,14 @@ export const SpotList = (props: SpotListProps) => {
 
     // FIXME: is the effect only dependent on the token for the initial order? If so: move to backend for more clarity
     const saveSpotsOrdering = useCallback(async (spots: Array<SpotModel>) => {
-        let config = await authConfiguration(token);
-        await new SpotsApi(config).orderSpots(
-            spots
-                .filter(loc => loc.id)
-                .map(loc => loc.id!));
-    }, [token]);
+        if (props.isSavingNewOrderAllowed) {
+            let config = await authConfiguration(token);
+            await new SpotsApi(config).orderSpots(
+                spots
+                    .filter(loc => loc.id)
+                    .map(loc => loc.id!));
+        }
+    }, [token, props.isSavingNewOrderAllowed]); // isSavingNewOrderAllowed needs to be in dependency list, otherwise it is always true (initial state)
 
     useEffect(() => {
         if (user) {
