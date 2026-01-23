@@ -1,6 +1,6 @@
 import './Spot.scss'
 import React, {useState} from 'react';
-import {SpotsApi} from '../../../gen/msw-api-ts';
+import {CountryEnum, SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import arrow_down_icon from '../../../assets/arrow_down.svg';
@@ -69,9 +69,17 @@ export const Spot = (props: SpotProps) => {
         return formatted.replace(",", "");
     }
 
+    function getStationLinkBaseUrl(country: CountryEnum) {
+        switch (country) {
+            case "CH":
+                return "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/";
+            case "FR":
+                return "https://www.vigicrues.gouv.fr/station/"
+        }
+    }
+
     function getSpotSummaryContent(spot: SpotModel) {
-        // TODO: other link for other country
-        let link = "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/" + spot.stationId.externalId;
+        let stationLinkUrl = getStationLinkBaseUrl(spot.stationId.country) + spot.stationId.externalId;
 
         return <>
             <div className='icons-container'>
@@ -101,12 +109,12 @@ export const Spot = (props: SpotProps) => {
                 <Button
                     variant="link"
                     className="icon"
-                    href={link}
+                    href={stationLinkUrl}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label="Link to the BAFU station"
+                    aria-label="Link to the station"
                 >
-                    <img src={link_icon} alt="" title="Link to the BAFU station"/>
+                    <img src={link_icon} alt="" title="Link to the station"/>
                 </Button>
                 {user &&
                     <MswEditSpot spot={spot}/>
