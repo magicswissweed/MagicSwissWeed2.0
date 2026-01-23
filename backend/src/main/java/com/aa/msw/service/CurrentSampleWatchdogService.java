@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 @Service
-@Profile("!test")
+@Profile({"dev", "prd"})
 public class CurrentSampleWatchdogService {
     private final SampleDao sampleDao;
 

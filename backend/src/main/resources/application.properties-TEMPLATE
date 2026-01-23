@@ -1,4 +1,4 @@
-spring.profiles.active=dev
+spring.profiles.active=local
 spring.application.name=msw
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/msw
