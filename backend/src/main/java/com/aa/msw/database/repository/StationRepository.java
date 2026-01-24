@@ -2,6 +2,7 @@ package com.aa.msw.database.repository;
 
 import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.database.repository.dao.StationDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.daos.StationTableDao;
 import com.aa.msw.gen.jooq.tables.records.StationTableRecord;
@@ -67,8 +68,10 @@ public class StationRepository extends AbstractRepository
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteByStationId(ApiStationId stationId) {
         dsl.deleteFrom(TABLE)
+                .where(TABLE.STATIONID.eq(stationId.getExternalId())
+                        .and(TABLE.COUNTRY.eq(country(stationId.getCountry()))))
                 .execute();
     }
 }

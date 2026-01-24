@@ -1,6 +1,5 @@
 package com.aa.msw.source;
 
-import com.aa.msw.database.exceptions.NoSampleAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.database.repository.dao.LastFewDaysDao;
 import com.aa.msw.database.repository.dao.SampleDao;
@@ -59,19 +58,6 @@ public class InputDataFetcherService {
         this.lastFewDaysDao = lastFewDaysDao;
         this.notificationService = notificationService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
-    }
-
-    public List<Sample> fetchForStationId(ApiStationId stationId) throws NoSampleAvailableException {
-        List<Sample> samples = List.of();
-        try {
-            switch (stationId.getCountry()) {
-                case CH -> samples = swissSampleFetchService.fetchSamples(Set.of(stationId));
-                case FR -> LOG.error("TODO - Fetching data for France is not yet implemented.");
-            }
-        } catch (IOException | URISyntaxException e) {
-            throw new NoSampleAvailableException(e.getMessage());
-        }
-        return samples;
     }
 
     @Scheduled(fixedRate = 5 * 60 * 1000) // 5 minutes in milliseconds
