@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {ApiSpotSpotTypeEnum, ApiStation, ApiStationId} from "../gen/msw-api-ts";
+import {ApiSpotSpotTypeEnum, ApiStation, ApiStationId, CountryEnum} from "../gen/msw-api-ts";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import Modal from "react-bootstrap/Modal";
@@ -24,6 +24,17 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
             setIsSubmitButtonDisabled(true);
         }
     }, [minFlow, maxFlow, spotName, stationId, stations]);
+
+    const countryEmoji = (country: CountryEnum) => {
+        switch (country) {
+            case CountryEnum.Ch:
+                return '🇨🇭';
+            case CountryEnum.Fr:
+                return '🇫🇷';
+            default:
+                return '🌍';
+        }
+    };
 
     return <>
         <Modal dialogClassName="add-or-edit-modal" show={showModal} onHide={handleCancelModal} scrollable={true}>
@@ -73,9 +84,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                 </Form>
                             </Form.Group>
 
-                            <Form.Label htmlFor="formBasicStationId">The measuring station
-                                (from <a href="https://www.hydrodaten.admin.ch/" target="_blank"
-                                         rel="noopener noreferrer">hydrodaten.admin.ch</a>)</Form.Label>
+                            <Form.Label htmlFor="formBasicStationId">The measuring station</Form.Label>
                             <Form.Group className="mb-3" controlId="formBasicStationId">
                                 <Typeahead
                                     allowNew={false}
@@ -106,6 +115,17 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                             setStationSelectionError("Please select a valid option.");
                                             setIsSubmitButtonDisabled(true);
                                         }
+                                    }}
+                                    renderMenuItemChildren={(option: unknown) => {
+                                        const station = option as ApiStation;
+                                        return (
+                                            <div>
+                                                <span style={{marginRight: 8}}>
+                                                    {countryEmoji(station.id.country)}
+                                                </span>
+                                                <span>{station.label}</span>
+                                            </div>
+                                        );
                                     }}
                                     options={stations}
                                     placeholder="Station"
