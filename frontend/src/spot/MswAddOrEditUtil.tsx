@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import {ApiSpotSpotTypeEnum, ApiStation, ApiStationId, CountryEnum} from "../gen/msw-api-ts";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
@@ -35,6 +35,10 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                 return '🌍';
         }
     };
+
+    const sortedStations = useMemo(() => {
+        return [...stations].sort((a, b) => a.label.localeCompare(b.label));
+    }, [stations]);
 
     return <>
         <Modal dialogClassName="add-or-edit-modal" show={showModal} onHide={handleCancelModal} scrollable={true}>
@@ -127,7 +131,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                             </div>
                                         );
                                     }}
-                                    options={stations}
+                                    options={sortedStations}
                                     placeholder="Station"
                                     selected={stations.filter(s => {
                                         if (stationId === undefined) {
