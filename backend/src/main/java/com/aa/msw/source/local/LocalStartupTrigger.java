@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 @Component
-@Profile("dev")
+@Profile({"dev", "local"})
 public class LocalStartupTrigger implements CommandLineRunner {
     private final InputDataFetcherService inputDataFetcherService;
 
