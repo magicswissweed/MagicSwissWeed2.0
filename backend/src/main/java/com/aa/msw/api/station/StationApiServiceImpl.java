@@ -68,7 +68,7 @@ public class StationApiServiceImpl implements StationApiService {
             Set<Station> onlyNewStations = getOnlyNewStations(fetchedStations, existingStations);
 
             persistStationsToDb(onlyNewStations);
-            stations.addAll(onlyNewStations);
+            stations = stationDao.getStations();
         }
     }
 
@@ -103,8 +103,7 @@ public class StationApiServiceImpl implements StationApiService {
      * - if invalid -> return empty and delete the station from db (if exists)
      */
     private Optional<Station> processFetchedStations(Station station) {
-        boolean isValid = isValidStation(station);
-        if (isValid) {
+        if (isValidStation(station)) {
             return Optional.of(station);
         } else {
             stationDao.deleteByStationId(station.stationId());
