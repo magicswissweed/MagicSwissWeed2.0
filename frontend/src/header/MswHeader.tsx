@@ -6,6 +6,7 @@ import {MswAddSpot} from "../spot/add/MswAddSpot";
 import {MswLoginModal} from "../user/login/MswLoginModal";
 import MswSignUpModal from "../user/signup/MswSignUp";
 import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
+import {MswProfileModal} from "../user/profile/MswProfileModal";
 import {useAuthModal} from '../user/AuthModalContext';
 import '@khmyznikov/pwa-install';
 import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
@@ -45,7 +46,12 @@ export const MswHeader = () => {
     if (user) {
         loginOrLogout = <>
             <MswAddSpot/>
-            <Button variant='danger' size='sm' onClick={logOut}>Log Out</Button>
+            {/* <Button variant='danger' size='sm' onClick={logOut}>Log Out</Button> */}
+
+            {/* <div className='icon' onClick={() => setShowProfileModal(true)}>
+              <img className="button" alt="Show user information." title="Show user information." src={user_icon}/>
+            </div> */}
+            <MswProfileModal/>
         </>
     } else {
         loginOrLogout = <>

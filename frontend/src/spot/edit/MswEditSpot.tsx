@@ -10,6 +10,7 @@ import edit_icon from "../../assets/edit.svg";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
 import {SpotModel} from "../../model/SpotModel";
+import {Button} from "react-bootstrap";
 
 // specify the properties (inputs) for the MswEditSpot component
 interface MswEditSpotProps {
@@ -89,9 +90,14 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
 
     let isEditMode = true;
     return <>
-        <div className="icon" onClick={() => handleShowEditSpotModal()}>
-            <img alt="Edit this private spot." title="Edit this private spot." src={edit_icon}/>
-        </div>
+        <Button
+            variant="link"
+            className='icon'
+            onClick={() => handleShowEditSpotModal()}
+            aria-label="Edit this private spot"
+        >
+            <img className="button" alt="" title="Edit this private spot." src={edit_icon}/>
+        </Button>
         {MswAddOrEditSpotModal(
             showEditSpotModal,
             handleCancelEditSpotModal,
