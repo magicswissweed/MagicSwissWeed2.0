@@ -1,8 +1,10 @@
+import './MswProfileModal.scss';
 import React, {useState} from "react";
 import {Button} from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {useUserAuth} from "../UserAuthContext";
 import user_icon from '../../assets/user_icon.svg';
+import {MswThemeSwitch} from "../../overview/theme/MswThemeSwitch";
 
 export const MswProfileModal = () => {
 
@@ -28,15 +30,16 @@ export const MswProfileModal = () => {
                     <Modal.Title>User Profile</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <div className='text-center'>
-                    {user?.email && (
-                        <div style={{ marginBottom: '16px' }}>
-                            <p style={{ margin: '0 0 8px 0', color: '#666' }}>Email</p>
-                            <p style={{ margin: '0', fontWeight: 'bold' }}>{user.email}</p>
-                        </div>
-                    )}
-                    <Button variant='danger' onClick={logOut}>Log Out</Button>
-                  </div>
+                    <div className='text-center '>
+                        {user?.email && (
+                            <div style={{marginBottom: '16px'}}>
+                                <p style={{margin: '0 0 8px 0', color: '#666'}}>Email</p>
+                                <p style={{margin: '0', fontWeight: 'bold'}}>{user.email}</p>
+                            </div>
+                        )}
+                        <MswThemeSwitch/>
+                        <Button className='logoutButton' variant='danger' onClick={logOut}>Log Out</Button>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-dark" onClick={handleCloseProfileModal}>

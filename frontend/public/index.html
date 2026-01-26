@@ -17,6 +17,14 @@
 
         gtag("config", "G-0M0X4LT868");
     </script>
+    <script>
+        (() => {
+            const stored = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = stored ?? (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <meta charset="utf-8"/>
     <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>

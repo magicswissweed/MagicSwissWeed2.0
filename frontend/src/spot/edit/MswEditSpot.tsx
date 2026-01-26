@@ -13,7 +13,7 @@ import {useUserAuth} from '../../user/UserAuthContext';
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../../api/config/AuthConfiguration";
 import {spotsService} from "../../service/SpotsService";
-import edit_icon from "../../assets/edit.svg";
+import {ReactComponent as EditIcon} from "../../assets/edit.svg";
 import {MswAddOrEditSpotModal} from "../MswAddOrEditUtil";
 import {stationsService} from "../../service/StationsService";
 import {SpotModel} from "../../model/SpotModel";
@@ -104,7 +104,7 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             onClick={() => handleShowEditSpotModal()}
             aria-label="Edit this private spot"
         >
-            <img className="button" alt="" title="Edit this private spot." src={edit_icon}/>
+            <EditIcon className="svg-icon inverted-bg-icon"/>
         </Button>
         {MswAddOrEditSpotModal(
             showEditSpotModal,

@@ -1,0 +1,79 @@
+.theme-toggle {
+  margin: auto;
+  position: relative;
+  width: 64px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  background-color: var(--bs-body-bg);
+  padding: 0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+
+  .icon {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    font-size: 14px;
+    transition: color 0.25s ease;
+
+    svg {
+      color: var(--bg-inverted);
+    }
+  }
+
+  .sun::before {
+    content: '☀︎';
+  }
+
+  .moon::before {
+    content: '☾';
+  }
+
+  .thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bs-body-color);
+    opacity: 0.08;
+    z-index: 1;
+    transition: transform 0.25s ease;
+  }
+
+  &.dark {
+    background-color: var(--bs-dark-bg-subtle, #1e1e1e);
+
+    .thumb {
+      transform: translateX(32px);
+    }
+
+    .moon {
+      color: var(--bs-body-color);
+    }
+  }
+
+  &.light {
+    .sun {
+      color: var(--bs-body-color);
+    }
+  }
+
+  &:hover .thumb {
+    opacity: 0.12;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+  }
+}
