@@ -28,6 +28,36 @@
   }
 }
 
+.no-spots-message-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  color: #666;
+}
+
+.add-spot-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  button {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    img {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
 .align-items-center {
   text-transform: uppercase;
 }

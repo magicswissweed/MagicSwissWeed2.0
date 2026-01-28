@@ -10,6 +10,7 @@ import {Col, Form, Row} from "react-bootstrap";
 import {MswSpotMap} from "./map/spot-map/MswSpotMap";
 import {SpotModel} from "../model/SpotModel";
 import {stationsService} from "../service/StationsService";
+import {MswAddSpot} from "../spot/add/MswAddSpot";
 
 function isNotEmpty(array: Array<any> | undefined) {
     return array && array.length > 0;
@@ -23,6 +24,7 @@ export enum GraphTypeEnum {
 export const MswOverviewPage = () => {
     const [spots, setSpots] = useState<Array<SpotModel>>([]);
     const [showGraphOfType, setShowGraphOfType] = useState<GraphTypeEnum>(GraphTypeEnum.Forecast);
+    const [isLoading, setIsLoading] = useState(true);
 
     // @ts-ignore
     const {user, token} = useUserAuth();
@@ -38,7 +40,10 @@ export const MswOverviewPage = () => {
     }, [user, token]);
 
     useEffect(() => {
-        const updateSpots = (newSpots: SpotModel[]) => setSpots(newSpots);
+        const updateSpots = (newSpots: SpotModel[]) => {
+            setSpots(newSpots);
+            setIsLoading(false);
+        };
         spotsService.subscribe(updateSpots);
 
         return () => spotsService.unsubscribe(updateSpots);
@@ -52,7 +57,16 @@ export const MswOverviewPage = () => {
     return <>
         <div className="App">
             <MswHeader/>
-            {spots.length > 0 ? getContent() : <MswLoader/>}
+            {isLoading ? (
+                <MswLoader />
+            ) : spots.length > 0 ? (
+                getContent()
+            ) : (
+                <div className="no-spots-message-container">
+                    <div>No spots saved.</div>
+                    <div className="add-spot-link">Add a new spot <MswAddSpot/></div>
+                </div>
+            )}
             <MswFooter/>
         </div>
     </>;
