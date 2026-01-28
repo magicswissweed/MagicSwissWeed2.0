@@ -67,7 +67,8 @@ $icons-container-width: 40px;
   }
 
   .svg-icon {
-    width: 60%;
+    width: 24px;
+    height: 24px;
   }
 
   @include small {
@@ -164,7 +165,7 @@ $icons-container-width: 40px;
 }
 
 .icons-container .arrow-icon .inverted-bg-icon {
-  width: 40%;
+  width: 24px;
   height: 24px;
   object-fit: contain;
 }
