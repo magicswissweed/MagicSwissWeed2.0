@@ -1,5 +1,5 @@
 import "./MswOverviewPage.scss";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {MswHeader} from '../header/MswHeader';
 import {MswFooter} from '../footer/MswFooter';
 import {SpotList} from './spotlist/SpotList'
@@ -8,8 +8,9 @@ import {useUserAuth} from '../user/UserAuthContext';
 import {spotsService} from "../service/SpotsService";
 import {Col, Form, Row} from "react-bootstrap";
 import {MswSpotMap} from "./map/spot-map/MswSpotMap";
-import {SpotModel} from "../model/SpotModel";
+import {FlowColorEnum, SpotModel} from "../model/SpotModel";
 import {stationsService} from "../service/StationsService";
+import {FlowStatusFilterChips} from "./filter/FlowStatusFilterChips";
 import {MswAddSpot} from "../spot/add/MswAddSpot";
 
 function isNotEmpty(array: Array<any> | undefined) {
@@ -23,8 +24,22 @@ export enum GraphTypeEnum {
 
 export const MswOverviewPage = () => {
     const [spots, setSpots] = useState<Array<SpotModel>>([]);
+    const [selectedFlowStatuses, setSelectedFlowStatuses] = useState([FlowColorEnum.GREEN, FlowColorEnum.ORANGE, FlowColorEnum.RED]);
     const [showGraphOfType, setShowGraphOfType] = useState<GraphTypeEnum>(GraphTypeEnum.Forecast);
     const [isLoading, setIsLoading] = useState(true);
+
+    const filteredSpots = useMemo(
+        () =>
+            spots.filter(spot =>
+                selectedFlowStatuses.includes(spot.flowStatus)
+            ),
+        [spots, selectedFlowStatuses]
+    );
+
+    const areAllFlowStatusEnumsSelected = useMemo(
+        () => selectedFlowStatuses.length === 3,
+        [selectedFlowStatuses]
+    );
 
     // @ts-ignore
     const {user, token} = useUserAuth();
@@ -72,14 +87,22 @@ export const MswOverviewPage = () => {
     </>;
 
     function getContent() {
-        let riverSurfSpots = spots.filter(l => l.spotType === "RIVER_SURF");
-        let bungeeSurfSpots = spots.filter(l => l.spotType === "BUNGEE_SURF");
+        let riverSurfSpots = filteredSpots.filter(l => l.spotType === "RIVER_SURF");
+        let bungeeSurfSpots = filteredSpots.filter(l => l.spotType === "BUNGEE_SURF");
         return <>
+            <FlowStatusFilterChips
+                initialSelected={selectedFlowStatuses}
+                onChange={statuses => {
+                    setSelectedFlowStatuses(statuses);
+                }}
+            />
             <div className="surfspots">
                 {isNotEmpty(riverSurfSpots) &&
-                    <SpotList title="Riversurf" spots={riverSurfSpots} showGraphOfType={showGraphOfType}/>}
+                    <SpotList title="Riversurf" spots={riverSurfSpots} showGraphOfType={showGraphOfType}
+                              isSavingNewOrderAllowed={areAllFlowStatusEnumsSelected}/>}
                 {isNotEmpty(bungeeSurfSpots) &&
-                    <SpotList title="Bungeesurf" spots={bungeeSurfSpots} showGraphOfType={showGraphOfType}/>}
+                    <SpotList title="Bungeesurf" spots={bungeeSurfSpots} showGraphOfType={showGraphOfType}
+                              isSavingNewOrderAllowed={areAllFlowStatusEnumsSelected}/>}
             </div>
             <Form>
                 <Row className="align-items-center">
