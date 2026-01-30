@@ -48,19 +48,8 @@ export const MswAddSpot = () => {
     const [stationSelectionError, setStationSelectionError] = useState('');
 
     useEffect(() => {
-        // Fetch stations if not already loaded
-        const currentStations = stationsService.getStations();
-        if (currentStations && currentStations.length > 0) {
-            setStations(currentStations);
-        } else {
-            // Trigger fetch and wait for it to complete
-            stationsService.fetchData();
-            // Give it a moment to fetch, then try getting them
-            setTimeout(() => {
-                setStations(stationsService.getStations());
-            }, 500);
-        }
-    }, [showAddSpotModal]);
+        setStations(stationsService.getStations());
+    }, []);
 
 
     // @ts-ignore
