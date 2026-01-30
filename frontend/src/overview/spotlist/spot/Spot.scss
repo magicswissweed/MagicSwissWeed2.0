@@ -1,5 +1,6 @@
 @import "../../../ReactiveMixins";
 @import "../../../index";
+@import "../../../theme";
 
 .details-title {
   color: $msw-blue;
@@ -11,9 +12,10 @@ $icons-container-width: 40px;
   display: flex;
   flex-direction: column;
   padding: 0;
-  color: #000000;
+  color: var(--bg-inverted);
+  background: var(--spot-bg);
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(var(--bg-inverted-rgb), 0.3);
 
   .miniGraph {
     font-size: 20px;
@@ -53,17 +55,26 @@ $icons-container-width: 40px;
   margin: 5.5px 0;
   padding: 0 !important;
   border: none !important;
-  border-radius: 0%;
+  border-radius: 0;
   min-width: 0;
 
-  img {
-    width: 60%;
+  .inverted-bg-icon {
+    color: var(--bg-inverted);
+
+    * {
+      fill: currentColor !important;
+    }
+  }
+
+  .svg-icon {
+    width: 24px;
+    height: 24px;
   }
 
   @include small {
     margin: 2.5px 0;
 
-    .arrow-icon > img {
+    .arrow-icon > .svg-icon {
       margin: 2.5px 0
     }
   }
@@ -80,7 +91,7 @@ $icons-container-width: 40px;
 }
 
 .collapsible-icon {
-  img {
+  .svg-icon {
     cursor: pointer;
   }
 }
@@ -119,7 +130,7 @@ $icons-container-width: 40px;
 .spot-title > a {
   flex: 1;
   text-overflow: ellipsis;
-  color: #000000;
+  color: var(--bg-inverted);
   text-decoration: none;
   text-transform: uppercase;
   font-size: 85%;
@@ -153,8 +164,8 @@ $icons-container-width: 40px;
   }
 }
 
-.icons-container .arrow-icon img {
-  width: 40%;
+.icons-container .arrow-icon .inverted-bg-icon {
+  width: 24px;
   height: 24px;
   object-fit: contain;
 }

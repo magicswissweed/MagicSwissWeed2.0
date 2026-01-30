@@ -1,8 +1,12 @@
+@import './theme';
+
 $msw-blue: #3bbae8;
 $msw-blue-secondary: #2473db;
 
 body {
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg);
+  color: var(--bg-inverted);
 }
 
 a {

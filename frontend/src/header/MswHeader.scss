@@ -2,8 +2,6 @@
 
 .App-header {
   font-size: 2.5em;
-  color: #000000;
-
 
   @include small() {
     font-size: 2em;
@@ -12,6 +10,7 @@
 }
 
 .title {
+  color: var(--bg-inverted);
 
   h1 {
     text-transform: none;
@@ -51,7 +50,7 @@
   margin: auto;
   width: 70px;
   font-size: medium;
-  border: 1px black solid;
+  border: 1px var(--bg-inverted) solid;
   border-radius: 5px;
 }
 
@@ -79,10 +78,6 @@
   justify-content: center;
   border-radius: 4px;
   transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
 
   img.button {
     width: 32px;

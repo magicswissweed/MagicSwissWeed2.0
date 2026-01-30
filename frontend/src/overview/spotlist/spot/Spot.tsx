@@ -3,10 +3,10 @@ import React, {useState} from 'react';
 import {CountryEnum, SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
-import arrow_down_icon from '../../../assets/arrow_down.svg';
-import delete_icon from '../../../assets/trash.svg';
-import link_icon from '../../../assets/link.svg';
-import drag_drop_icon from '../../../assets/drag_drop_icon.svg';
+import {ReactComponent as ArrowDownIcon} from '../../../assets/arrow_down.svg';
+import {ReactComponent as DeleteIcon} from '../../../assets/trash.svg';
+import {ReactComponent as LinkIcon} from '../../../assets/link.svg';
+import {ReactComponent as DragDropIcon} from '../../../assets/drag_drop_icon.svg';
 import {authConfiguration} from '../../../api/config/AuthConfiguration';
 import {useUserAuth} from '../../../user/UserAuthContext';
 import Modal from 'react-bootstrap/Modal';
@@ -90,7 +90,7 @@ export const Spot = (props: SpotProps) => {
                         {...props.dragHandleProps}
                         aria-label="Sort the spots on your dashboard"
                     >
-                        <img alt="" src={drag_drop_icon}/>
+                        <DragDropIcon className="svg-icon inverted-bg-icon"/>
                     </Button>
                 }
             </div>
@@ -114,7 +114,7 @@ export const Spot = (props: SpotProps) => {
                     rel="noreferrer"
                     aria-label="Link to the station"
                 >
-                    <img src={link_icon} alt="" title="Link to the station"/>
+                    <LinkIcon className="svg-icon inverted-bg-icon"/>
                 </Button>
                 {user &&
                     <MswEditSpot spot={spot}/>
@@ -126,8 +126,7 @@ export const Spot = (props: SpotProps) => {
                         onClick={() => handleShowConfirmationModal()}
                         aria-label="Delete this spot from your dashboard"
                     >
-                        <img className="button" alt="" title="Delete this spot from your dashboard."
-                             src={delete_icon}/>
+                        <DeleteIcon className="svg-icon"/>
                     </Button>
                 }
                 <Modal show={showConfirmationModal} onHide={handleCancelConfirmationModal}>
@@ -151,7 +150,7 @@ export const Spot = (props: SpotProps) => {
                     onClick={() => setIsSpotOpen(!isSpotOpen)}
                     aria-label="Toggle forecast details"
                 >
-                    <img alt="Toggle forecast details" src={arrow_down_icon}/>
+                    <ArrowDownIcon className="svg-icon inverted-bg-icon"/>
                 </Button>
             </div>
         </>

@@ -8,6 +8,7 @@ import {MswOverviewPage} from './overview/MswOverviewPage';
 import {ErrorNotFound} from "./error/404";
 import {AuthModalProvider} from './user/AuthModalContext';
 import {GoogleMapsProvider} from "./map-provider/GoogleMapsProvider";
+import {MswThemeProvider} from "./theme/MswThemeProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement,
@@ -17,13 +18,15 @@ root.render(
     <UserAuthContextProvider>
         <AuthModalProvider>
             <GoogleMapsProvider>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<Navigate replace to="/spots"/>}/>
-                        <Route path="/spots" element={<MswOverviewPage/>}/>
-                        <Route path="*" element={<ErrorNotFound/>}/>
-                    </Routes>
-                </BrowserRouter>
+                <MswThemeProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<Navigate replace to="/spots"/>}/>
+                            <Route path="/spots" element={<MswOverviewPage/>}/>
+                            <Route path="*" element={<ErrorNotFound/>}/>
+                        </Routes>
+                    </BrowserRouter>
+                </MswThemeProvider>
             </GoogleMapsProvider>
         </AuthModalProvider>
     </UserAuthContextProvider>,

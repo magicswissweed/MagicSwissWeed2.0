@@ -3,6 +3,8 @@ import {GoogleMap, InfoWindow} from "@react-google-maps/api";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import './MswSpotMapPerCategory.scss';
 import {FlowColorEnum, SpotModel} from "../../../../model/SpotModel";
+import {darkMapStyle, lightMapStyle} from "../../map-styles";
+import {useTheme} from "../../../../theme/MswThemeContext";
 import {useGoogleMaps} from "../../../../map-provider/GoogleMapsProvider";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
@@ -22,6 +24,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const clustererRef = useRef<MarkerClusterer | null>(null);
+    const {theme} = useTheme();
 
     const clearMap = () => {
         clustererRef.current?.clearMarkers();
@@ -113,6 +116,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 zoom={8}
                 center={mapCenter}
                 onLoad={handleMapLoad}
+                options={{styles: theme === 'dark' ? darkMapStyle : lightMapStyle}}
             >
                 {selectedSpot && (
                     <InfoWindow
