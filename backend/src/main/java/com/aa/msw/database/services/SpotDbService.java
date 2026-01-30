@@ -92,7 +92,7 @@ public class SpotDbService {
         Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
         for (Spot spot : spots) {
             FlowStatusEnum updatedFlowStatusEnum = getCurrentFlowStatusEnum(spot);
-            spotsThatImproved = getSpotsThatImproved(spot, updatedFlowStatusEnum);
+            spotsThatImproved.addAll(getSpotsThatImproved(spot, updatedFlowStatusEnum));
             updateSpotCurrentInfo(spot, updatedFlowStatusEnum);
         }
         return spotsThatImproved;
