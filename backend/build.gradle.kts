@@ -30,6 +30,8 @@ dependencies {
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.google.firebase:firebase-admin:9.3.0")
+    implementation("org.locationtech.proj4j:proj4j:1.4.1")
+    implementation("org.locationtech.proj4j:proj4j-epsg:1.4.1")
 
     runtimeOnly("org.postgresql:postgresql")
 

@@ -232,10 +232,10 @@ export interface ApiSpot {
     'name': string;
     /**
      * 
-     * @type {number}
+     * @type {ApiStationId}
      * @memberof ApiSpot
      */
-    'stationId': number;
+    'stationId': ApiStationId;
     /**
      * 
      * @type {string}
@@ -301,10 +301,10 @@ export interface ApiSpotInformation {
     'name': string;
     /**
      * 
-     * @type {number}
+     * @type {ApiStationId}
      * @memberof ApiSpotInformation
      */
-    'stationId': number;
+    'stationId': ApiStationId;
     /**
      * 
      * @type {string}
@@ -370,10 +370,10 @@ export type ApiSpotInformationSpotTypeEnum = typeof ApiSpotInformationSpotTypeEn
 export interface ApiStation {
     /**
      * 
-     * @type {number}
+     * @type {ApiStationId}
      * @memberof ApiStation
      */
-    'id': number;
+    'id': ApiStationId;
     /**
      * 
      * @type {string}
@@ -393,6 +393,41 @@ export interface ApiStation {
      */
     'longitude': number;
 }
+/**
+ * 
+ * @export
+ * @interface ApiStationId
+ */
+export interface ApiStationId {
+    /**
+     * 
+     * @type {CountryEnum}
+     * @memberof ApiStationId
+     */
+    'country': CountryEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ApiStationId
+     */
+    'externalId': string;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const CountryEnum = {
+    Ch: 'CH',
+    Fr: 'FR'
+} as const;
+
+export type CountryEnum = typeof CountryEnum[keyof typeof CountryEnum];
+
+
 /**
  * 
  * @export
@@ -427,10 +462,10 @@ export interface PushNotificationSubscription {
 export interface StationToApiForecasts {
     /**
      * 
-     * @type {number}
+     * @type {ApiStationId}
      * @memberof StationToApiForecasts
      */
-    'station': number;
+    'station': ApiStationId;
     /**
      * 
      * @type {ApiForecast}
@@ -446,10 +481,10 @@ export interface StationToApiForecasts {
 export interface StationToApiHistoricalYears {
     /**
      * 
-     * @type {number}
+     * @type {ApiStationId}
      * @memberof StationToApiHistoricalYears
      */
-    'station': number;
+    'station': ApiStationId;
     /**
      * 
      * @type {ApiHistoricalYears}
@@ -460,21 +495,21 @@ export interface StationToApiHistoricalYears {
 /**
  * 
  * @export
- * @interface StationToLast40Days
+ * @interface StationToLastFewDays
  */
-export interface StationToLast40Days {
+export interface StationToLastFewDays {
     /**
      * 
-     * @type {number}
-     * @memberof StationToLast40Days
+     * @type {ApiStationId}
+     * @memberof StationToLastFewDays
      */
-    'station': number;
+    'station': ApiStationId;
     /**
      * 
      * @type {Array<ApiFlowSample>}
-     * @memberof StationToLast40Days
+     * @memberof StationToLastFewDays
      */
-    'last40Days': Array<ApiFlowSample>;
+    'lastFewDays': Array<ApiFlowSample>;
 }
 
 /**
@@ -483,40 +518,6 @@ export interface StationToLast40Days {
  */
 export const ForecastApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
-        /**
-         * 
-         * @summary Get Forecast for specific Station
-         * @param {number} stationId The id of the station to get the sample from.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getForecast: async (stationId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'stationId' is not null or undefined
-            assertParamExists('getForecast', 'stationId', stationId)
-            const localVarPath = `/api/v1/forecast/{stationId}`
-                .replace(`{${"stationId"}}`, encodeURIComponent(String(stationId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
         /**
          * 
          * @summary Get All Forecasts for user
@@ -559,19 +560,6 @@ export const ForecastApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get Forecast for specific Station
-         * @param {number} stationId The id of the station to get the sample from.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getForecast(stationId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiForecast>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getForecast(stationId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ForecastApi.getForecast']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @summary Get All Forecasts for user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -594,16 +582,6 @@ export const ForecastApiFactory = function (configuration?: Configuration, baseP
     return {
         /**
          * 
-         * @summary Get Forecast for specific Station
-         * @param {number} stationId The id of the station to get the sample from.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getForecast(stationId: number, options?: any): AxiosPromise<ApiForecast> {
-            return localVarFp.getForecast(stationId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @summary Get All Forecasts for user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -621,18 +599,6 @@ export const ForecastApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class ForecastApi extends BaseAPI {
-    /**
-     * 
-     * @summary Get Forecast for specific Station
-     * @param {number} stationId The id of the station to get the sample from.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ForecastApi
-     */
-    public getForecast(stationId: number, options?: RawAxiosRequestConfig) {
-        return ForecastApiFp(this.configuration).getForecast(stationId, options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * 
      * @summary Get All Forecasts for user
@@ -866,16 +832,15 @@ export const SampleApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 
-         * @summary Get current Flow and Temperature of a specific Station
-         * @param {number} stationId The id of the station to get the sample from.
+         * @summary Get Samples from last Few Days for this station.
+         * @param {Array<ApiStationId>} apiStationId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCurrentSample: async (stationId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'stationId' is not null or undefined
-            assertParamExists('getCurrentSample', 'stationId', stationId)
-            const localVarPath = `/api/v1/sample/current/{stationId}`
-                .replace(`{${"stationId"}}`, encodeURIComponent(String(stationId)));
+        getLastFewDaysSamples: async (apiStationId: Array<ApiStationId>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'apiStationId' is not null or undefined
+            assertParamExists('getLastFewDaysSamples', 'apiStationId', apiStationId)
+            const localVarPath = `/api/v1/sample/lastFewDays`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -883,49 +848,18 @@ export const SampleApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Get Samples from last 40 Days for this station.
-         * @param {Array<number>} stationIds The ids of the stations to get the sample from.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getLast40DaysSamples: async (stationIds: Array<number>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'stationIds' is not null or undefined
-            assertParamExists('getLast40DaysSamples', 'stationIds', stationIds)
-            const localVarPath = `/api/v1/sample/last40Days/{stationIds}`
-                .replace(`{${"stationIds"}}`, encodeURIComponent(String(stationIds)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(apiStationId, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -944,28 +878,15 @@ export const SampleApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get current Flow and Temperature of a specific Station
-         * @param {number} stationId The id of the station to get the sample from.
+         * @summary Get Samples from last Few Days for this station.
+         * @param {Array<ApiStationId>} apiStationId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCurrentSample(stationId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiSample>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getCurrentSample(stationId, options);
+        async getLastFewDaysSamples(apiStationId: Array<ApiStationId>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StationToLastFewDays>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getLastFewDaysSamples(apiStationId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SampleApi.getCurrentSample']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Get Samples from last 40 Days for this station.
-         * @param {Array<number>} stationIds The ids of the stations to get the sample from.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getLast40DaysSamples(stationIds: Array<number>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StationToLast40Days>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getLast40DaysSamples(stationIds, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SampleApi.getLast40DaysSamples']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['SampleApi.getLastFewDaysSamples']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -980,23 +901,13 @@ export const SampleApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 
-         * @summary Get current Flow and Temperature of a specific Station
-         * @param {number} stationId The id of the station to get the sample from.
+         * @summary Get Samples from last Few Days for this station.
+         * @param {Array<ApiStationId>} apiStationId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCurrentSample(stationId: number, options?: any): AxiosPromise<ApiSample> {
-            return localVarFp.getCurrentSample(stationId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Get Samples from last 40 Days for this station.
-         * @param {Array<number>} stationIds The ids of the stations to get the sample from.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getLast40DaysSamples(stationIds: Array<number>, options?: any): AxiosPromise<Array<StationToLast40Days>> {
-            return localVarFp.getLast40DaysSamples(stationIds, options).then((request) => request(axios, basePath));
+        getLastFewDaysSamples(apiStationId: Array<ApiStationId>, options?: any): AxiosPromise<Array<StationToLastFewDays>> {
+            return localVarFp.getLastFewDaysSamples(apiStationId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1010,26 +921,14 @@ export const SampleApiFactory = function (configuration?: Configuration, basePat
 export class SampleApi extends BaseAPI {
     /**
      * 
-     * @summary Get current Flow and Temperature of a specific Station
-     * @param {number} stationId The id of the station to get the sample from.
+     * @summary Get Samples from last Few Days for this station.
+     * @param {Array<ApiStationId>} apiStationId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SampleApi
      */
-    public getCurrentSample(stationId: number, options?: RawAxiosRequestConfig) {
-        return SampleApiFp(this.configuration).getCurrentSample(stationId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Get Samples from last 40 Days for this station.
-     * @param {Array<number>} stationIds The ids of the stations to get the sample from.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SampleApi
-     */
-    public getLast40DaysSamples(stationIds: Array<number>, options?: RawAxiosRequestConfig) {
-        return SampleApiFp(this.configuration).getLast40DaysSamples(stationIds, options).then((request) => request(this.axios, this.basePath));
+    public getLastFewDaysSamples(apiStationId: Array<ApiStationId>, options?: RawAxiosRequestConfig) {
+        return SampleApiFp(this.configuration).getLastFewDaysSamples(apiStationId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -3,6 +3,7 @@ package com.aa.msw.gen.api;
 import java.net.URI;
 import java.util.Objects;
 import com.aa.msw.gen.api.ApiStation;
+import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -21,14 +22,14 @@ import jakarta.annotation.Generated;
  * ApiSpot
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-29T11:28:08.103650+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-12T17:43:06.448035+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpot {
 
   private UUID id;
 
   private String name;
 
-  private Integer stationId;
+  private ApiStationId stationId;
 
   /**
    * Gets or Sets spotType
@@ -84,7 +85,7 @@ public class ApiSpot {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpot(UUID id, String name, Integer stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, Boolean withNotification) {
+  public ApiSpot(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, Boolean withNotification) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
@@ -136,7 +137,7 @@ public class ApiSpot {
     this.name = name;
   }
 
-  public ApiSpot stationId(Integer stationId) {
+  public ApiSpot stationId(ApiStationId stationId) {
     this.stationId = stationId;
     return this;
   }
@@ -145,14 +146,14 @@ public class ApiSpot {
    * Get stationId
    * @return stationId
   */
-  @NotNull 
+  @NotNull @Valid 
   @Schema(name = "stationId", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("stationId")
-  public Integer getStationId() {
+  public ApiStationId getStationId() {
     return stationId;
   }
 
-  public void setStationId(Integer stationId) {
+  public void setStationId(ApiStationId stationId) {
     this.stationId = stationId;
   }
 

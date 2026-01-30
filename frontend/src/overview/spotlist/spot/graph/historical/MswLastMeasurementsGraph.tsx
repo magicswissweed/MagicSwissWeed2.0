@@ -13,13 +13,13 @@ import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
 
 export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
-    let lineData = props.spot.last40DaysLoaded && props.spot.last40Days ?
+    let lineData = props.spot.lastFewDaysLoaded && props.spot.lastFewDays ?
         [
-            ...props.spot.last40Days,
+            ...props.spot.lastFewDays,
             {timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}
         ] :
         [];
-    if (props.spot.last40DaysLoaded) {
+    if (props.spot.lastFewDaysLoaded) {
         if (!lineData || lineData.length === 0) {
             return <div>Detailed Graph not possible at the moment...</div>
         }
@@ -65,30 +65,30 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         },
         shapes: [
             ...(getCommonPlotlyLayout(
-              props.isMini, 
-              getTimestamps(lineData), 
-              props.spot.minFlow, 
-              props.spot.maxFlow,
-              false
+                props.isMini,
+                getTimestamps(lineData),
+                props.spot.minFlow,
+                props.spot.maxFlow,
+                false
             ).shapes || []),
             // Vertical lines at midnight (darker than noon grid)
             ...(getTimestamps(lineData).length > 0 ?
-              startOfDayTicks
-                  .map(timestamp => ({
-                      type: 'line' as const,
-                      x0: timestamp,
-                      x1: timestamp,
-                      y0: 0,
-                      y1: 1,
-                      yref: 'paper' as const,
-                      line: {
-                          color: 'rgba(169, 169, 169, 0.8)',  // Dark gray for midnight lines
-                          width: 1
-                      },
-                      layer: 'below' as const
-                  }))
-              : []
-      ),
+                    startOfDayTicks
+                        .map(timestamp => ({
+                            type: 'line' as const,
+                            x0: timestamp,
+                            x1: timestamp,
+                            y0: 0,
+                            y1: 1,
+                            yref: 'paper' as const,
+                            line: {
+                                color: 'rgba(169, 169, 169, 0.8)',  // Dark gray for midnight lines
+                                width: 1
+                            },
+                            layer: 'below' as const
+                        }))
+                    : []
+            ),
         ]
     };
 

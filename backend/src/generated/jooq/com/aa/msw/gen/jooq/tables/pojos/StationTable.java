@@ -4,6 +4,8 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -17,10 +19,11 @@ public class StationTable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final UUID dbId;
-    private final Integer stationid;
+    private final String stationid;
     private final String label;
     private final Double latitude;
     private final Double longitude;
+    private final Country country;
 
     public StationTable(StationTable value) {
         this.dbId = value.dbId;
@@ -28,20 +31,23 @@ public class StationTable implements Serializable {
         this.label = value.label;
         this.latitude = value.latitude;
         this.longitude = value.longitude;
+        this.country = value.country;
     }
 
     public StationTable(
         UUID dbId,
-        Integer stationid,
+        String stationid,
         String label,
         Double latitude,
-        Double longitude
+        Double longitude,
+        Country country
     ) {
         this.dbId = dbId;
         this.stationid = stationid;
         this.label = label;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.country = country;
     }
 
     /**
@@ -54,7 +60,7 @@ public class StationTable implements Serializable {
     /**
      * Getter for <code>public.station_table.stationid</code>.
      */
-    public Integer getStationid() {
+    public String getStationid() {
         return this.stationid;
     }
 
@@ -77,6 +83,13 @@ public class StationTable implements Serializable {
      */
     public Double getLongitude() {
         return this.longitude;
+    }
+
+    /**
+     * Getter for <code>public.station_table.country</code>.
+     */
+    public Country getCountry() {
+        return this.country;
     }
 
     @Override
@@ -118,6 +131,12 @@ public class StationTable implements Serializable {
         }
         else if (!this.longitude.equals(other.longitude))
             return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        }
+        else if (!this.country.equals(other.country))
+            return false;
         return true;
     }
 
@@ -130,6 +149,7 @@ public class StationTable implements Serializable {
         result = prime * result + ((this.label == null) ? 0 : this.label.hashCode());
         result = prime * result + ((this.latitude == null) ? 0 : this.latitude.hashCode());
         result = prime * result + ((this.longitude == null) ? 0 : this.longitude.hashCode());
+        result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         return result;
     }
 
@@ -142,6 +162,7 @@ public class StationTable implements Serializable {
         sb.append(", ").append(label);
         sb.append(", ").append(latitude);
         sb.append(", ").append(longitude);
+        sb.append(", ").append(country);
 
         sb.append(")");
         return sb.toString();

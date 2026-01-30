@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.StationTable;
 
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
     /**
      * Setter for <code>public.station_table.stationid</code>.
      */
-    public StationTableRecord setStationid(Integer value) {
+    public StationTableRecord setStationid(String value) {
         set(1, value);
         return this;
     }
@@ -46,8 +47,8 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
     /**
      * Getter for <code>public.station_table.stationid</code>.
      */
-    public Integer getStationid() {
-        return (Integer) get(1);
+    public String getStationid() {
+        return (String) get(1);
     }
 
     /**
@@ -95,6 +96,21 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
         return (Double) get(4);
     }
 
+    /**
+     * Setter for <code>public.station_table.country</code>.
+     */
+    public StationTableRecord setCountry(Country value) {
+        set(5, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.station_table.country</code>.
+     */
+    public Country getCountry() {
+        return (Country) get(5);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -118,7 +134,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
     /**
      * Create a detached, initialised StationTableRecord
      */
-    public StationTableRecord(UUID dbId, Integer stationid, String label, Double latitude, Double longitude) {
+    public StationTableRecord(UUID dbId, String stationid, String label, Double latitude, Double longitude, Country country) {
         super(StationTable.STATION_TABLE);
 
         setDbId(dbId);
@@ -126,6 +142,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
         setLabel(label);
         setLatitude(latitude);
         setLongitude(longitude);
+        setCountry(country);
         resetChangedOnNotNull();
     }
 
@@ -141,6 +158,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
             setLabel(value.getLabel());
             setLatitude(value.getLatitude());
             setLongitude(value.getLongitude());
+            setCountry(value.getCountry());
             resetChangedOnNotNull();
         }
     }

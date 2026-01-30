@@ -2,6 +2,7 @@ package com.aa.msw.database.repository;
 
 import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.database.repository.dao.StationDao;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.daos.StationTableDao;
 import com.aa.msw.gen.jooq.tables.records.StationTableRecord;
@@ -10,6 +11,9 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
 @Component
 public class StationRepository extends AbstractRepository
@@ -26,7 +30,7 @@ public class StationRepository extends AbstractRepository
     protected Station mapRecord(StationTableRecord record) {
         return new Station(
                 new StationId(record.getDbId()),
-                record.getStationid(),
+                apiStationId(record.getCountry(), record.getStationid()),
                 record.getLabel(),
                 record.getLatitude(),
                 record.getLongitude()
@@ -38,7 +42,8 @@ public class StationRepository extends AbstractRepository
         final StationTableRecord record = dsl.newRecord(table);
 
         record.setDbId(station.databaseId().getId());
-        record.setStationid(station.stationId());
+        record.setCountry(country(station.stationId().getCountry()));
+        record.setStationid(station.stationId().getExternalId());
         record.setLabel(station.label());
         record.setLatitude(station.latitude());
         record.setLongitude(station.longitude());
@@ -49,7 +54,7 @@ public class StationRepository extends AbstractRepository
     protected Station mapEntity(com.aa.msw.gen.jooq.tables.pojos.StationTable stationTable) {
         return new Station(
                 new StationId(stationTable.getDbId()),
-                stationTable.getStationid(),
+                apiStationId(stationTable.getCountry(), stationTable.getStationid()),
                 stationTable.getLabel(),
                 stationTable.getLatitude(),
                 stationTable.getLongitude()
@@ -63,8 +68,10 @@ public class StationRepository extends AbstractRepository
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteByStationId(ApiStationId stationId) {
         dsl.deleteFrom(TABLE)
+                .where(TABLE.STATIONID.eq(stationId.getExternalId())
+                        .and(TABLE.COUNTRY.eq(country(stationId.getCountry()))))
                 .execute();
     }
 }

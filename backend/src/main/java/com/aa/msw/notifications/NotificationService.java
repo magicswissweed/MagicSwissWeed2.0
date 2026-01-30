@@ -6,6 +6,8 @@ import com.aa.msw.model.FlowStatusEnum;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.AbstractMap;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationService.class);
+
     private final NotificationDao notificationDao;
     private final FirebaseMessaging fcm;
 
@@ -89,7 +93,7 @@ public class NotificationService {
             if (e.getMessage().contains("Requested entity was not found")) {
                 notificationDao.deleteSubscriptionToken(subscriptionToken);
             } else {
-                System.out.println("Error sending message: " + e.getMessage());
+                LOG.error("Error sending message", e);
             }
         }
     }

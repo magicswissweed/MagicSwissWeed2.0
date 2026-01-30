@@ -36,7 +36,7 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                     onCloseClick={() => setSelectedStation(null)}
                 >
                     <div>
-                        <p>{selectedStation.id} - {selectedStation.label}</p>
+                        <p>{selectedStation.id.externalId} - {selectedStation.label}</p>
                     </div>
                 </InfoWindow>
             )}

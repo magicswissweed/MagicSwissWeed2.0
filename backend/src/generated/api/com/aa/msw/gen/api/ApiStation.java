@@ -2,6 +2,7 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
+import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -18,10 +19,10 @@ import jakarta.annotation.Generated;
  * ApiStation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-29T11:28:08.103650+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-12T17:43:06.448035+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiStation {
 
-  private Integer id;
+  private ApiStationId id;
 
   private String label;
 
@@ -36,14 +37,14 @@ public class ApiStation {
   /**
    * Constructor with only required parameters
    */
-  public ApiStation(Integer id, String label, Double latitude, Double longitude) {
+  public ApiStation(ApiStationId id, String label, Double latitude, Double longitude) {
     this.id = id;
     this.label = label;
     this.latitude = latitude;
     this.longitude = longitude;
   }
 
-  public ApiStation id(Integer id) {
+  public ApiStation id(ApiStationId id) {
     this.id = id;
     return this;
   }
@@ -52,14 +53,14 @@ public class ApiStation {
    * Get id
    * @return id
   */
-  @NotNull 
+  @NotNull @Valid 
   @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("id")
-  public Integer getId() {
+  public ApiStationId getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(ApiStationId id) {
     this.id = id;
   }
 

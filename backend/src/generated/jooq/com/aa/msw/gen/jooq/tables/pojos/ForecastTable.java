@@ -4,6 +4,8 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
+import com.aa.msw.gen.jooq.enums.Country;
+
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -20,7 +22,7 @@ public class ForecastTable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final UUID id;
-    private final Integer stationid;
+    private final String stationid;
     private final JSONB measureddata;
     private final JSONB median;
     private final JSONB max;
@@ -28,6 +30,7 @@ public class ForecastTable implements Serializable {
     private final OffsetDateTime timestamp;
     private final JSONB twentyfivepercentile;
     private final JSONB seventyfivepercentile;
+    private final Country country;
 
     public ForecastTable(ForecastTable value) {
         this.id = value.id;
@@ -39,18 +42,20 @@ public class ForecastTable implements Serializable {
         this.timestamp = value.timestamp;
         this.twentyfivepercentile = value.twentyfivepercentile;
         this.seventyfivepercentile = value.seventyfivepercentile;
+        this.country = value.country;
     }
 
     public ForecastTable(
         UUID id,
-        Integer stationid,
+        String stationid,
         JSONB measureddata,
         JSONB median,
         JSONB max,
         JSONB min,
         OffsetDateTime timestamp,
         JSONB twentyfivepercentile,
-        JSONB seventyfivepercentile
+        JSONB seventyfivepercentile,
+        Country country
     ) {
         this.id = id;
         this.stationid = stationid;
@@ -61,6 +66,7 @@ public class ForecastTable implements Serializable {
         this.timestamp = timestamp;
         this.twentyfivepercentile = twentyfivepercentile;
         this.seventyfivepercentile = seventyfivepercentile;
+        this.country = country;
     }
 
     /**
@@ -73,7 +79,7 @@ public class ForecastTable implements Serializable {
     /**
      * Getter for <code>public.forecast_table.stationid</code>.
      */
-    public Integer getStationid() {
+    public String getStationid() {
         return this.stationid;
     }
 
@@ -124,6 +130,13 @@ public class ForecastTable implements Serializable {
      */
     public JSONB getSeventyfivepercentile() {
         return this.seventyfivepercentile;
+    }
+
+    /**
+     * Getter for <code>public.forecast_table.country</code>.
+     */
+    public Country getCountry() {
+        return this.country;
     }
 
     @Override
@@ -189,6 +202,12 @@ public class ForecastTable implements Serializable {
         }
         else if (!this.seventyfivepercentile.equals(other.seventyfivepercentile))
             return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        }
+        else if (!this.country.equals(other.country))
+            return false;
         return true;
     }
 
@@ -205,6 +224,7 @@ public class ForecastTable implements Serializable {
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
         result = prime * result + ((this.twentyfivepercentile == null) ? 0 : this.twentyfivepercentile.hashCode());
         result = prime * result + ((this.seventyfivepercentile == null) ? 0 : this.seventyfivepercentile.hashCode());
+        result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         return result;
     }
 
@@ -221,6 +241,7 @@ public class ForecastTable implements Serializable {
         sb.append(", ").append(timestamp);
         sb.append(", ").append(twentyfivepercentile);
         sb.append(", ").append(seventyfivepercentile);
+        sb.append(", ").append(country);
 
         sb.append(")");
         return sb.toString();

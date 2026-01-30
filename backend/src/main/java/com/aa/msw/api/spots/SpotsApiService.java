@@ -15,8 +15,14 @@ import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiFlowStatusEnum;
 import com.aa.msw.gen.api.ApiSpotInformation;
 import com.aa.msw.gen.api.ApiStation;
-import com.aa.msw.model.*;
+import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.model.Spot;
+import com.aa.msw.model.SpotCurrentInfo;
+import com.aa.msw.model.Station;
+import com.aa.msw.model.UserSpot;
 import com.aa.msw.source.InputDataFetcherService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +33,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SpotsApiService {
+    private static final Logger LOG = LoggerFactory.getLogger(SpotsApiService.class);
+
     private final SampleApiService sampleApiService;
     private final SampleDao sampleDao;
     private final SpotDao spotDao;
@@ -47,7 +55,7 @@ public class SpotsApiService {
         this.spotDbService = spotDbService;
     }
 
-    public Set<Integer> getStations() {
+    public Set<ApiStationId> getStations() {
         return getSpots()
                 .stream()
                 .map(i -> i.getStation().getId())
@@ -62,12 +70,12 @@ public class SpotsApiService {
                 return getAllSpots();
             }
         } catch (Exception e) {
+            LOG.error("Error while fetching spots.", e);
             return List.of();
         }
     }
 
     public void addPrivateSpot(Spot spot, int position, boolean withNotification) throws NoSampleAvailableException {
-        fetchSamplesAndPersistIfExists(spot.stationId());
         spotDbService.addPrivateSpot(spot, position, withNotification);
     }
 
@@ -139,12 +147,11 @@ public class SpotsApiService {
                                     .withNotification(withNotification)
                     );
                 } catch (NoDataAvailableException e) {
-                    // should never happen, but if it does, we just don't return this one spot
+                    LOG.error("No data available for spot {}. Skipping this spot from the list of spots.", spot.spotId());
                 }
 
             } catch (NoSuchElementException e) {
-                // ignore for the moment and do not add this ApiSpotInformation to the list
-                break;
+                LOG.error("Station with ID {} does not exist. Skipping this spot from the list of spots.", spot.stationId());
             }
         }
         return spotInformationList;
@@ -164,12 +171,6 @@ public class SpotsApiService {
     }
 
     private void editPrivateSpot(Spot updatedSpot) throws NoSampleAvailableException {
-        fetchSamplesAndPersistIfExists(updatedSpot.stationId());
         spotDbService.updatePrivateSpot(updatedSpot);
-    }
-
-    private void fetchSamplesAndPersistIfExists(Integer stationId) throws NoSampleAvailableException {
-        List<Sample> samples = inputDataFetcherService.fetchForStationId(stationId);
-        sampleDao.persistSamplesIfNotExist(samples);
     }
 }

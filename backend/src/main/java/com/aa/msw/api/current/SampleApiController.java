@@ -1,10 +1,10 @@
 package com.aa.msw.api.current;
 
-import com.aa.msw.database.exceptions.NoDataAvailableException;
-import com.aa.msw.gen.api.ApiSample;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.SampleApi;
-import com.aa.msw.gen.api.StationToLast40Days;
-import org.springframework.http.HttpStatus;
+import com.aa.msw.gen.api.StationToLastFewDays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +13,7 @@ import java.util.Objects;
 
 @RestController
 public class SampleApiController implements SampleApi {
+    private static final Logger LOG = LoggerFactory.getLogger(SampleApiController.class);
 
     private final SampleApiService sampleApiService;
 
@@ -21,26 +22,17 @@ public class SampleApiController implements SampleApi {
     }
 
     @Override
-    public ResponseEntity<ApiSample> getCurrentSample(Integer stationId) {
-        try {
-            ApiSample sample = sampleApiService.getCurrentSample(stationId);
-            return ResponseEntity.ok(sample);
-        } catch (NoDataAvailableException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @Override
-    public ResponseEntity<List<StationToLast40Days>> getLast40DaysSamples(List<Integer> stationIds) {
+    public ResponseEntity<List<StationToLastFewDays>> getLastFewDaysSamples(List<ApiStationId> stationIds) {
         return ResponseEntity.ok(
                 stationIds.stream()
                         .map(stationId -> {
                             try {
-                                return new StationToLast40Days(
+                                return new StationToLastFewDays(
                                         stationId,
-                                        sampleApiService.getLast40DaysSamples(stationId)
+                                        sampleApiService.getLastFewDaysSamples(stationId)
                                 );
                             } catch (Exception e) {
+                                LOG.error("Error getting last few days samples for station {}", stationId, e);
                                 return null;
                             }
                         })

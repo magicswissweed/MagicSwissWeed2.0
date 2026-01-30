@@ -5,8 +5,11 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.UserToSpot;
 import com.aa.msw.database.helpers.id.UserToSpotId;
 import com.aa.msw.database.repository.dao.*;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.*;
 import com.aa.msw.notifications.NotificationSpotInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SpotDbService {
+    private static final Logger LOG = LoggerFactory.getLogger(SpotDbService.class);
+
     private final SpotDao spotDao;
     private final SpotCurrentInfoDao spotCurrentInfoDao;
     private final UserToSpotDao userToSpotDao;
@@ -73,16 +78,16 @@ public class SpotDbService {
     }
 
     @Transactional
-    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStations(Set<Integer> stationIds) {
+    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStations(Set<ApiStationId> stationIds) {
         Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
-        for (Integer stationId : stationIds) {
+        for (ApiStationId stationId : stationIds) {
             spotsThatImproved.addAll(updateCurrentInfoForAllSpotsOfStation(stationId));
         }
         return spotsThatImproved;
     }
 
     @Transactional
-    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStation(Integer stationId) {
+    public Set<NotificationSpotInfo> updateCurrentInfoForAllSpotsOfStation(ApiStationId stationId) {
         Set<Spot> spots = spotDao.getSpotsWithStationId(stationId);
         Set<NotificationSpotInfo> spotsThatImproved = new HashSet<>();
         for (Spot spot : spots) {
@@ -108,7 +113,7 @@ public class SpotDbService {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Exception while trying to get the spots that improved " + e.getMessage());
+            LOG.error("Exception while trying to get the spots that improved", e);
         }
 
         return spotsThatImproved;

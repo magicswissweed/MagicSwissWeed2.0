@@ -3,6 +3,7 @@ package com.aa.msw.gen.api;
 import java.net.URI;
 import java.util.Objects;
 import com.aa.msw.gen.api.ApiForecast;
+import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -19,10 +20,10 @@ import jakarta.annotation.Generated;
  * StationToApiForecasts
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-29T11:28:08.103650+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-12T17:43:06.448035+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class StationToApiForecasts {
 
-  private Integer station;
+  private ApiStationId station;
 
   private ApiForecast forecast;
 
@@ -33,12 +34,12 @@ public class StationToApiForecasts {
   /**
    * Constructor with only required parameters
    */
-  public StationToApiForecasts(Integer station, ApiForecast forecast) {
+  public StationToApiForecasts(ApiStationId station, ApiForecast forecast) {
     this.station = station;
     this.forecast = forecast;
   }
 
-  public StationToApiForecasts station(Integer station) {
+  public StationToApiForecasts station(ApiStationId station) {
     this.station = station;
     return this;
   }
@@ -47,14 +48,14 @@ public class StationToApiForecasts {
    * Get station
    * @return station
   */
-  @NotNull 
+  @NotNull @Valid 
   @Schema(name = "station", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("station")
-  public Integer getStation() {
+  public ApiStationId getStation() {
     return station;
   }
 
-  public void setStation(Integer station) {
+  public void setStation(ApiStationId station) {
     this.station = station;
   }
 
