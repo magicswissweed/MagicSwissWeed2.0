@@ -1,15 +1,10 @@
 import React, {useState} from 'react';
-import {GoogleMap, InfoWindow, Marker, MarkerClusterer, useLoadScript} from '@react-google-maps/api';
+import {GoogleMap, InfoWindow, Marker, MarkerClusterer} from '@react-google-maps/api';
 import {ApiStation} from "../../../gen/msw-api-ts";
 import {mapCenter} from "../spot-map/per-category/MswSpotMapPerCategory";
 
 export const MswStationMap = (props: { stations: ApiStation[] }) => {
-    const {isLoaded} = useLoadScript({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
-    });
     const [selectedStation, setSelectedStation] = useState<ApiStation | null>(null);
-
-    if (!isLoaded) return <p>Loading maps...</p>;
 
     return (
         <GoogleMap
