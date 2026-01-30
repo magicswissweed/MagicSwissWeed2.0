@@ -1,8 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {GoogleMap, InfoWindow, useLoadScript} from "@react-google-maps/api";
+import {GoogleMap, InfoWindow} from "@react-google-maps/api";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import './MswSpotMapPerCategory.scss';
 import {FlowColorEnum, SpotModel} from "../../../../model/SpotModel";
+import {useGoogleMaps} from "../../../../map-provider/GoogleMapsProvider";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
 
@@ -16,9 +17,7 @@ interface MswSpotMapPropsPerCategory {
 }
 
 export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
-    const {isLoaded, loadError} = useLoadScript({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
-    });
+    const {isLoaded, loadError} = useGoogleMaps();
     const [selectedSpot, setSelectedSpot] = useState<SpotModel | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
