@@ -7,6 +7,7 @@ import {UserAuthContextProvider} from './user/UserAuthContext';
 import {MswOverviewPage} from './overview/MswOverviewPage';
 import {ErrorNotFound} from "./error/404";
 import {AuthModalProvider} from './user/AuthModalContext';
+import {GoogleMapsProvider} from "./map-provider/GoogleMapsProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement,
@@ -15,13 +16,15 @@ const root = ReactDOM.createRoot(
 root.render(
     <UserAuthContextProvider>
         <AuthModalProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Navigate replace to="/spots"/>}/>
-                    <Route path="/spots" element={<MswOverviewPage/>}/>
-                    <Route path="*" element={<ErrorNotFound/>}/>
-                </Routes>
-            </BrowserRouter>
+            <GoogleMapsProvider>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Navigate replace to="/spots"/>}/>
+                        <Route path="/spots" element={<MswOverviewPage/>}/>
+                        <Route path="*" element={<ErrorNotFound/>}/>
+                    </Routes>
+                </BrowserRouter>
+            </GoogleMapsProvider>
         </AuthModalProvider>
     </UserAuthContextProvider>,
 );
