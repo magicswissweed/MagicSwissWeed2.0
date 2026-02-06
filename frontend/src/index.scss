@@ -1,8 +1,5 @@
 @import './theme';
 
-$msw-blue: #3bbae8;
-$msw-blue-secondary: #2473db;
-
 body {
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
   background-color: var(--bg);
@@ -10,27 +7,27 @@ body {
 }
 
 a {
-  color: $msw-blue;
+  color: var(--msw-blue);
 }
 
 .btn-msw {
-  background-color: $msw-blue;
+  background-color: var(--msw-blue);
   color: white;
 
   &:hover {
     background-color: white;
-    color: $msw-blue;
-    border-color: $msw-blue;
+    color: var(--msw-blue);
+    border-color: var(--msw-blue);
   }
 }
 
 .btn-msw-outline {
   background-color: white;
-  color: $msw-blue;
-  border-color: $msw-blue;
+  color: var(--msw-blue);
+  border-color: var(--msw-blue);
 
   &:hover {
-    background-color: $msw-blue;
+    background-color: var(--msw-blue);
     color: white;
   }
 }
@@ -44,15 +41,15 @@ a {
 }
 
 .btn-link {
-  color: $msw-blue;
+  color: var(--msw-blue);
 }
 
 input[type="radio"]:checked {
-  border-color: $msw-blue;
-  background-color: $msw-blue;
+  border-color: var(--msw-blue);
+  background-color: var(--msw-blue);
 }
 
 #graph-toggle.form-check-input:checked {
-  background-color: $msw-blue;
-  border-color: $msw-blue;
+  background-color: var(--msw-blue);
+  border-color: var(--msw-blue);
 }

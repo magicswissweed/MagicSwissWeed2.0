@@ -1,5 +1,6 @@
 @import "../ReactiveMixins";
 @import "../index";
+@import "../theme";
 
 .App {
   text-align: center;
@@ -16,7 +17,7 @@
   flex-direction: row;
   justify-content: space-evenly;
   flex-flow: row wrap;
-  color: $msw-blue;
+  color: var(--msw-blue);
 
   @include medium {
     flex-direction: column;

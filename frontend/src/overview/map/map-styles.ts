@@ -1,9 +1,14 @@
-// TODO: use https://snazzymaps.com/explore to handle styles
+// use https://snazzymaps.com/explore to handle styles
+
+const mswBlue = getComputedStyle(document.documentElement)
+    .getPropertyValue('--msw-blue')
+    .trim();
+
 export const lightMapStyle = [
     {
         featureType: "water",
         elementType: "geometry",
-        stylers: [{color: "#3bbae8"}],
+        stylers: [{color: mswBlue}],
     },
 ];
 
@@ -15,7 +20,7 @@ export const darkMapStyle = [
     {
         featureType: "water",
         elementType: "geometry",
-        stylers: [{color: "#3bbae8"}],
+        stylers: [{color: mswBlue}],
     },
     {
         featureType: "road",

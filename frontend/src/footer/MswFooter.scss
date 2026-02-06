@@ -1,11 +1,12 @@
 @import "../ReactiveMixins";
 @import "../index";
+@import "../theme";
 
 .Footer {
   margin-top: 30px;
   padding: 1.25rem;
   color: white;
-  background-color: $msw-blue;
+  background-color: var(--msw-blue);
 
   .Footer_list {
     list-style: none;
