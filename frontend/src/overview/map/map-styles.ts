@@ -1,5 +1,11 @@
 // TODO: use https://snazzymaps.com/explore to handle styles
-export const lightMapStyle = [];
+export const lightMapStyle = [
+    {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{color: "#3bbae8"}],
+    },
+];
 
 export const darkMapStyle = [
     {elementType: "geometry", stylers: [{color: "#111111"}]},
@@ -9,7 +15,7 @@ export const darkMapStyle = [
     {
         featureType: "water",
         elementType: "geometry",
-        stylers: [{color: "#4097bc"}],
+        stylers: [{color: "#3bbae8"}],
     },
     {
         featureType: "road",
