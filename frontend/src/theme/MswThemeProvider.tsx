@@ -16,6 +16,8 @@ export const MswThemeProvider = ({children}: { children: React.ReactNode }) => {
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
+
+        syncAndroidToolbarWithTheme();
     }, [theme]);
 
     useEffect(() => {
@@ -31,4 +33,20 @@ export const MswThemeProvider = ({children}: { children: React.ReactNode }) => {
             {children}
         </MswThemeContext.Provider>
     );
+
+    function syncAndroidToolbarWithTheme() {
+        const metaThemeColor = document.querySelector(
+            'meta[name="theme-color"]'
+        );
+
+        if (metaThemeColor) {
+            const bg = getComputedStyle(document.documentElement)
+                .getPropertyValue('--bg')
+                .trim();
+
+            if (bg) {
+                metaThemeColor.setAttribute('content', bg);
+            }
+        }
+    }
 };
