@@ -34,11 +34,15 @@ public class HealthCheckController {
             Sample sample = sampleDao.getCurrentSample(STATION);
 
             if (sample.getTimestamp().isBefore(OffsetDateTime.now(UTC).minus(MAX_SAMPLE_AGE))) {
+                System.err.println("Healthcheck failed. Exiting.");
+                System.exit(1);
                 return ResponseEntity
                         .status(503)
                         .body("Unhealthy: sample older than 30 minutes");
             }
         } catch (NoDataAvailableException e) {
+            System.err.println("Healthcheck failed. Exiting.");
+            System.exit(1);
             return ResponseEntity
                     .status(503)
                     .body("Unhealthy: no sample available");
