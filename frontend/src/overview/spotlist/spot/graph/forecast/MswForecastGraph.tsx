@@ -12,22 +12,19 @@ import {
     plotColors
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
+import {useMemo} from "react";
+import {useTheme} from "../../../../../theme/MswThemeContext";
 
 export const MswForecastGraph = (props: MswGraphProps) => {
-    if (!props.spot.forecastLoaded) {
-        return <MswLoader/>;
-    }
-    if (!props.spot.forecast) {
-        return <div>Detailed Forecast not possible at the moment...</div>;
-    }
+    const {theme} = useTheme();
 
     // Get data for plotting
     const {currentSample} = props.spot ?? {};
     const {minFlow, maxFlow} = props.spot ?? {};
-    const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.spot.forecast;
+    const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.spot.forecast ?? {};
 
     // Get timestamps for x-axis grid and labels
-    const allTimestamps = getTimestamps([...measuredData, ...median]);
+    const allTimestamps = getTimestamps([...measuredData ?? [], ...median ?? []]);
 
     // Update all series with current measurement if available
     const removeSamplesBeforeCurrentTime = (series: ApiLineEntry[]) => {
@@ -42,55 +39,71 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     // Process all data series
     const processedData = {
         measured: currentSample
-            ? [...measuredData, {timestamp: currentSample.timestamp, flow: currentSample.flow}]
+            ? [...measuredData ?? [], {timestamp: currentSample.timestamp, flow: currentSample.flow}]
             : measuredData,
-        median: removeSamplesBeforeCurrentTime(median),
-        min: removeSamplesBeforeCurrentTime(min),
-        max: removeSamplesBeforeCurrentTime(max),
-        p25: removeSamplesBeforeCurrentTime(twentyFivePercentile),
-        p75: removeSamplesBeforeCurrentTime(seventyFivePercentile)
+        median: removeSamplesBeforeCurrentTime(median ?? []),
+        min: removeSamplesBeforeCurrentTime(min ?? []),
+        max: removeSamplesBeforeCurrentTime(max ?? []),
+        p25: removeSamplesBeforeCurrentTime(twentyFivePercentile ?? []),
+        p75: removeSamplesBeforeCurrentTime(seventyFivePercentile ?? [])
     };
 
     // Get common layout and extend it with forecast-specific settings
     let midDayTicks = getTicksAt(12, allTimestamps);
     let startOfDayTicks = getTicksAt(0, allTimestamps)
-    const layout = {
-        ...getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow),
-        xaxis: {
-            ...getCommonPlotlyLayout(props.isMini, allTimestamps).xaxis,
-            // Only show labels at noon
-            tickvals: midDayTicks,
-            // Format labels as weekday names
-            ticktext: midDayTicks
-                .map(timestamp => {
-                    const date = new Date(timestamp);
-                    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                    return weekdays[date.getDay()];
-                }),
-        },
-        shapes: [
-            ...(getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow).shapes || []),
-            // Vertical lines at midnight (darker than noon grid)
-            ...(allTimestamps.length > 0 ?
-                    startOfDayTicks
-                        .map(timestamp => ({
-                            type: 'line' as const,
-                            x0: timestamp,
-                            x1: timestamp,
-                            y0: 0,
-                            y1: 1,
-                            yref: 'paper' as const,
-                            line: {
-                                color: 'rgba(169, 169, 169, 0.8)',  // Dark gray for midnight lines
-                                width: 1
-                            },
-                            layer: 'below' as const
-                        }))
-                    : []
-            ),
-        ]
-    };
+    const layout = useMemo(() => {
+        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow, true, theme);
 
+        return {
+            ...baseLayout,
+            xaxis: {
+                ...baseLayout.xaxis,
+                // Only show labels at noon
+                tickvals: midDayTicks,
+                // Format labels as weekday names
+                ticktext: midDayTicks
+                    .map(timestamp => {
+                        const date = new Date(timestamp);
+                        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                        return weekdays[date.getDay()];
+                    }),
+            },
+            shapes: [
+                ...(baseLayout.shapes || []),
+                // Vertical lines at midnight (darker than noon grid)
+                ...(allTimestamps.length > 0 ?
+                        startOfDayTicks
+                            .map(timestamp => ({
+                                type: 'line' as const,
+                                x0: timestamp,
+                                x1: timestamp,
+                                y0: 0,
+                                y1: 1,
+                                yref: 'paper' as const,
+                                line: {
+                                    color: 'rgba(169, 169, 169, 0.8)',  // Dark gray for midnight lines
+                                    width: 1
+                                },
+                                layer: 'below' as const
+                            }))
+                        : []
+                ),
+            ]
+        };
+    }, [
+        props.isMini,
+        allTimestamps,
+        minFlow,
+        maxFlow,
+        theme
+    ]);
+
+    if (!props.spot.forecastLoaded) {
+        return <MswLoader/>;
+    }
+    if (!props.spot.forecast) {
+        return <div>Detailed Forecast not possible at the moment...</div>;
+    }
 
     return (
         <Plot
@@ -120,7 +133,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                     'Median',
                 ),
                 createTrace(
-                    processedData.measured,
+                    processedData.measured!,
                     !props.isMini,
                     props.isMini,
                     plotColors.measured,
