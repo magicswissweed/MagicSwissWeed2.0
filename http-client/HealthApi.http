@@ -1,0 +1,4 @@
+###
+# @name Get Health status
+#
+GET http://localhost:8080/health

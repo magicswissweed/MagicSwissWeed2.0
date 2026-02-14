@@ -23,6 +23,7 @@ public class SecurityConfiguration {
                 .jwt(withDefaults())
                 .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(converter)));
         http.authorizeHttpRequests(requests -> requests
+                .requestMatchers(HttpMethod.GET, "/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/spots/public").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/stations").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/historicalYears").permitAll()
