@@ -1,6 +1,8 @@
 import {ApiFlowSample} from "../../../../../gen/msw-api-ts";
 import {SpotModel} from "../../../../../model/SpotModel";
 import {Config, Layout} from 'plotly.js';
+import {MswTheme} from "../../../../../theme/MswThemeContext";
+import {getThemeDependingColors, ThemeDependingColors} from "../../../../../theme/MswThemeHelper";
 
 export class MswGraphProps {
     spot: SpotModel;
@@ -42,22 +44,12 @@ export function getFlows(data: ApiFlowSample[]): number[] {
     return data.map(item => item.flow);
 }
 
-// Calculate maximum Y value from data series with padding
-export function calculateMaxY(measured: ApiFlowSample[], max: ApiFlowSample[], paddingPercent: number = 10): number {
-    const maxY = Math.max(
-        Math.max(...measured.map(m => m.flow)),
-        Math.max(...max.map(m => m.flow))
-    )
-
-    return maxY * (1 + paddingPercent / 100); // Add padding percentage
-}
-
 // Get timestamps at a specific hour (and minute)
 export function getTicksAt(hour: number, timestamps: Array<string>, minute: number = 0): Array<string> {
-  let matchingTimestamps = timestamps.filter(ts => new Date(ts).getHours() === hour);
-  matchingTimestamps = matchingTimestamps.filter(ts => new Date(ts).getMinutes() === minute);
-  
-  return matchingTimestamps;
+    let matchingTimestamps = timestamps.filter(ts => new Date(ts).getHours() === hour);
+    matchingTimestamps = matchingTimestamps.filter(ts => new Date(ts).getMinutes() === minute);
+
+    return matchingTimestamps;
 }
 
 // Create a trace for Plotly with common defaults
@@ -109,43 +101,45 @@ export const commonPlotlyConfig: Partial<Config> = {
     modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']
 };
 
-// Common Plotly layout configuration
 export function getCommonPlotlyLayout(
     isMini: boolean,
-    allTimestamps: string[] = [],
-    minFlow?: number,
-    maxFlow?: number,
-    showCurrentTimeLine: boolean = true
+    allTimestamps: string[],
+    minFlow: number,
+    maxFlow: number,
+    showCurrentTimeLine: boolean,
+    theme: MswTheme
 ): Partial<Layout> {
-    const lightGray = 'rgba(211, 211, 211, 0.5)';
+    const themeDependingColors: ThemeDependingColors = getThemeDependingColors(theme);
     return {
-        // TODO: clean up unused properties
         autosize: true,
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
         xaxis: {
-            showgrid: true,
-            gridcolor: lightGray,
+            showgrid: false,
             showticklabels: !isMini,
             range: allTimestamps.length ? [allTimestamps[0], allTimestamps[allTimestamps.length - 1]] : undefined,
             spikemode: 'toaxis+across',
             spikethickness: -2,
-            spikecolor: 'rgba(0, 0, 0, 0.5)',
+            spikecolor: `rgba(${themeDependingColors.invertedRgb}, 1)`,
+            color: `rgba(${themeDependingColors.invertedRgb}, 1)`,
         },
         yaxis: {
             showticklabels: !isMini,
-            gridcolor: isMini ? 'transparent' : lightGray,
-            ticklabelposition: 'inside' as const
+            gridcolor: isMini ? 'transparent' : `rgba(${themeDependingColors.invertedRgb}, 0.3)`,
+            ticklabelposition: 'inside' as const,
+            tickfont: { // simply using color on yaxis does not work because of ticklabelposition: 'inside'
+                color: `rgba(${themeDependingColors.invertedRgb}, 1)`,
+            },
         },
-        legend: !isMini ? {
+        legend: isMini ? undefined : {
             orientation: 'h',
             y: -0.1,
             yanchor: 'top',
             xanchor: 'center',
             x: 0.5,
             itemclick: false,
-            itemdoubleclick: false
-        } : undefined,
+            itemdoubleclick: false,
+        },
         margin: isMini ?
             {l: 5, r: 5, t: 5, b: 5} :
             {l: 30, r: 30, t: 0, b: 30}, // provide space for x-axis labels without legend
@@ -182,6 +176,9 @@ export function getCommonPlotlyLayout(
         ],
         hoverlabel: isMini ? undefined : {bgcolor: 'white', bordercolor: 'gray', font: {size: 13}},
         hovermode: isMini ? false : 'closest' as const,
-        dragmode: false as const
+        dragmode: false as const,
+        font: {
+            color: `rgba(${themeDependingColors.invertedRgb}, 1)`
+        },
     };
 }
