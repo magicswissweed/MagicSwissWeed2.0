@@ -56,7 +56,7 @@ public class FrenchLast30DaysSampleFetchServiceImpl extends AbstractFrenchLineFe
     }
 
     @Override
-    public Set<LastFewDays> fetchLast30DaysSamples(Set<ApiStationId> stationIds) throws URISyntaxException {
+    public Set<LastFewDays> fetchLast30DaysSamples(Set<ApiStationId> stationIds) {
         Set<LastFewDays> result = new HashSet<>();
         for (ApiStationId stationId : stationIds) {
             try {
@@ -64,7 +64,6 @@ public class FrenchLast30DaysSampleFetchServiceImpl extends AbstractFrenchLineFe
 
                 // Random jittered delay between to avoid pattern detection
                 Thread.sleep(100 + (long) (Math.random() * 50));
-
             } catch (InterruptedException e) {
                 LOG.error("wait was interrupted", e);
             } catch (Exception e) {

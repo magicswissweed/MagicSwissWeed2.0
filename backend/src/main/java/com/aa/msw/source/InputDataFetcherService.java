@@ -1,5 +1,6 @@
 package com.aa.msw.source;
 
+import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.database.repository.dao.LastFewDaysDao;
 import com.aa.msw.database.repository.dao.SampleDao;
@@ -24,10 +25,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +51,8 @@ public class InputDataFetcherService {
 
     private boolean fetchedDataSinceRestart = false;
 
-    private final AtomicBoolean isFetching = new AtomicBoolean(false);
+    private final AtomicBoolean isFetchingSwissData = new AtomicBoolean(false);
+    private final AtomicBoolean isFetchingFrenchData = new AtomicBoolean(false);
 
     public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
         this.swissSampleFetchService = swissSampleFetchService;
@@ -62,40 +67,85 @@ public class InputDataFetcherService {
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000) // 5 minutes in milliseconds
     public void fetchDataAndWriteToDb() throws IOException, URISyntaxException {
-        if (isFetching.compareAndSet(false, true)) {
-            try {
-//        We do this very explicitly. This way it's easy to see which data is fetched for which country.
-//        If we fetch data from a lot of countries, we should refactor this in the future.
-                Set<ApiStationId> stationIds = getAllStationIds();
-                Set<ApiStationId> swissStationIds = stationIds.stream()
-                        .filter(stationId -> stationId.getCountry().equals(CountryEnum.CH))
-                        .collect(Collectors.toSet());
-                Set<ApiStationId> frenchStationIds = stationIds.stream()
-                        .filter(stationId -> stationId.getCountry().equals(CountryEnum.FR))
-                        .collect(Collectors.toSet());
-                fetchAndWriteFrenchLast30DaysAndSample(frenchStationIds);
-                fetchAndWriteSwissSamples(swissStationIds);
-                fetchAndWriteSwissForecasts(swissStationIds);
-                fetchAndWriteSwissLast40Days(swissStationIds);
-                Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
-                notificationService.sendNotificationsForSpots(spotsThatImproved);
+        fetchSwissDataAndWriteToDb();
+        fetchFrenchDataAndWriteToDb();
+    }
 
-                fetchedDataSinceRestart = true;
+    @Scheduled(fixedRate = 5 * 60 * 1000) // 5 minutes in milliseconds
+    private void fetchSwissDataAndWriteToDb() {
+        if (isFetchingSwissData.compareAndSet(false, true)) {
+            try {
+                fetchDataAndWrite(CountryEnum.CH, this::fetchAndWriteSwissData);
             } finally {
-                isFetching.set(false);
+                isFetchingSwissData.set(false);
             }
         } else {
-            LOG.warn("Fetch already in progress, skipping this trigger.");
+            LOG.warn("Fetch already in progress for switzerland, skipping this trigger.");
         }
+    }
+
+    @Scheduled(fixedRate = 5 * 60 * 1000, initialDelay = 2 * 60 * 1000) // 5 minutes in milliseconds
+    private void fetchFrenchDataAndWriteToDb() {
+        if (isFetchingFrenchData.compareAndSet(false, true)) {
+            try {
+                fetchDataAndWrite(CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
+            } finally {
+                isFetchingFrenchData.set(false);
+            }
+        } else {
+            LOG.warn("Fetch already in progress for france, skipping this trigger.");
+        }
+    }
+
+    private void fetchDataAndWrite(CountryEnum country, Consumer<Set<ApiStationId>> fetchAndWriteFunction) {
+        Set<ApiStationId> stationIds = getAllStationIds();
+
+        fetchAndWriteIfNecessary(stationIds, country, fetchAndWriteFunction);
+
+        Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+        notificationService.sendNotificationsForSpots(spotsThatImproved);
+
+        fetchedDataSinceRestart = true;
+    }
+
+    private void fetchAndWriteIfNecessary(
+            Set<ApiStationId> stationIds,
+            CountryEnum country,
+            Consumer<Set<ApiStationId>> fetchAndWriteFunction
+    ) {
+        Duration sampleInterval = Duration.ofMinutes(9);
+        try {
+            Set<ApiStationId> filteredStationIds = stationIds.stream()
+                    .filter(stationId -> stationId.getCountry().equals(country))
+                    .filter(stationId -> isLastSampleOlderThan(stationId, sampleInterval))
+                    .collect(Collectors.toSet());
+            fetchAndWriteFunction.accept(filteredStationIds);
+        } catch (Exception e) {
+            LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", country, e);
+        }
+    }
+
+    private boolean isLastSampleOlderThan(ApiStationId stationId, Duration sampleInterval) {
+        try {
+            return sampleDao.getCurrentSample(stationId).getTimestamp()
+                    .isBefore(OffsetDateTime.now().minus(sampleInterval));
+        } catch (NoDataAvailableException e) {
+            return true;
+        }
+    }
+
+    private void fetchAndWriteSwissData(Set<ApiStationId> swissStationIds) {
+        fetchAndWriteSwissSamples(swissStationIds);
+        fetchAndWriteSwissForecasts(swissStationIds);
+        fetchAndWriteSwissLast40Days(swissStationIds);
     }
 
     public boolean hasFetchedDataSinceRestart() {
         return fetchedDataSinceRestart;
     }
 
-    private void fetchAndWriteFrenchLast30DaysAndSample(Set<ApiStationId> stationIds) throws URISyntaxException {
+    private void fetchAndWriteFrenchLast30DaysAndSample(Set<ApiStationId> stationIds) {
 //        France does not have a call for the latest sample, so we fetch the last 30 days and use the newest as our current sample
         Set<LastFewDays> lastFewDaysSet = frenchLast30DaysSampleFetchService.fetchLast30DaysSamples(stationIds);
         if (!lastFewDaysSet.isEmpty()) {
@@ -110,17 +160,17 @@ public class InputDataFetcherService {
         }
     }
 
-    private void fetchAndWriteSwissSamples(Set<ApiStationId> stationIds) throws IOException, URISyntaxException {
+    private void fetchAndWriteSwissSamples(Set<ApiStationId> stationIds) {
         List<Sample> samples = swissSampleFetchService.fetchSamples(stationIds);
         sampleDao.persistSamplesIfNotExist(samples);
     }
 
-    private void fetchAndWriteSwissForecasts(Set<ApiStationId> stationIds) throws URISyntaxException {
+    private void fetchAndWriteSwissForecasts(Set<ApiStationId> stationIds) {
         List<Forecast> forecasts = swissForecastFetchService.fetchForecasts(stationIds);
         forecastDao.persistForecastsIfNotExist(forecasts);
     }
 
-    public void fetchAndWriteSwissLast40Days(Set<ApiStationId> stationIds) throws URISyntaxException {
+    public void fetchAndWriteSwissLast40Days(Set<ApiStationId> stationIds) {
         Set<LastFewDays> fetchedLastFewDaysSamples = swissLast40DaysSampleFetchService.fetchLast40DaysSamples(stationIds);
         if (!fetchedLastFewDaysSamples.isEmpty()) {
             lastFewDaysDao.persistLastFewDaysSamples(fetchedLastFewDaysSamples);
