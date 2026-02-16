@@ -45,6 +45,8 @@ public class InputDataFetcherService {
     private final NotificationService notificationService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
 
+    private boolean fetchedDataSinceRestart = false;
+
     private final AtomicBoolean isFetching = new AtomicBoolean(false);
 
     public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
@@ -82,9 +84,14 @@ public class InputDataFetcherService {
             } finally {
                 isFetching.set(false);
             }
+            fetchedDataSinceRestart = true;
         } else {
             LOG.warn("Fetch already in progress, skipping this trigger.");
         }
+    }
+
+    public boolean hasFetchedDataSinceRestart() {
+        return fetchedDataSinceRestart;
     }
 
     private void fetchAndWriteFrenchLast30DaysAndSample(Set<ApiStationId> stationIds) throws URISyntaxException {

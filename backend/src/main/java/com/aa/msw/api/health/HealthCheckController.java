@@ -5,7 +5,7 @@ import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
-import jakarta.annotation.PostConstruct;
+import com.aa.msw.source.InputDataFetcherService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,21 +18,16 @@ import static java.time.ZoneOffset.UTC;
 @RestController
 public class HealthCheckController {
 
-    private static final Duration MAX_SAMPLE_AGE = Duration.ofMinutes(40);
-    private static final Duration STARTUP_GRACE_PERIOD = Duration.ofMinutes(40);
+    private static final Duration MAX_SAMPLE_AGE = Duration.ofMinutes(35);
 
     private final SampleDao sampleDao;
-    private OffsetDateTime startedAt;
+    private final InputDataFetcherService inputDataFetcherService;
 
     private static final ApiStationId STATION = new ApiStationId(CountryEnum.CH, "2018");
 
-    public HealthCheckController(SampleDao sampleDao) {
+    public HealthCheckController(SampleDao sampleDao, InputDataFetcherService inputDataFetcherService) {
         this.sampleDao = sampleDao;
-    }
-
-    @PostConstruct
-    public void init() {
-        this.startedAt = OffsetDateTime.now(UTC);
+        this.inputDataFetcherService = inputDataFetcherService;
     }
 
     @GetMapping("/health")
@@ -40,8 +35,8 @@ public class HealthCheckController {
         OffsetDateTime now = OffsetDateTime.now(UTC);
 
         // Grace period after startup
-        if (now.isBefore(startedAt.plus(STARTUP_GRACE_PERIOD))) {
-            return ResponseEntity.ok("OK (startup grace period)");
+        if (!inputDataFetcherService.hasFetchedDataSinceRestart()) {
+            return ResponseEntity.ok("OK (waiting for first data fetch)");
         }
 
         // Sample freshness check
@@ -50,6 +45,10 @@ public class HealthCheckController {
 
             if (sample.getTimestamp().isBefore(now.minus(MAX_SAMPLE_AGE))) {
                 System.err.println("Healthcheck failed. Exiting.");
+                System.err.println("Now: " + now);
+                System.err.println("Sample timestamp: " + sample.getTimestamp());
+                System.err.println("Difference minutes: " +
+                        Duration.between(sample.getTimestamp(), now).toMinutes());
                 System.exit(1);
                 return ResponseEntity
                         .status(503)
