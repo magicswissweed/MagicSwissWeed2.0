@@ -81,10 +81,11 @@ public class InputDataFetcherService {
                 fetchAndWriteSwissLast40Days(swissStationIds);
                 Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
                 notificationService.sendNotificationsForSpots(spotsThatImproved);
+
+                fetchedDataSinceRestart = true;
             } finally {
                 isFetching.set(false);
             }
-            fetchedDataSinceRestart = true;
         } else {
             LOG.warn("Fetch already in progress, skipping this trigger.");
         }

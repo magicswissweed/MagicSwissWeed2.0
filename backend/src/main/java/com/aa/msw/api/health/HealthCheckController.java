@@ -18,7 +18,7 @@ import static java.time.ZoneOffset.UTC;
 @RestController
 public class HealthCheckController {
 
-    private static final Duration MAX_SAMPLE_AGE = Duration.ofMinutes(35);
+    private static final Duration MAX_SAMPLE_AGE = Duration.ofMinutes(40);
 
     private final SampleDao sampleDao;
     private final InputDataFetcherService inputDataFetcherService;
