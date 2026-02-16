@@ -72,7 +72,7 @@ public class InputDataFetcherService {
         fetchFrenchDataAndWriteToDb();
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000) // 5 minutes in milliseconds
+    @Scheduled(cron = "0 1/5 * * * *") // 01, 06, 11, 16, 21, 26, ...
     private void fetchSwissDataAndWriteToDb() {
         if (isFetchingSwissData.compareAndSet(false, true)) {
             try {
@@ -85,7 +85,7 @@ public class InputDataFetcherService {
         }
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000, initialDelay = 2 * 60 * 1000) // 5 minutes in milliseconds
+    @Scheduled(cron = "0 3/5 * * * *") // 03, 08, 13, 18, 23, 28, ...
     private void fetchFrenchDataAndWriteToDb() {
         if (isFetchingFrenchData.compareAndSet(false, true)) {
             try {
