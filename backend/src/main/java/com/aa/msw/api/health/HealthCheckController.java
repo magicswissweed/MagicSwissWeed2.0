@@ -18,8 +18,8 @@ import static java.time.ZoneOffset.UTC;
 @RestController
 public class HealthCheckController {
 
-    private static final Duration MAX_SAMPLE_AGE = Duration.ofMinutes(30);
-    private static final Duration STARTUP_GRACE_PERIOD = Duration.ofMinutes(30);
+    private static final Duration MAX_SAMPLE_AGE = Duration.ofMinutes(40);
+    private static final Duration STARTUP_GRACE_PERIOD = Duration.ofMinutes(40);
 
     private final SampleDao sampleDao;
     private OffsetDateTime startedAt;
@@ -56,8 +56,6 @@ public class HealthCheckController {
                         .body("Unhealthy: sample older than 30 minutes");
             }
         } catch (NoDataAvailableException e) {
-            System.err.println("Healthcheck failed. Exiting.");
-            System.exit(1);
             return ResponseEntity
                     .status(503)
                     .body("Unhealthy: no sample available");
