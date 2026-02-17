@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,8 +74,32 @@ public class InputDataFetcherService {
     @Scheduled(cron = "0 1/5 * * * *") // 01, 06, 11, 16, 21, 26, ...
     private void fetchSwissDataAndWriteToDb() {
         if (isFetchingSwissData.compareAndSet(false, true)) {
+            LOG.info("Fetching swiss data...");
             try {
-                fetchDataAndWrite(CountryEnum.CH, this::fetchAndWriteSwissData);
+                Set<ApiStationId> stationIds = getAllStationIds();
+
+                try {
+                    Set<ApiStationId> filteredStationIds = stationIds.stream()
+                            .filter(stationId -> stationId.getCountry().equals(CountryEnum.CH))
+                            .collect(Collectors.toSet());
+                    fetchAndWriteSwissData(filteredStationIds);
+                } catch (Exception e) {
+                    LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", CountryEnum.CH, e);
+                }
+
+                Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+                notificationService.sendNotificationsForSpots(spotsThatImproved);
+
+                fetchedDataSinceRestart = true;
+
+                // TODO: get rid of too much logging
+                LOG.info("Finished fetching swiss data.");
+                try {
+                    OffsetDateTime currentSampleTimestamp = sampleDao.getCurrentSample(new ApiStationId(CountryEnum.CH, "2018")).getTimestamp();
+                    LOG.info("Current sample timestamp for 2018: {}", currentSampleTimestamp);
+                } catch (NoDataAvailableException e) {
+                    LOG.error("No sample found for stationId 2018");
+                }
             } finally {
                 isFetchingSwissData.set(false);
             }
@@ -88,41 +111,31 @@ public class InputDataFetcherService {
     @Scheduled(cron = "0 3/5 * * * *") // 03, 08, 13, 18, 23, 28, ...
     private void fetchFrenchDataAndWriteToDb() {
         if (isFetchingFrenchData.compareAndSet(false, true)) {
+            LOG.info("Fetching french data...");
             try {
-                fetchDataAndWrite(CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
+                Set<ApiStationId> stationIds = getAllStationIds();
+
+                Duration sampleInterval = Duration.ofMinutes(9);
+                try {
+                    Set<ApiStationId> filteredStationIds = stationIds.stream()
+                            .filter(stationId -> stationId.getCountry().equals(CountryEnum.FR))
+                            .filter(stationId -> isLastSampleOlderThan(stationId, sampleInterval))
+                            .collect(Collectors.toSet());
+                    fetchAndWriteFrenchLast30DaysAndSample(filteredStationIds);
+                } catch (Exception e) {
+                    LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", CountryEnum.FR, e);
+                }
+
+                Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+                notificationService.sendNotificationsForSpots(spotsThatImproved);
+
+                fetchedDataSinceRestart = true;
+                LOG.info("Finished fetching french data.");
             } finally {
                 isFetchingFrenchData.set(false);
             }
         } else {
             LOG.warn("Fetch already in progress for france, skipping this trigger.");
-        }
-    }
-
-    private void fetchDataAndWrite(CountryEnum country, Consumer<Set<ApiStationId>> fetchAndWriteFunction) {
-        Set<ApiStationId> stationIds = getAllStationIds();
-
-        fetchAndWriteIfNecessary(stationIds, country, fetchAndWriteFunction);
-
-        Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
-        notificationService.sendNotificationsForSpots(spotsThatImproved);
-
-        fetchedDataSinceRestart = true;
-    }
-
-    private void fetchAndWriteIfNecessary(
-            Set<ApiStationId> stationIds,
-            CountryEnum country,
-            Consumer<Set<ApiStationId>> fetchAndWriteFunction
-    ) {
-        Duration sampleInterval = Duration.ofMinutes(9);
-        try {
-            Set<ApiStationId> filteredStationIds = stationIds.stream()
-                    .filter(stationId -> stationId.getCountry().equals(country))
-                    .filter(stationId -> isLastSampleOlderThan(stationId, sampleInterval))
-                    .collect(Collectors.toSet());
-            fetchAndWriteFunction.accept(filteredStationIds);
-        } catch (Exception e) {
-            LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", country, e);
         }
     }
 
