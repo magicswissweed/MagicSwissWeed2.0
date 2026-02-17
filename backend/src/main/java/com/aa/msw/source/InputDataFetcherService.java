@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -79,9 +78,7 @@ public class InputDataFetcherService {
                 Set<ApiStationId> stationIds = getAllStationIds();
 
                 try {
-                    Set<ApiStationId> filteredStationIds = stationIds.stream()
-                            .filter(stationId -> stationId.getCountry().equals(CountryEnum.CH))
-                            .collect(Collectors.toSet());
+                    Set<ApiStationId> filteredStationIds = filterByCountry(stationIds, CountryEnum.CH);
                     fetchAndWriteSwissData(filteredStationIds);
                 } catch (Exception e) {
                     LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", CountryEnum.CH, e);
@@ -115,12 +112,8 @@ public class InputDataFetcherService {
             try {
                 Set<ApiStationId> stationIds = getAllStationIds();
 
-                Duration sampleInterval = Duration.ofMinutes(9);
                 try {
-                    Set<ApiStationId> filteredStationIds = stationIds.stream()
-                            .filter(stationId -> stationId.getCountry().equals(CountryEnum.FR))
-                            .filter(stationId -> isLastSampleOlderThan(stationId, sampleInterval))
-                            .collect(Collectors.toSet());
+                    Set<ApiStationId> filteredStationIds = filterByCountry(stationIds, CountryEnum.FR);
                     fetchAndWriteFrenchLast30DaysAndSample(filteredStationIds);
                 } catch (Exception e) {
                     LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", CountryEnum.FR, e);
@@ -139,13 +132,10 @@ public class InputDataFetcherService {
         }
     }
 
-    private boolean isLastSampleOlderThan(ApiStationId stationId, Duration sampleInterval) {
-        try {
-            return sampleDao.getCurrentSample(stationId).getTimestamp()
-                    .isBefore(OffsetDateTime.now().minus(sampleInterval));
-        } catch (NoDataAvailableException e) {
-            return true;
-        }
+    private static Set<ApiStationId> filterByCountry(Set<ApiStationId> stationIds, CountryEnum country) {
+        return stationIds.stream()
+                .filter(stationId -> stationId.getCountry().equals(country))
+                .collect(Collectors.toSet());
     }
 
     private void fetchAndWriteSwissData(Set<ApiStationId> swissStationIds) {
