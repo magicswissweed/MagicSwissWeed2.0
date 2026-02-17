@@ -71,7 +71,7 @@ public class InputDataFetcherService {
         fetchFrenchDataAndWriteToDb();
     }
 
-    @Scheduled(cron = "0 1/5 * * * *") // 01, 06, 11, 16, 21, 26, ...
+    @Scheduled(cron = "0 1/10 * * * *") // 01, 11, 21, ...
     private void fetchSwissDataAndWriteToDb() {
         if (isFetchingSwissData.compareAndSet(false, true)) {
             LOG.info("Fetching swiss data...");
@@ -92,7 +92,6 @@ public class InputDataFetcherService {
 
                 fetchedDataSinceRestart = true;
 
-                // TODO: get rid of too much logging
                 LOG.info("Finished fetching swiss data.");
                 try {
                     OffsetDateTime currentSampleTimestamp = sampleDao.getCurrentSample(new ApiStationId(CountryEnum.CH, "2018")).getTimestamp();
@@ -108,7 +107,8 @@ public class InputDataFetcherService {
         }
     }
 
-    @Scheduled(cron = "0 3/5 * * * *") // 03, 08, 13, 18, 23, 28, ...
+    // 03, 08, 13, 18, 23, 28, ... in theory... In reality fetching takes a long time, and therefore this runs only every 20 minutes or so
+    @Scheduled(cron = "0 3/5 * * * *")
     private void fetchFrenchDataAndWriteToDb() {
         if (isFetchingFrenchData.compareAndSet(false, true)) {
             LOG.info("Fetching french data...");
