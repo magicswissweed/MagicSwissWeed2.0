@@ -10,6 +10,8 @@ import com.aa.msw.source.swiss.existenz.sample.model.ExistenzResponseSample;
 import com.aa.msw.source.swiss.existenz.sample.model.ExistenzSample;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,8 @@ import java.util.stream.Collectors;
 @Profile("!test")
 @Service
 public class SwissSampleFetchServiceImpl extends AbstractFetchService implements SwissSampleFetchService {
+    private static final Logger LOG = LoggerFactory.getLogger(SwissSampleFetchServiceImpl.class);
+
     private static String getExistenzUrl(Set<ApiStationId> stationIds) {
         String locationsString = stationIds.stream()
                 .map(ApiStationId::getExternalId)
@@ -64,9 +68,15 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
                 flow);
     }
 
-    public List<Sample> fetchSamples(Set<ApiStationId> stationIds) throws IOException, URISyntaxException {
-        String fetchUrl = getExistenzUrl(stationIds);
-        List<ExistenzSample> existenzSamples = fetchData(fetchUrl).payload();
+    public List<Sample> fetchSamples(Set<ApiStationId> stationIds) {
+        List<ExistenzSample> existenzSamples;
+        try {
+            String fetchUrl = getExistenzUrl(stationIds);
+            existenzSamples = fetchData(fetchUrl).payload();
+        } catch (Exception e) {
+            LOG.error("Error while fetching samples from existenz for stationIds {}. Ignore the current fetch.", stationIds, e);
+            return List.of();
+        }
         List<Sample> samples = new ArrayList<>();
         for (ApiStationId stationId : stationIds) {
             try {

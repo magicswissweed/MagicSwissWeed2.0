@@ -25,17 +25,17 @@ public class SwissForecastFetchServiceImpl extends AbstractSwissHydroLineFetchSe
     private static OffsetDateTime extractTimestamp(HydroResponse hydroResponse) {
         String datetimeString = hydroResponse.plot().layout().annotations().stream()
                 .filter((a) -> a.xref().equals("x"))
-                .toList().get(0).x();
+                .toList().getFirst().x();
 
         return OffsetDateTime.parse(datetimeString);
     }
 
-    public List<Forecast> fetchForecasts(Set<ApiStationId> stationIds) throws URISyntaxException {
+    public List<Forecast> fetchForecasts(Set<ApiStationId> stationIds) {
         List<Forecast> forecasts = new ArrayList<>();
         for (ApiStationId stationId : stationIds) {
             try {
                 forecasts.add(fetchForecast(stationId));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // ignore: could be that this station just does not have a forecast
             }
         }

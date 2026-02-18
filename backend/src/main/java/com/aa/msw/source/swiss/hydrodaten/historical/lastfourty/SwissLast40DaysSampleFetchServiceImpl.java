@@ -51,12 +51,12 @@ public class SwissLast40DaysSampleFetchServiceImpl extends AbstractSwissHydroLin
     }
 
     @Override
-    public Set<LastFewDays> fetchLast40DaysSamples(Set<ApiStationId> stationIds) throws URISyntaxException {
+    public Set<LastFewDays> fetchLast40DaysSamples(Set<ApiStationId> stationIds) {
         Set<LastFewDays> result = new HashSet<>();
         for (ApiStationId stationId : stationIds) {
             try {
                 result.add(fetchLast40DaysSamples(stationId));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // ignore, there might not be data from last 40 days
             }
         }

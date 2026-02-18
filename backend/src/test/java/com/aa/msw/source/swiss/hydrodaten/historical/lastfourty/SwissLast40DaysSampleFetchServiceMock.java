@@ -5,7 +5,6 @@ import com.aa.msw.model.LastFewDays;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.net.URISyntaxException;
 import java.util.Set;
 
 @Profile("test")
@@ -13,7 +12,7 @@ import java.util.Set;
 class SwissLast40DaysSampleFetchServiceMock implements SwissLast40DaysSampleFetchService {
 
     @Override
-    public Set<LastFewDays> fetchLast40DaysSamples(Set<ApiStationId> stationIds) throws URISyntaxException {
+    public Set<LastFewDays> fetchLast40DaysSamples(Set<ApiStationId> stationIds) {
         return Set.of();
     }
 }

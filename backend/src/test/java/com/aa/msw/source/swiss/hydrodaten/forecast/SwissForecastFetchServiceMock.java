@@ -4,7 +4,6 @@ import com.aa.msw.database.helpers.id.ForecastId;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.model.Forecast;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -33,16 +32,6 @@ class SwissForecastFetchServiceMock implements SwissForecastFetchService {
 
     private OffsetDateTime offsetDateTime(int year, int month, int dayOfMonth) {
         return OffsetDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, ZoneOffset.UTC);
-    }
-
-    @Override
-    public Forecast fetchForecast(ApiStationId stationId) {
-        for (Forecast forecast : forecasts) {
-            if (forecast.stationId().getExternalId().equals(stationId.getExternalId())) {
-                return forecast;
-            }
-        }
-        throw new NotImplementedException("Add the forecast with this stationId to the ForecastFetchServiceMock");
     }
 
     private Forecast forecast(ApiStationId stationId) {
