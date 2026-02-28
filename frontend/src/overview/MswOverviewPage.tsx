@@ -12,6 +12,8 @@ import {FlowColorEnum, SpotModel} from "../model/SpotModel";
 import {stationsService} from "../service/StationsService";
 import {FlowStatusFilterChips} from "./filter/FlowStatusFilterChips";
 import {MswAddSpot} from "../spot/add/MswAddSpot";
+import PullToRefresh from 'pulltorefreshjs';
+import {isIosPwa} from "../utils/deviceDetection";
 
 function isNotEmpty(array: Array<any> | undefined) {
     return array && array.length > 0;
@@ -68,6 +70,32 @@ export const MswOverviewPage = () => {
     useEffect(() => {
         stationsService.fetchData();
     }, []);
+
+    // Initialize pull-to-refresh for iOS PWA
+    useEffect(() => {
+        if (isIosPwa()) {
+            const ptr = PullToRefresh.init({
+                mainElement: '.App',
+                onRefresh() {
+                    return spotsService.fetchData(token).then(() => {
+                        // Optional: add a small delay to ensure smooth animation
+                        return new Promise(resolve => setTimeout(resolve, 300));
+                    });
+                },
+                instructionsPullToRefresh: 'Pull down to refresh',
+                instructionsReleaseToRefresh: 'Release to refresh',
+                instructionsRefreshing: 'Refreshing...',
+                distThreshold: 60,
+                distMax: 80,
+                distReload: 50,
+                // resistance: 2.5
+            });
+
+            return () => {
+                ptr.destroy();
+            };
+        }
+    }, [token]);
 
     return <>
         <div className="App">
