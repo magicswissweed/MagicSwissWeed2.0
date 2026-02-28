@@ -62,3 +62,16 @@
 .align-items-center {
   text-transform: uppercase;
 }
+
+// Style pull-to-refresh elements
+.ptr--ui {
+  color: var(--ptr-text-color) !important;
+
+  .ptr--icon {
+    border-color: var(--ptr-icon-color) !important;
+  }
+}
+
+.ptr--box {
+  background-color: var(--ptr-bg) !important;
+}

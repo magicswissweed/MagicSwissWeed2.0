@@ -5,6 +5,10 @@
   --bg-inverted-rgb: 0, 0, 0;
   --bg-inverted: #000000;
   --msw-blue: #3bbae8;
+  // Pull-to-refresh colors
+  --ptr-text-color: #3bbae8;
+  --ptr-icon-color: #3bbae8;
+  --ptr-bg: transparent;
 }
 
 [data-theme='dark'] {
