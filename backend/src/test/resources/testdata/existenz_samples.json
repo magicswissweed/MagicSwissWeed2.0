@@ -1,0 +1,32 @@
+{
+  "source": "Swiss Federal Office for the Environment FOEN / BAFU, Hydrology",
+  "apiurl": "https://api.existenz.ch#hydro",
+  "opendata": "https://opendata.swiss/en/dataset/wassertemperatur-der-flusse",
+  "license": "https://www.bafu.admin.ch/dam/bafu/de/dokumente/wasser/fachinfo-daten/liefer-nutzungsbedingungen-hydrologische-daten.pdf",
+  "payload": [
+    {
+      "timestamp": 1772545200,
+      "loc": "2018",
+      "par": "flow",
+      "val": 81.77
+    },
+    {
+      "timestamp": 1772545200,
+      "loc": "2243",
+      "par": "flow",
+      "val": 62.25
+    },
+    {
+      "timestamp": 1772545200,
+      "loc": "2018",
+      "par": "temperature",
+      "val": 8.62
+    },
+    {
+      "timestamp": 1772545200,
+      "loc": "2243",
+      "par": "temperature",
+      "val": 7.46
+    }
+  ]
+}

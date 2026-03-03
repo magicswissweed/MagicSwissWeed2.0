@@ -1,0 +1,15 @@
+{
+  "Serie": {
+    "CdStationHydro": "V271201001",
+    "LbStationHydro": "Pont-d'Ain",
+    "Link": "services/station.json?CdStationHydro=V271201001",
+    "GrdSerie": "Q",
+    "ObssHydro": [
+      [1768691100000, 59.2],
+      [1768691400000, 59.4],
+      [1768691700000, 59.7],
+      [1768692000000, 60.0],
+      [1768692300000, 60.3]
+    ]
+  }
+}

@@ -4,6 +4,7 @@ import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.model.Station;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -11,8 +12,9 @@ import java.util.Set;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 
+@Profile("test")
 @Service
-class StationApiServiceImplMock implements StationApiService {
+public class StationApiServiceImplMock implements StationApiService {
 
     @Override
     public Set<Station> getStations() {

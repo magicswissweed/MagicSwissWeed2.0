@@ -32,19 +32,11 @@ public abstract class AbstractSwissHydroLineFetchService extends AbstractFetchSe
         this.fetchUrlSuffix = fetchUrlSuffix;
     }
 
-    protected static String fetchAsString(String url) throws IOException, URISyntaxException {
+    @Override
+    protected String fetchAsString(String url) throws IOException, URISyntaxException {
         HttpURLConnection conn = (HttpURLConnection) new URI(url).toURL().openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "application/json");
-//		conn.setRequestProperty("Authorization", authHeaderValue);
-        // ignore.
-        // FIXME: There seems to be a bigger problem.
-        //  We can fix that later with manual restarts,
-        //  but for the moment we don't want the tests to fail because hydrodaten has issues...
-//        if ((conn.getResponseCode() != 200) && (conn.getResponseCode() != 404)) {
-//            throw new RuntimeException("Failed : HTTP Error code : "
-//                    + conn.getResponseCode());
-//        }
         InputStreamReader in = new InputStreamReader(conn.getInputStream());
         BufferedReader br = new BufferedReader(in);
         return br.readLine();
