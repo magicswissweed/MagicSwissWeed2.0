@@ -6,13 +6,11 @@ import com.aa.msw.gen.api.ApiHistoricalYears;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.StationToApiHistoricalYears;
 import com.aa.msw.model.HistoricalYearsData;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Profile("!test")
 @Service
 public class HistoricalYearsApiServiceImpl extends AbstractGraphLineApiService implements HistoricalYearsApiService {
     private final HistoricalYearsAccessorService historicalYearsAccessorService;
