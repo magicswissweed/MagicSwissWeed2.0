@@ -1,5 +1,6 @@
 package com.aa.msw.integrationtest;
 
+import com.aa.msw.TestcontainersConfiguration;
 import com.aa.msw.helper.PublicSpotListConfiguration;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
@@ -12,26 +13,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static io.restassured.RestAssured.given;
 
-/**
- * Base class for integration tests.
- * Configured to prevent deadlocks by disabling background tasks and ensuring
- * context isolation between test classes.
- */
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "spring.flyway.clean-disabled=false",
                 "spring.jpa.hibernate.ddl-auto=none",
-                "spring.task.scheduling.enabled=false" // Prevents background tasks from holding locks
+                "spring.task.scheduling.enabled=false"
         }
 )
+@Import(TestcontainersConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS) // Closes all connections after class finishes
 public abstract class IntegrationTest {
 
     @LocalServerPort

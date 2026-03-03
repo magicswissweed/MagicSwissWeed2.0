@@ -49,6 +49,8 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.rest-assured:rest-assured")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:postgresql")
 }
 
 tasks.withType<Test> {
