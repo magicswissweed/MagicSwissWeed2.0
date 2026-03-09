@@ -12,7 +12,7 @@ import {FlowColorEnum, SpotModel} from "../model/SpotModel";
 import {stationsService} from "../service/StationsService";
 import {FlowStatusFilterChips} from "./filter/FlowStatusFilterChips";
 import {MswAddSpot} from "../spot/add/MswAddSpot";
-import PullToRefresh from 'pulltorefreshjs';
+import PullToRefresh from "pulltorefreshjs";
 import {isIosPwa} from "../utils/deviceDetection";
 
 const pullToRefreshStyles = `
