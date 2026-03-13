@@ -24,8 +24,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum CountryEnum {
   
   CH("CH"),
-  
-  FR("FR");
+
+  FR("FR"),
+
+  DE_BW("DE_BW");
 
   private String value;
 

@@ -9,6 +9,8 @@ import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30DaysSampleFetchService;
 import com.aa.msw.source.french.vigicrues.stations.FrenchStationFetchService;
+import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
+import com.aa.msw.source.german.bw.stations.DeBwStationFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.stations.SwissStationFetchService;
 import org.springframework.context.annotation.Profile;
@@ -28,18 +30,22 @@ public class StationApiServiceImpl implements StationApiService {
     private final StationDao stationDao;
     private final SwissStationFetchService swissStationFetchService;
     private final FrenchStationFetchService frenchStationFetchService;
+    private final DeBwStationFetchService deBwStationFetchService;
     private final SampleDao sampleDao;
     private final SwissSampleFetchService swissSampleFetchService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
+    private final BwSampleFetchService bwSampleFetchService;
     private Set<Station> stations = new HashSet<>();
 
-    public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
+    public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, DeBwStationFetchService deBwStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
         this.swissStationFetchService = swissStationFetchService;
         this.stationDao = stationDao;
         this.frenchStationFetchService = frenchStationFetchService;
+        this.deBwStationFetchService = deBwStationFetchService;
         this.sampleDao = sampleDao;
         this.swissSampleFetchService = swissSampleFetchService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
+        this.bwSampleFetchService = bwSampleFetchService;
     }
 
     @Override
@@ -88,6 +94,7 @@ public class StationApiServiceImpl implements StationApiService {
     private Set<Station> fetchStations() {
         Set<Station> stations = frenchStationFetchService.fetchStations();
         stations.addAll(swissStationFetchService.fetchStations());
+        stations.addAll(deBwStationFetchService.fetchStations());
         return stations.stream()
                 .map(this::processFetchedStations)
                 .filter(Optional::isPresent)
@@ -139,6 +146,7 @@ public class StationApiServiceImpl implements StationApiService {
         return switch (stationId.getCountry()) {
             case CH -> canFetchDataForCh(stationId);
             case FR -> canFetchDataForFr(stationId);
+            case DE_BW -> canFetchDataForBw(stationId);
         };
     }
 
@@ -155,6 +163,15 @@ public class StationApiServiceImpl implements StationApiService {
         try {
             Set<LastFewDays> dataSet = frenchLast30DaysSampleFetchService.fetchLast30DaysSamples(Set.of(stationId));
             return dataSet.size() == 1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean canFetchDataForBw(ApiStationId stationId) {
+        try {
+            List<Sample> samples = bwSampleFetchService.fetchSamples(Set.of(stationId));
+            return samples.size() == 1;
         } catch (Exception e) {
             return false;
         }
