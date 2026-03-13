@@ -14,6 +14,7 @@ import com.aa.msw.model.Station;
 import com.aa.msw.notifications.NotificationService;
 import com.aa.msw.notifications.NotificationSpotInfo;
 import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30DaysSampleFetchService;
+import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.forecast.SwissForecastFetchService;
 import com.aa.msw.source.swiss.hydrodaten.historical.lastfourty.SwissLast40DaysSampleFetchService;
@@ -22,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -45,13 +44,15 @@ public class InputDataFetcherService {
     private final LastFewDaysDao lastFewDaysDao;
     private final NotificationService notificationService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
+    private final BwSampleFetchService bwSampleFetchService;
 
     private boolean fetchedDataSinceRestart = false;
 
     private final AtomicBoolean isFetchingSwissData = new AtomicBoolean(false);
     private final AtomicBoolean isFetchingFrenchData = new AtomicBoolean(false);
+    private final AtomicBoolean isFetchingBwData = new AtomicBoolean(false);
 
-    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
+    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
         this.swissSampleFetchService = swissSampleFetchService;
         this.swissForecastFetchService = swissForecastFetchService;
         this.stationDao = stationDao;
@@ -62,11 +63,7 @@ public class InputDataFetcherService {
         this.lastFewDaysDao = lastFewDaysDao;
         this.notificationService = notificationService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
-    }
-
-    public void fetchDataAndWriteToDb() throws IOException, URISyntaxException {
-        fetchSwissDataAndWriteToDb();
-        fetchFrenchDataAndWriteToDb();
+        this.bwSampleFetchService = bwSampleFetchService;
     }
 
     @Scheduled(cron = "0 1/10 * * * *") // 01, 11, 21, ...
@@ -78,6 +75,11 @@ public class InputDataFetcherService {
     @Scheduled(cron = "0 3/5 * * * *")
     private void fetchFrenchDataAndWriteToDb() {
         fetchAndWriteToDb(isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
+    }
+
+    @Scheduled(cron = "0 5/10 * * * *") // 05, 15, 25, ...
+    private void fetchBwDataAndWriteToDb() {
+        fetchAndWriteToDb(isFetchingBwData, CountryEnum.DE_BW, this::fetchAndWriteBwSamples);
     }
 
     private void fetchAndWriteToDb(AtomicBoolean isFetchingForCountry, CountryEnum country, Consumer<Set<ApiStationId>> fetchForCountryFunction) {
@@ -136,6 +138,11 @@ public class InputDataFetcherService {
 
             sampleDao.persistSamplesIfNotExist(currentSamples);
         }
+    }
+
+    private void fetchAndWriteBwSamples(Set<ApiStationId> stationIds) {
+        List<Sample> samples = bwSampleFetchService.fetchSamples(stationIds);
+        sampleDao.persistSamplesIfNotExist(samples);
     }
 
     private void fetchAndWriteSwissSamples(Set<ApiStationId> stationIds) {

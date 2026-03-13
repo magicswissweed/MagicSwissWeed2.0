@@ -259,6 +259,7 @@ components:
       enum:
         - CH
         - FR
+        - DE_BW
     ApiStationId:
       type: object
       required: [ country, externalId ]
