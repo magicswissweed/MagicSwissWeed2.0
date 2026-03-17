@@ -1,8 +1,8 @@
 import {initializeApp} from "firebase/app";
 import {initializeUI} from "@firebase-oss/ui-core";
 import {browserLocalPersistence, getAuth, setPersistence} from "firebase/auth";
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
