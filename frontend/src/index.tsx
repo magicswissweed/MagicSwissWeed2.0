@@ -1,7 +1,6 @@
 import "./index.scss"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@firebase-oss/ui-styles/dist.min.css";
-import React from 'react';
 import {FirebaseUIProvider} from "@firebase-oss/ui-react";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import ReactDOM from 'react-dom/client';

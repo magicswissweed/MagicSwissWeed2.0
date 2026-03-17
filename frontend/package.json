@@ -5,7 +5,9 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@firebase-oss/ui-core": "^7.0.2-beta",
     "@firebase-oss/ui-react": "^7.0.2-beta",
+    "@firebase-oss/ui-styles": "^7.0.2-beta",
     "@hello-pangea/dnd": "^18.0.1",
     "@khmyznikov/pwa-install": "^0.5.8",
     "@react-google-maps/api": "^2.20.8",
