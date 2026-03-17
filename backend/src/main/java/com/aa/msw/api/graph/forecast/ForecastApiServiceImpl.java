@@ -8,13 +8,11 @@ import com.aa.msw.gen.api.ApiForecast;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.StationToApiForecasts;
 import com.aa.msw.model.Forecast;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Profile("!test")
 @Service
 public class ForecastApiServiceImpl extends AbstractGraphLineApiService implements ForecastApiService {
 

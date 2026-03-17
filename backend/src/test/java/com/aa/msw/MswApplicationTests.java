@@ -1,10 +1,9 @@
 package com.aa.msw;
 
+import com.aa.msw.integrationtest.IntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MswApplicationTests {
+class MswApplicationTests extends IntegrationTest {
 
     @Test
     void contextLoads() {

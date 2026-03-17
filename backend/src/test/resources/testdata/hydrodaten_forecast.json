@@ -1,0 +1,193 @@
+{
+  "plot": {
+    "layout": {
+      "annotations": [
+        {
+          "text": "m\u00b3/s",
+          "font": {
+            "color": "#000000"
+          },
+          "showarrow": false,
+          "xref": "paper",
+          "yref": "paper",
+          "x": 0.0,
+          "xanchor": "right",
+          "y": 1.05,
+          "yanchor": "bottom",
+          "xshift": 5
+        },
+        {
+          "xref": "x",
+          "yref": "paper",
+          "x": "2026-03-03T10:00:00.000+01:00",
+          "xanchor": "left",
+          "y": 1.02,
+          "yanchor": "bottom",
+          "text": "Vorhersage ab 03.03.26 10:00",
+          "font": {
+            "color": "#FF0000"
+          },
+          "showarrow": false
+        }
+      ]
+    },
+    "data": [
+      {
+        "x": [
+          "2026-03-03T10:00:00.000+01:00",
+          "2026-03-03T11:00:00.000+01:00",
+          "2026-03-03T12:00:00.000+01:00"
+        ],
+        "y": [
+          85.6,
+          87.0,
+          86.8
+        ],
+        "type": "scatter",
+        "mode": "lines",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "m\u00b3/s",
+          "hoverformat": {
+            "cutoff_for_three_decimals": 0.5,
+            "cutoff_for_two_decimals": 1,
+            "cutoff_for_one_decimal": 10
+          },
+          "nullify_hover_value": true
+        },
+        "line": {
+          "color": "magenta",
+          "width": 1
+        },
+        "name": "Min. / Max."
+      },
+      {
+        "x": [
+          "2026-03-03T10:00:00.000+01:00",
+          "2026-03-03T11:00:00.000+01:00",
+          "2026-03-03T12:00:00.000+01:00"
+        ],
+        "y": [
+          85.6,
+          87.0,
+          86.8
+        ],
+        "type": "scatter",
+        "mode": "lines",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "m\u00b3/s",
+          "hoverformat": {
+            "cutoff_for_three_decimals": 0.5,
+            "cutoff_for_two_decimals": 1,
+            "cutoff_for_one_decimal": 10
+          },
+          "nullify_hover_value": true
+        },
+        "line": {
+          "color": "magenta",
+          "width": 1
+        },
+        "showlegend": false,
+        "name": "Min. / Max."
+      },
+      {
+        "x": [
+          "2026-03-03T10:00:00.000+01:00",
+          "2026-03-03T11:00:00.000+01:00",
+          "2026-03-03T12:00:00.000+01:00",
+          "2026-03-03T11:00:00.000+01:00",
+          "2026-03-03T10:00:00.000+01:00",
+          "2026-03-03T10:00:00.000+01:00"
+        ],
+        "y": [
+          85.6,
+          87.0,
+          86.8,
+          87.0,
+          85.6,
+          85.6
+        ],
+        "type": "scatter",
+        "mode": "none",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "",
+          "hoverformat": null,
+          "nullify_hover_value": false
+        },
+        "fillcolor": "rgba(255, 192, 203, 0.5)",
+        "name": "25.-75. Perzentil",
+        "fill": "tozerox"
+      },
+      {
+        "x": [
+          "2026-03-03T10:00:00.000+01:00",
+          "2026-03-03T11:00:00.000+01:00",
+          "2026-03-03T12:00:00.000+01:00"
+        ],
+        "y": [
+          85.6,
+          87.0,
+          86.8
+        ],
+        "type": "scatter",
+        "mode": "lines",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "m\u00b3/s",
+          "hoverformat": {
+            "cutoff_for_three_decimals": 0.5,
+            "cutoff_for_two_decimals": 1,
+            "cutoff_for_one_decimal": 10
+          },
+          "nullify_hover_value": true
+        },
+        "line": {
+          "color": "#10067A",
+          "width": 2,
+          "dash": "solid"
+        },
+        "name": "Median"
+      },
+      {
+        "x": [
+          "2026-03-02T10:00:00.000+01:00",
+          "2026-03-02T11:00:00.000+01:00",
+          "2026-03-02T12:00:00.000+01:00"
+        ],
+        "y": [
+          95.2,
+          94.4,
+          94.3
+        ],
+        "type": "scatter",
+        "mode": "lines",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "m\u00b3/s",
+          "hoverformat": {
+            "cutoff_for_three_decimals": 0.5,
+            "cutoff_for_two_decimals": 1,
+            "cutoff_for_one_decimal": 10
+          },
+          "nullify_hover_value": true
+        },
+        "line": {
+          "color": "#57C7FF"
+        },
+        "name": "Gemessen"
+      }
+    ]
+  },
+  "hoverInfo": {
+    "show": true,
+    "text": "Datum",
+    "format": "dd.MM.yyyy HH:mm:ss"
+  }
+}

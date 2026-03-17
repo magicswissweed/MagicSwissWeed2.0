@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 
 public abstract class AbstractFetchService {
 
-    protected static String fetchAsString(String url) throws IOException, URISyntaxException {
+    protected String fetchAsString(String url) throws IOException, URISyntaxException {
         HttpURLConnection conn = (HttpURLConnection) new URI(url).toURL().openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "application/json");

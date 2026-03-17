@@ -1,0 +1,113 @@
+{
+  "plot": {
+    "layout": {
+      "annotations": [
+        {
+          "text": "m \u00fc.M.",
+          "font": {
+            "color": "#3A8CB5"
+          },
+          "showarrow": false,
+          "xref": "paper",
+          "yref": "paper",
+          "x": 0.0,
+          "xanchor": "right",
+          "y": 1.05,
+          "yanchor": "bottom",
+          "xshift": 5
+        },
+        {
+          "text": "m\u00b3/s",
+          "font": {
+            "color": "#57C7FF"
+          },
+          "showarrow": false,
+          "xref": "paper",
+          "yref": "paper",
+          "x": 1,
+          "xanchor": "left",
+          "y": 1.05,
+          "yanchor": "bottom"
+        },
+        {
+          "text": "Daten ab 23.1.2026",
+          "font": {
+            "color": "#000000"
+          },
+          "showarrow": false,
+          "bgcolor": "rgba(256, 256, 256, 0.7)",
+          "borderwidth": 0,
+          "borderpad": 0,
+          "yref": "paper",
+          "y": 0.98,
+          "yanchor": "top",
+          "x": "2026-01-23T00:00:00.000+01:00",
+          "xanchor": "left"
+        }
+      ]
+    },
+    "data": [
+      {
+        "x": [
+          "2026-01-23T00:00:00.000+01:00",
+          "2026-01-23T00:05:00.000+01:00",
+          "2026-01-23T00:10:00.000+01:00"
+        ],
+        "y": [
+          343.675,
+          343.675,
+          343.676
+        ],
+        "type": "scatter",
+        "mode": "lines",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "m \u00fc.M.",
+          "hoverformat": 2,
+          "nullify_hover_value": false
+        },
+        "yaxis": "y",
+        "line": {
+          "color": "#3A8CB5"
+        },
+        "name": "Wasserstand"
+      },
+      {
+        "x": [
+          "2026-01-23T00:00:00.000+01:00",
+          "2026-01-23T00:05:00.000+01:00",
+          "2026-01-23T00:10:00.000+01:00"
+        ],
+        "y": [
+          40.776,
+          40.776,
+          40.87
+        ],
+        "type": "scatter",
+        "mode": "lines",
+        "hoverinfo": "none",
+        "connectgaps": false,
+        "meta": {
+          "unit": "m\u00b3/s",
+          "hoverformat": {
+            "cutoff_for_three_decimals": 0.5,
+            "cutoff_for_two_decimals": 1,
+            "cutoff_for_one_decimal": 10
+          },
+          "nullify_hover_value": true
+        },
+        "yaxis": "y2",
+        "line": {
+          "color": "#57C7FF"
+        },
+        "name": "Abfluss"
+      }
+    ]
+  },
+  "hoverInfo": {
+    "show": true,
+    "text": "Datum",
+    "format": "dd.MM.yyyy HH:mm"
+  }
+}
