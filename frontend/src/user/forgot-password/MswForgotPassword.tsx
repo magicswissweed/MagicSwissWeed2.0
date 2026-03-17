@@ -39,9 +39,9 @@ export function MswForgotPassword(props: MswForgotPasswordProps) {
     return <>
         <Modal show={showForgotPasswordModal} onHide={props.closeModal}>
             <Modal.Header closeButton>
-                <Modal.Title>Reset password</Modal.Title>
+                <Modal.Title>Reset Password</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="auth-modal">
                 <div className="form">
                     <Form ref={formRef} onSubmit={handleSubmit}>
 
@@ -69,7 +69,7 @@ export function MswForgotPassword(props: MswForgotPasswordProps) {
                 </Button>
                 <Button variant="msw"
                         onClick={() => formRef.current && formRef.current.requestSubmit()}>
-                    Reset password
+                    Reset Password
                 </Button>
             </Modal.Footer>
         </Modal>

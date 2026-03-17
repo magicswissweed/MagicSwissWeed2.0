@@ -1,4 +1,5 @@
 import {initializeApp} from "firebase/app";
+import {initializeUI} from "@firebase-oss/ui-core";
 import {browserLocalPersistence, getAuth, setPersistence} from "firebase/auth";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -21,5 +22,9 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
+const ui = initializeUI({app});
+
 setPersistence(auth, browserLocalPersistence);
+export const firebaseApp = app;
 export const firebaseAuth = auth;
+export const firebaseUI = ui;

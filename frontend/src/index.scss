@@ -53,3 +53,43 @@ input[type="radio"]:checked {
   background-color: var(--msw-blue);
   border-color: var(--msw-blue);
 }
+
+// Styles for authentication modals (login, signup, forgot password)
+
+.auth-modal {
+  .form-control {
+    border-color: var(--msw-blue);
+  }
+
+  .form-control:focus {
+    border-color: var(--msw-blue);
+    box-shadow: 0 0 0 0.2rem rgba(59, 186, 232, 0.25);
+  }
+
+  .auth-separator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .auth-separator::before,
+  .auth-separator::after {
+    content: "";
+    flex: 1;
+    border-top: 1px solid #d0d7de;
+  }
+
+  .auth-separator span {
+    color: #57606a;
+    font-weight: 500;
+    text-transform: lowercase;
+  }
+
+  .google-signin-button-container .fui-provider__button,
+  .google-signin-button-container button {
+    color: black;
+    background-color: white;
+    border: 1px solid var(--msw-blue);
+    border-radius: 6px;
+  }
+}

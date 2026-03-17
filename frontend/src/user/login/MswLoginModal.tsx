@@ -1,6 +1,7 @@
 import './MswLogin.scss';
 import React, {useEffect, useRef, useState} from "react";
 import {Alert, Button, Form} from "react-bootstrap";
+import {GoogleSignInButton} from "@firebase-oss/ui-react";
 import Modal from "react-bootstrap/Modal";
 import {useUserAuth} from "../UserAuthContext";
 
@@ -71,7 +72,7 @@ export const MswLoginModal = (props: MswLoginModalProps) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Log In</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className="auth-modal">
                     <div className="form">
                         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -97,13 +98,16 @@ export const MswLoginModal = (props: MswLoginModalProps) => {
                                 <Button variant="link" onClick={onOpenForgotPasswordModal}>Forgot Password</Button>
                             </div>
                         </Form>
-                        {/*<div className="google-button-container">*/}
-                        {/*    <GoogleButton*/}
-                        {/*        type="dark"*/}
-                        {/*        onClick={handleGoogleSignIn}*/}
-                        {/*    />*/}
-                        {/*</div>*/}
                     </div>
+
+                    <div className="auth-separator mt-2 mb-3">
+                        <span>or</span>
+                    </div>
+
+                    <div className="d-flex flex-column align-items-center gap-2 mb-2 google-signin-button-container">
+                        <GoogleSignInButton themed onSignIn={() => props.closeModal()}/>
+                    </div>
+
                     <div className="p-4 box mt-3 text-center">
                         Don't have an account?
                         <Button variant="link" onClick={onOpenSignupModal}>Sign Up</Button>
