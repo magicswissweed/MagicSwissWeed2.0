@@ -1,6 +1,7 @@
 import './MswSignUp.scss';
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Form} from "react-bootstrap";
+import {GoogleSignInButton} from "@firebase-oss/ui-react";
 import {useUserAuth} from "../UserAuthContext";
 import Modal from "react-bootstrap/Modal";
 
@@ -53,7 +54,7 @@ const MswSignup = (props: MswSignUpProps) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Sign Up</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className="auth-modal">
                     <div className="form">
                         {error && <p className="error-message" dangerouslySetInnerHTML={{__html: error}}></p>}
 
@@ -77,6 +78,14 @@ const MswSignup = (props: MswSignUpProps) => {
                             </Form.Group>
                         </Form>
                     </div>
+
+                    <div className="auth-separator mt-2 mb-3">
+                        <span>or</span>
+                    </div>
+                    <div className="d-flex justify-content-center mb-2 google-signin-button-container">
+                        <GoogleSignInButton themed onSignIn={() => props.closeModal()}/>
+                    </div>
+
                     <div className="p-4 box mt-3 text-center">
                         Already have an account?
                         <Button variant="link" onClick={onOpenLoginModal}>Log In</Button>
