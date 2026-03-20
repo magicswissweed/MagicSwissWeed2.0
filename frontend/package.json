@@ -9,7 +9,7 @@
     "@firebase-oss/ui-react": "^7.0.2-beta",
     "@firebase-oss/ui-styles": "^7.0.2-beta",
     "@hello-pangea/dnd": "^18.0.1",
-    "@khmyznikov/pwa-install": "^0.5.8",
+    "@khmyznikov/pwa-install": "^0.6.3",
     "@react-google-maps/api": "^2.20.8",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
@@ -47,6 +47,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "overrides": {
+    "form-data": "4.0.4"
   },
   "eslintConfig": {
     "extends": [
