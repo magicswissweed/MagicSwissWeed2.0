@@ -9,7 +9,7 @@ import {MswForgotPassword} from "../user/forgot-password/MswForgotPassword";
 import {MswProfileModal} from "../user/profile/MswProfileModal";
 import {useAuthModal} from '../user/AuthModalContext';
 import '@khmyznikov/pwa-install';
-import {usePwaInstalled} from "../isPwaInstalled/isPwaInstalled";
+import {usePwaInstalled} from "../utils/isPwaInstalled";
 import {subscribeToPushNotifications} from "../subscribeToPushNotifications";
 
 // Declare the custom element for TypeScript
