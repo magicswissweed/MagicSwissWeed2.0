@@ -12,15 +12,6 @@ import '@khmyznikov/pwa-install';
 import {usePwaInstalled} from "../utils/isPwaInstalled";
 import {subscribeToPushNotifications} from "../subscribeToPushNotifications";
 
-// Declare the custom element for TypeScript
-declare global {
-    namespace React.JSX {
-        interface IntrinsicElements {
-            'pwa-install': any;
-        }
-    }
-}
-
 export const MswHeader = () => {
     // @ts-ignore
     const {user, token, logOut} = useUserAuth();
@@ -94,7 +85,7 @@ export const MswHeader = () => {
                     <div>
                         {/* PWA Install Element - automatically shows install button when available */}
                         <pwa-install
-                            manifestpath="/manifest.json"
+                            manifest-url="/manifest.json"
                             name="MagicSwissWeed"
                             description="Know when the rivers flow."
                             install-description="Install as an app to enable notifications."
