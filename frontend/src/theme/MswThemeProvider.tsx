@@ -1,8 +1,23 @@
 import {useEffect, useState} from 'react';
 import {MswTheme, MswThemeContext} from "./MswThemeContext";
 
+const THEME_COOKIE = 'theme';
+const COOKIE_MAX_AGE_SECONDS = 365 * 24 * 60 * 60;
+
+const getThemeCookie = (): MswTheme | null => {
+    const match = document.cookie.split('; ').find(row => row.startsWith(THEME_COOKIE + '='));
+    if (!match) return null;
+    const value = match.split('=')[1] as MswTheme;
+    return value === 'dark' || value === 'light' ? value : null;
+};
+
+const setThemeCookie = (theme: MswTheme) => {
+    const secure = location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `${THEME_COOKIE}=${theme}; max-age=${COOKIE_MAX_AGE_SECONDS}; path=/; SameSite=Lax${secure}`;
+};
+
 const getInitialTheme = (): MswTheme => {
-    const stored = localStorage.getItem('theme') as MswTheme | null;
+    const stored = getThemeCookie();
     if (stored) return stored;
 
     return window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -15,7 +30,7 @@ export const MswThemeProvider = ({children}: { children: React.ReactNode }) => {
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
+        setThemeCookie(theme);
 
         syncAndroidToolbarWithTheme();
     }, [theme]);
