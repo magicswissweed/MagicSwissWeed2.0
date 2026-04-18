@@ -1,7 +1,7 @@
 .theme-toggle {
   margin: auto;
   position: relative;
-  width: 64px;
+  width: 96px;
   height: 32px;
   border-radius: 999px;
   border: 1px solid var(--bs-border-color, #dee2e6);
@@ -33,14 +33,18 @@
     content: '☀︎';
   }
 
+  .system::before {
+    content: '⊙';
+  }
+
   .moon::before {
     content: '☾';
   }
 
   .thumb {
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 1px;
+    left: 1px;
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -50,21 +54,33 @@
     transition: transform 0.25s ease;
   }
 
-  &.dark {
-    background-color: var(--bs-dark-bg-subtle, #1e1e1e);
+  &.pref-light {
+    .sun {
+      color: var(--bs-body-color);
+    }
+
+    // thumb stays at left (translateX 0)
+  }
+
+  &.pref-system {
+    .system {
+      color: var(--bs-body-color);
+    }
 
     .thumb {
       transform: translateX(32px);
     }
+  }
+
+  &.pref-dark {
+    background-color: var(--bs-dark-bg-subtle, #1e1e1e);
 
     .moon {
       color: var(--bs-body-color);
     }
-  }
 
-  &.light {
-    .sun {
-      color: var(--bs-body-color);
+    .thumb {
+      transform: translateX(64px);
     }
   }
 

@@ -1,35 +1,45 @@
 import {useEffect, useState} from 'react';
-import {MswTheme, MswThemeContext} from "./MswThemeContext";
+import {MswTheme, MswThemeContext, MswThemePreference} from "./MswThemeContext";
 
-const getInitialTheme = (): MswTheme => {
-    const stored = localStorage.getItem('theme') as MswTheme | null;
-    if (stored) return stored;
+const STORAGE_KEY = 'theme';
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
+const getInitialPreference = (): MswThemePreference => {
+    const stored = localStorage.getItem(STORAGE_KEY) as MswThemePreference | null;
+    // Treat a legacy stored value of 'light' or 'dark' as-is; anything else → 'system'
+    if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
+    return 'system';
+};
+
+const resolveTheme = (preference: MswThemePreference, systemDark: boolean): MswTheme => {
+    if (preference === 'system') return systemDark ? 'dark' : 'light';
+    return preference;
 };
 
 export const MswThemeProvider = ({children}: { children: React.ReactNode }) => {
-    const [theme, setTheme] = useState<MswTheme>(getInitialTheme);
+    const [preference, setPreference] = useState<MswThemePreference>(getInitialPreference);
+    const [systemDark, setSystemDark] = useState(
+        () => window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
 
+    const theme = resolveTheme(preference, systemDark);
+
+    // Apply theme to DOM and persist preference
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-
+        localStorage.setItem(STORAGE_KEY, preference);
         syncAndroidToolbarWithTheme();
-    }, [theme]);
+    }, [preference, theme]);
 
+    // Track OS-level dark mode — only affects the UI when preference is 'system'
     useEffect(() => {
         const media = window.matchMedia('(prefers-color-scheme: dark)');
-        const listener = () => setTheme(media.matches ? 'dark' : 'light');
-
+        const listener = (e: MediaQueryListEvent) => setSystemDark(e.matches);
         media.addEventListener('change', listener);
         return () => media.removeEventListener('change', listener);
     }, []);
 
     return (
-        <MswThemeContext.Provider value={{theme, setTheme}}>
+        <MswThemeContext.Provider value={{theme, preference, setPreference}}>
             {children}
         </MswThemeContext.Provider>
     );
