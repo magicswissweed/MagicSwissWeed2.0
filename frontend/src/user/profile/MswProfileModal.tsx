@@ -30,7 +30,7 @@ export const MswProfileModal = () => {
                     <Modal.Title>User Profile</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className='text-center '>
+                    <div className='text-center profileModalActions'>
                         {user?.email && (
                             <div style={{marginBottom: '16px'}}>
                                 <p style={{margin: '0 0 8px 0', color: '#666'}}>Email</p>

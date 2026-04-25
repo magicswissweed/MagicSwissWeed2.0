@@ -1,3 +1,13 @@
+@import "../../ReactiveMixins";
+
+.profileModalActions {
+  @include small() {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .logoutButton {
   margin-top: 10px;
 }

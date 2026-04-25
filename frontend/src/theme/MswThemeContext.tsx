@@ -1,10 +1,14 @@
 import {createContext, useContext} from 'react';
 
 export type MswTheme = 'light' | 'dark';
+export type MswThemePreference = 'light' | 'system' | 'dark';
 
 type ThemeContextType = {
+    /** Resolved theme actually applied to the UI (never 'system'). */
     theme: MswTheme;
-    setTheme: (t: MswTheme) => void;
+    /** What the user has chosen: 'light', 'dark', or 'system' (follow OS). */
+    preference: MswThemePreference;
+    setPreference: (p: MswThemePreference) => void;
 };
 
 export const MswThemeContext = createContext<ThemeContextType | null>(null);
