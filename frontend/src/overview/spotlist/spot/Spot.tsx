@@ -1,5 +1,6 @@
 import './Spot.scss'
 import React, {useState} from 'react';
+import {useAutoFontSize} from './useAutoFontSize';
 import {CountryEnum, SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
@@ -31,6 +32,7 @@ export const Spot = (props: SpotProps) => {
 
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [isSpotOpen, setIsSpotOpen] = useState(false);
+    const spotTitleRef = useAutoFontSize<HTMLDivElement>();
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
@@ -95,7 +97,7 @@ export const Spot = (props: SpotProps) => {
                 }
             </div>
             <div className="spotContainer" onClick={() => setIsSpotOpen(!isSpotOpen)}>
-                <div className="spot-title">
+                <div className="spot-title" ref={spotTitleRef}>
                     {spot.name}
                 </div>
                 <MswMeasurement spot={spot}/>
