@@ -34,8 +34,14 @@ export const MswThemeProvider = ({children}: { children: React.ReactNode }) => {
     useEffect(() => {
         const media = window.matchMedia('(prefers-color-scheme: dark)');
         const listener = (e: MediaQueryListEvent) => setSystemDark(e.matches);
-        media.addEventListener('change', listener);
-        return () => media.removeEventListener('change', listener);
+
+        if (typeof media.addEventListener === 'function') {
+            media.addEventListener('change', listener);
+            return () => media.removeEventListener('change', listener);
+        }
+
+        media.addListener(listener);
+        return () => media.removeListener(listener);
     }, []);
 
     return (
