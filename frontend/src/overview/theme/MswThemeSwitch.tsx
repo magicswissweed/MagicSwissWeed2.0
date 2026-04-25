@@ -13,6 +13,7 @@ export const MswThemeSwitch = () => {
 
     return (
         <button
+            type="button"
             className={`theme-toggle pref-${preference}`}
             onClick={cycle}
             title={preference === 'system' ? 'Following system' : preference === 'dark' ? 'Dark mode' : 'Light mode'}
