@@ -34,7 +34,7 @@ class SwissSampleFetchIntegrationTest {
         Sample station2018 = samples.stream()
                 .filter(s -> s.stationId().getExternalId().equals("2018"))
                 .findFirst().orElseThrow();
-        assertEquals(81, station2018.flow());
+        assertEquals(81.77, station2018.flow(), 0.01);
         assertTrue(station2018.temperature().isPresent());
         assertEquals(8.62, station2018.temperature().get(), 0.01);
         assertEquals(CountryEnum.CH, station2018.stationId().getCountry());
@@ -43,7 +43,7 @@ class SwissSampleFetchIntegrationTest {
         Sample station2243 = samples.stream()
                 .filter(s -> s.stationId().getExternalId().equals("2243"))
                 .findFirst().orElseThrow();
-        assertEquals(62, station2243.flow());
+        assertEquals(62.25, station2243.flow(), 0.01);
         assertTrue(station2243.temperature().isPresent());
         assertEquals(7.46, station2243.temperature().get(), 0.01);
     }

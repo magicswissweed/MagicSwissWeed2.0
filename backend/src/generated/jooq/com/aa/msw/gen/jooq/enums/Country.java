@@ -19,7 +19,9 @@ public enum Country implements EnumType {
 
     CH("CH"),
 
-    FR("FR");
+    FR("FR"),
+
+    DE_BW("DE_BW");
 
     private final String literal;
 

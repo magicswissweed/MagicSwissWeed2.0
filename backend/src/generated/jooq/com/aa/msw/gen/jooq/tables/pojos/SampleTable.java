@@ -23,7 +23,7 @@ public class SampleTable implements Serializable {
     private final String stationid;
     private final OffsetDateTime timestamp;
     private final Float temperature;
-    private final Integer flow;
+    private final Float flow;
     private final Country country;
 
     public SampleTable(SampleTable value) {
@@ -40,7 +40,7 @@ public class SampleTable implements Serializable {
         String stationid,
         OffsetDateTime timestamp,
         Float temperature,
-        Integer flow,
+        Float flow,
         Country country
     ) {
         this.id = id;
@@ -82,7 +82,7 @@ public class SampleTable implements Serializable {
     /**
      * Getter for <code>public.sample_table.flow</code>.
      */
-    public Integer getFlow() {
+    public Float getFlow() {
         return this.flow;
     }
 

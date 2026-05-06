@@ -284,7 +284,8 @@ components:
           type: number
           format: double
         flow:
-          type: integer
+          type: number
+          format: double
     ApiFlowSample:
       type: object
       required: [ timestamp, flow ]
