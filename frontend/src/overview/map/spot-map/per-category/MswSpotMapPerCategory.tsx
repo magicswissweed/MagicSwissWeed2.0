@@ -124,7 +124,11 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                         position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
                         onCloseClick={() => setSelectedSpot(null)}
                     >
-                        <p style={{textTransform: "none"}}>{selectedSpot.name}: {formatFlow(selectedSpot.currentSample.flow)} m³/s</p>
+                        <p style={{textTransform: "none"}}>
+                            {selectedSpot.name}: {selectedSpot.currentSample
+                                ? `${formatFlow(selectedSpot.currentSample.flow)} m³/s`
+                                : 'Data is being fetched...'}
+                        </p>
                     </InfoWindow>
                 )}
             </GoogleMap>

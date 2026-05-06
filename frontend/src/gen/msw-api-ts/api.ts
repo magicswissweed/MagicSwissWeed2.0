@@ -346,13 +346,19 @@ export interface ApiSpotInformation {
      * @type {ApiSample}
      * @memberof ApiSpotInformation
      */
-    'currentSample': ApiSample;
+    'currentSample'?: ApiSample;
     /**
      * 
      * @type {ApiFlowStatusEnum}
      * @memberof ApiSpotInformation
      */
     'flowStatusEnum': ApiFlowStatusEnum;
+    /**
+     * True when no sample data has been fetched yet for this spot\'s station (e.g. a newly added French spot). The frontend should show a \"fetching data\" placeholder.
+     * @type {boolean}
+     * @memberof ApiSpotInformation
+     */
+    'dataPending': boolean;
 }
 
 export const ApiSpotInformationSpotTypeEnum = {

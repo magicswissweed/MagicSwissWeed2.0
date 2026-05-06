@@ -81,7 +81,8 @@ class SpotsService {
                     false,
                     undefined,
                     undefined,
-                    s.withNotification);
+                    s.withNotification,
+                    s.dataPending);
             })
             this.setSpots(spots);
         }

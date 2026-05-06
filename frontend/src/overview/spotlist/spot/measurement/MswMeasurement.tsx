@@ -17,25 +17,34 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
     render() {
+        if (!this.spot.currentSample) {
+            return <>
+                <div className="measurements pending"
+                     tabIndex={0}>
+                    <div className="pending-message">Data is being fetched...</div>
+                </div>
+            </>;
+        }
+
         return <>
             <div className="measurements"
                  tabIndex={0}>
                 <div className="measurement_row meas flow">
-                    {this.getFlow()}
+                    {this.getFlow(this.spot.currentSample.flow)}
                 </div>
 
-                {this.spot.currentSample!.temperature &&
+                {this.spot.currentSample.temperature &&
                     <div className="measurement_row meas temp">
-                        {this.getTemp()}
+                        {this.getTemp(this.spot.currentSample.temperature)}
                     </div>
                 }
             </div>
         </>;
     }
 
-    private getFlow() {
+    private getFlow(flow: number) {
         return <>
-            <div className={this.spot.flowStatus}>{formatFlow(this.spot.currentSample.flow)}</div>
+            <div className={this.spot.flowStatus}>{formatFlow(flow)}</div>
             <div className="unit">
                 m<sup>3</sup>/s
             </div>
@@ -43,10 +52,9 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
 
-    private getTemp() {
-        let temp: number = this.spot.currentSample!.temperature ?? 0;
+    private getTemp(temperature: number) {
         return <>
-            <div>{temp}</div>
+            <div>{temperature}</div>
             <div className="unit">°C</div>
         </>;
     }

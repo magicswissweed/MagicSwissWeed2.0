@@ -18,7 +18,7 @@ export class SpotModel {
     minFlow: number;
     maxFlow: number;
     station: ApiStation;
-    currentSample: ApiSample;
+    currentSample: ApiSample | undefined;
     flowStatus: FlowColorEnum;
     forecastLoaded: boolean;
     forecast: ApiForecast | undefined;
@@ -26,6 +26,7 @@ export class SpotModel {
     lastFewDays: Array<ApiFlowSample> | undefined;
     historical: ApiHistoricalYears | undefined;
     withNotification: boolean;
+    dataPending: boolean;
 
     constructor(
         id: string,
@@ -36,14 +37,15 @@ export class SpotModel {
         minFlow: number,
         maxFlow: number,
         station: ApiStation,
-        currentSample: ApiSample,
+        currentSample: ApiSample | undefined,
         flowStatus: FlowColorEnum,
         forecastLoaded: boolean,
         forecast: ApiForecast | undefined,
         lastFewDaysLoaded: boolean,
         lastFewDays: Array<ApiFlowSample> | undefined,
         historical: ApiHistoricalYears | undefined,
-        withNotification: boolean) {
+        withNotification: boolean,
+        dataPending: boolean) {
         this.id = id;
         this.name = name;
         this.stationId = stationId;
@@ -60,6 +62,7 @@ export class SpotModel {
         this.forecast = forecast;
         this.historical = historical;
         this.withNotification = withNotification;
+        this.dataPending = dataPending;
     }
 }
 
