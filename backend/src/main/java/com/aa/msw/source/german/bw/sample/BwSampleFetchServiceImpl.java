@@ -40,7 +40,7 @@ public class BwSampleFetchServiceImpl extends AbstractFetchService implements Bw
                             new ApiStationId(CountryEnum.DE_BW, station.stationId()),
                             station.flowTimestamp().get(),
                             Optional.empty(),
-                            station.flowValue().get().intValue()
+                            station.flowValue().get()
                     ))
                     .toList();
         } catch (Exception e) {
