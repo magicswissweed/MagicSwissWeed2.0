@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.records;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.LastFewDaysSamplesTable;
 
 import java.util.UUID;
@@ -84,6 +85,23 @@ public class LastFewDaysSamplesTableRecord extends UpdatableRecordImpl<LastFewDa
         return (Country) get(3);
     }
 
+    /**
+     * Setter for
+     * <code>public.last_few_days_samples_table.measurement_type</code>.
+     */
+    public LastFewDaysSamplesTableRecord setMeasurementType(MeasurementType value) {
+        set(4, value);
+        return this;
+    }
+
+    /**
+     * Getter for
+     * <code>public.last_few_days_samples_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return (MeasurementType) get(4);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -107,13 +125,14 @@ public class LastFewDaysSamplesTableRecord extends UpdatableRecordImpl<LastFewDa
     /**
      * Create a detached, initialised LastFewDaysSamplesTableRecord
      */
-    public LastFewDaysSamplesTableRecord(UUID dbId, String stationId, JSONB lastfewdayssamples, Country country) {
+    public LastFewDaysSamplesTableRecord(UUID dbId, String stationId, JSONB lastfewdayssamples, Country country, MeasurementType measurementType) {
         super(LastFewDaysSamplesTable.LAST_FEW_DAYS_SAMPLES_TABLE);
 
         setDbId(dbId);
         setStationId(stationId);
         setLastfewdayssamples(lastfewdayssamples);
         setCountry(country);
+        setMeasurementType(measurementType);
         resetChangedOnNotNull();
     }
 
@@ -128,6 +147,7 @@ public class LastFewDaysSamplesTableRecord extends UpdatableRecordImpl<LastFewDa
             setStationId(value.getStationId());
             setLastfewdayssamples(value.getLastfewdayssamples());
             setCountry(value.getCountry());
+            setMeasurementType(value.getMeasurementType());
             resetChangedOnNotNull();
         }
     }

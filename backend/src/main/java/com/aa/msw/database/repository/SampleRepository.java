@@ -4,6 +4,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.daos.SampleTableDao;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
@@ -58,6 +59,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         record.setTimestamp(sample.getTimestamp());
         record.setTemperature(sample.getTemperature().map(Double::floatValue).orElse(null));
         record.setFlow((float) sample.getFlow());
+        record.setMeasurementType(MeasurementType.FLOW);
         return record;
     }
 
@@ -77,7 +79,8 @@ public class SampleRepository extends AbstractTimestampedRepository
     public Sample getCurrentSample(ApiStationId stationId) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
-                        .and(TABLE.STATIONID.eq(stationId.getExternalId())))
+                        .and(TABLE.STATIONID.eq(stationId.getExternalId()))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW)))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)
@@ -91,7 +94,7 @@ public class SampleRepository extends AbstractTimestampedRepository
             SampleTableRecord record = mapDomain(sample);
             dsl.insertInto(TABLE)
                     .set(record)
-                    .onConflict(TABLE.TIMESTAMP, TABLE.STATIONID)
+                    .onConflict(TABLE.TIMESTAMP, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
                     .doNothing()
                     .execute();
         }

@@ -7,6 +7,7 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
 
 import java.time.OffsetDateTime;
@@ -104,6 +105,11 @@ public class ForecastTable extends TableImpl<ForecastTableRecord> {
      * The column <code>public.forecast_table.country</code>.
      */
     public final TableField<ForecastTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+
+    /**
+     * The column <code>public.forecast_table.measurement_type</code>.
+     */
+    public final TableField<ForecastTableRecord, MeasurementType> MEASUREMENT_TYPE = createField(DSL.name("measurement_type"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'FLOW'::measurement_type"), SQLDataType.VARCHAR)).asEnumDataType(MeasurementType.class), this, "");
 
     private ForecastTable(Name alias, Table<ForecastTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.daos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.LastFewDaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.records.LastFewDaysSamplesTableRecord;
 
@@ -114,5 +115,20 @@ public class LastFewDaysSamplesTableDao extends DAOImpl<LastFewDaysSamplesTableR
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.LastFewDaysSamplesTable> fetchByCountry(Country... values) {
         return fetch(LastFewDaysSamplesTable.LAST_FEW_DAYS_SAMPLES_TABLE.COUNTRY, values);
+    }
+
+    /**
+     * Fetch records that have <code>measurement_type BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.LastFewDaysSamplesTable> fetchRangeOfMeasurementType(MeasurementType lowerInclusive, MeasurementType upperInclusive) {
+        return fetchRange(LastFewDaysSamplesTable.LAST_FEW_DAYS_SAMPLES_TABLE.MEASUREMENT_TYPE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>measurement_type IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.LastFewDaysSamplesTable> fetchByMeasurementType(MeasurementType... values) {
+        return fetch(LastFewDaysSamplesTable.LAST_FEW_DAYS_SAMPLES_TABLE.MEASUREMENT_TYPE, values);
     }
 }

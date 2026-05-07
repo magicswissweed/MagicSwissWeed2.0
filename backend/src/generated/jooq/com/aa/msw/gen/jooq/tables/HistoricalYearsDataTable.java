@@ -7,6 +7,7 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.records.HistoricalYearsDataTableRecord;
 
 import java.util.Collection;
@@ -98,6 +99,12 @@ public class HistoricalYearsDataTable extends TableImpl<HistoricalYearsDataTable
      * The column <code>public.historical_years_data_table.country</code>.
      */
     public final TableField<HistoricalYearsDataTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+
+    /**
+     * The column
+     * <code>public.historical_years_data_table.measurement_type</code>.
+     */
+    public final TableField<HistoricalYearsDataTableRecord, MeasurementType> MEASUREMENT_TYPE = createField(DSL.name("measurement_type"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'FLOW'::measurement_type"), SQLDataType.VARCHAR)).asEnumDataType(MeasurementType.class), this, "");
 
     private HistoricalYearsDataTable(Name alias, Table<HistoricalYearsDataTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

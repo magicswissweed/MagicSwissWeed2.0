@@ -7,6 +7,7 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.records.LastFewDaysSamplesTableRecord;
 
 import java.util.Collection;
@@ -72,6 +73,12 @@ public class LastFewDaysSamplesTable extends TableImpl<LastFewDaysSamplesTableRe
      * The column <code>public.last_few_days_samples_table.country</code>.
      */
     public final TableField<LastFewDaysSamplesTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+
+    /**
+     * The column
+     * <code>public.last_few_days_samples_table.measurement_type</code>.
+     */
+    public final TableField<LastFewDaysSamplesTableRecord, MeasurementType> MEASUREMENT_TYPE = createField(DSL.name("measurement_type"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'FLOW'::measurement_type"), SQLDataType.VARCHAR)).asEnumDataType(MeasurementType.class), this, "");
 
     private LastFewDaysSamplesTable(Name alias, Table<LastFewDaysSamplesTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

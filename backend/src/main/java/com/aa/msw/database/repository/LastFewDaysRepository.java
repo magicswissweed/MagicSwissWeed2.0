@@ -4,6 +4,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.LastFewDaysId;
 import com.aa.msw.database.repository.dao.LastFewDaysDao;
 import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.LastFewDaysSamplesTable;
 import com.aa.msw.gen.jooq.tables.daos.LastFewDaysSamplesTableDao;
 import com.aa.msw.gen.jooq.tables.records.LastFewDaysSamplesTableRecord;
@@ -93,6 +94,7 @@ public class LastFewDaysRepository extends AbstractRepository
         record.setCountry(country(lastFewDays.getStationId().getCountry()));
         record.setStationId(lastFewDays.getStationId().getExternalId());
         record.setLastfewdayssamples(orderedMapToJsonb(lastFewDays.getLastFewDaysSamples()));
+        record.setMeasurementType(MeasurementType.FLOW);
 
         return record;
     }
@@ -124,7 +126,8 @@ public class LastFewDaysRepository extends AbstractRepository
     public LastFewDays getForStation(ApiStationId stationId) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
-                        .and(TABLE.STATION_ID.eq(stationId.getExternalId())))
+                        .and(TABLE.STATION_ID.eq(stationId.getExternalId()))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW)))
                 .limit(1)
                 .fetchOptional(this::mapRecord)
                 .orElseThrow(() -> new NoDataAvailableException("No current LastFewDaysSamples found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
@@ -133,7 +136,8 @@ public class LastFewDaysRepository extends AbstractRepository
     private void deleteIfExists(ApiStationId stationId) {
         dsl.deleteFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
-                        .and(TABLE.STATION_ID.eq(stationId.getExternalId())))
+                        .and(TABLE.STATION_ID.eq(stationId.getExternalId()))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW)))
                 .execute();
     }
 }

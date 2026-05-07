@@ -4,6 +4,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.ForecastId;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.daos.ForecastTableDao;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
@@ -98,6 +99,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
         record.setSeventyfivepercentile(seventyFivePercentile);
         record.setMin(min);
         record.setMax(max);
+        record.setMeasurementType(MeasurementType.FLOW);
         return record;
     }
 
@@ -150,7 +152,8 @@ public class ForecastRepository extends AbstractTimestampedRepository
     public Forecast getCurrentForecast(ApiStationId stationId) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
-                        .and(TABLE.STATIONID.eq(stationId.getExternalId())))
+                        .and(TABLE.STATIONID.eq(stationId.getExternalId()))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW)))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)
@@ -164,7 +167,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
             ForecastTableRecord record = mapDomain(forecast);
             dsl.insertInto(TABLE)
                     .set(record)
-                    .onConflict(TABLE.TIMESTAMP, TABLE.STATIONID)
+                    .onConflict(TABLE.TIMESTAMP, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
                     .doNothing()
                     .execute();
         }

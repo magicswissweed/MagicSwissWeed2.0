@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.records;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 
 import java.time.OffsetDateTime;
@@ -112,6 +113,21 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
         return (Country) get(5);
     }
 
+    /**
+     * Setter for <code>public.sample_table.measurement_type</code>.
+     */
+    public SampleTableRecord setMeasurementType(MeasurementType value) {
+        set(6, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.sample_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return (MeasurementType) get(6);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -135,7 +151,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Create a detached, initialised SampleTableRecord
      */
-    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float temperature, Float flow, Country country) {
+    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float temperature, Float flow, Country country, MeasurementType measurementType) {
         super(SampleTable.SAMPLE_TABLE);
 
         setId(id);
@@ -144,6 +160,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
         setTemperature(temperature);
         setFlow(flow);
         setCountry(country);
+        setMeasurementType(measurementType);
         resetChangedOnNotNull();
     }
 
@@ -160,6 +177,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
             setTemperature(value.getTemperature());
             setFlow(value.getFlow());
             setCountry(value.getCountry());
+            setMeasurementType(value.getMeasurementType());
             resetChangedOnNotNull();
         }
     }

@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.pojos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -25,6 +26,7 @@ public class SampleTable implements Serializable {
     private final Float temperature;
     private final Float flow;
     private final Country country;
+    private final MeasurementType measurementType;
 
     public SampleTable(SampleTable value) {
         this.id = value.id;
@@ -33,6 +35,7 @@ public class SampleTable implements Serializable {
         this.temperature = value.temperature;
         this.flow = value.flow;
         this.country = value.country;
+        this.measurementType = value.measurementType;
     }
 
     public SampleTable(
@@ -41,7 +44,8 @@ public class SampleTable implements Serializable {
         OffsetDateTime timestamp,
         Float temperature,
         Float flow,
-        Country country
+        Country country,
+        MeasurementType measurementType
     ) {
         this.id = id;
         this.stationid = stationid;
@@ -49,6 +53,7 @@ public class SampleTable implements Serializable {
         this.temperature = temperature;
         this.flow = flow;
         this.country = country;
+        this.measurementType = measurementType;
     }
 
     /**
@@ -91,6 +96,13 @@ public class SampleTable implements Serializable {
      */
     public Country getCountry() {
         return this.country;
+    }
+
+    /**
+     * Getter for <code>public.sample_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return this.measurementType;
     }
 
     @Override
@@ -138,6 +150,12 @@ public class SampleTable implements Serializable {
         }
         else if (!this.country.equals(other.country))
             return false;
+        if (this.measurementType == null) {
+            if (other.measurementType != null)
+                return false;
+        }
+        else if (!this.measurementType.equals(other.measurementType))
+            return false;
         return true;
     }
 
@@ -151,6 +169,7 @@ public class SampleTable implements Serializable {
         result = prime * result + ((this.temperature == null) ? 0 : this.temperature.hashCode());
         result = prime * result + ((this.flow == null) ? 0 : this.flow.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
+        result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
         return result;
     }
 
@@ -164,6 +183,7 @@ public class SampleTable implements Serializable {
         sb.append(", ").append(temperature);
         sb.append(", ").append(flow);
         sb.append(", ").append(country);
+        sb.append(", ").append(measurementType);
 
         sb.append(")");
         return sb.toString();

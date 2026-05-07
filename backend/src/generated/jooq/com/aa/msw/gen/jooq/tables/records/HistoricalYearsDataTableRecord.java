@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.records;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 
 import java.util.UUID;
@@ -161,6 +162,23 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
         return (Country) get(8);
     }
 
+    /**
+     * Setter for
+     * <code>public.historical_years_data_table.measurement_type</code>.
+     */
+    public HistoricalYearsDataTableRecord setMeasurementType(MeasurementType value) {
+        set(9, value);
+        return this;
+    }
+
+    /**
+     * Getter for
+     * <code>public.historical_years_data_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return (MeasurementType) get(9);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -184,7 +202,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Create a detached, initialised HistoricalYearsDataTableRecord
      */
-    public HistoricalYearsDataTableRecord(UUID dbId, String stationId, JSONB median, JSONB twentyFivePercentile, JSONB seventyFivePercentile, JSONB max, JSONB min, JSONB currentYear, Country country) {
+    public HistoricalYearsDataTableRecord(UUID dbId, String stationId, JSONB median, JSONB twentyFivePercentile, JSONB seventyFivePercentile, JSONB max, JSONB min, JSONB currentYear, Country country, MeasurementType measurementType) {
         super(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE);
 
         setDbId(dbId);
@@ -196,6 +214,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
         setMin(min);
         setCurrentYear(currentYear);
         setCountry(country);
+        setMeasurementType(measurementType);
         resetChangedOnNotNull();
     }
 
@@ -215,6 +234,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
             setMin(value.getMin());
             setCurrentYear(value.getCurrentYear());
             setCountry(value.getCountry());
+            setMeasurementType(value.getMeasurementType());
             resetChangedOnNotNull();
         }
     }
