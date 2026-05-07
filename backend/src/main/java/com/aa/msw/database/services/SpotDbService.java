@@ -165,7 +165,7 @@ public class SpotDbService {
     private FlowStatusEnum getCurrentFlowStatusEnum(Spot spot) {
         try {
             Sample currentSample = sampleDao.getCurrentSample(spot.stationId(), spot.measurementType());
-            if (isInSurfableRange(spot, currentSample.flow())) {
+            if (isInSurfableRange(spot, currentSample.value())) {
                 return FlowStatusEnum.GOOD;
             }
             Forecast forecast = forecastDao.getCurrentForecast(spot.stationId(), spot.measurementType());
@@ -188,7 +188,7 @@ public class SpotDbService {
         return FlowStatusEnum.BAD;
     }
 
-    private boolean isInSurfableRange(Spot spot, Double flow) {
-        return flow > spot.minValue() && flow < spot.maxValue();
+    private boolean isInSurfableRange(Spot spot, Double value) {
+        return value > spot.minValue() && value < spot.maxValue();
     }
 }

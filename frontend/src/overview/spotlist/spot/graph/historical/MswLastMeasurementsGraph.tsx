@@ -21,7 +21,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         [
             ...props.spot.lastFewDays,
             ...(props.spot.currentSample
-                ? [{timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}]
+                ? [{timestamp: props.spot.currentSample.timestamp, value: props.spot.currentSample.value}]
                 : [])
         ] :
         [];

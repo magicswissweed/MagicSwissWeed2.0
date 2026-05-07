@@ -13,7 +13,7 @@ public class AbstractGraphLineApiService {
                 .map(entry -> {
                     ApiLineEntry output = new ApiLineEntry();
                     output.setTimestamp(entry.getKey());
-                    output.setFlow(entry.getValue());
+                    output.setValue(entry.getValue());
                     return output;
                 })
                 .collect(Collectors.toList());

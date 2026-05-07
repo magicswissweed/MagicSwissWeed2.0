@@ -84,17 +84,17 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     }
 
     /**
-     * Setter for <code>public.sample_table.flow</code>.
+     * Setter for <code>public.sample_table.value</code>.
      */
-    public SampleTableRecord setFlow(Float value) {
+    public SampleTableRecord setValue(Float value) {
         set(4, value);
         return this;
     }
 
     /**
-     * Getter for <code>public.sample_table.flow</code>.
+     * Getter for <code>public.sample_table.value</code>.
      */
-    public Float getFlow() {
+    public Float getValue() {
         return (Float) get(4);
     }
 
@@ -151,14 +151,14 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Create a detached, initialised SampleTableRecord
      */
-    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float temperature, Float flow, Country country, MeasurementType measurementType) {
+    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float temperature, Float value, Country country, MeasurementType measurementType) {
         super(SampleTable.SAMPLE_TABLE);
 
         setId(id);
         setStationid(stationid);
         setTimestamp(timestamp);
         setTemperature(temperature);
-        setFlow(flow);
+        setValue(value);
         setCountry(country);
         setMeasurementType(measurementType);
         resetChangedOnNotNull();
@@ -175,7 +175,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
             setStationid(value.getStationid());
             setTimestamp(value.getTimestamp());
             setTemperature(value.getTemperature());
-            setFlow(value.getFlow());
+            setValue(value.getValue());
             setCountry(value.getCountry());
             setMeasurementType(value.getMeasurementType());
             resetChangedOnNotNull();

@@ -39,7 +39,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     // Process all data series
     const processedData = {
         measured: currentSample
-            ? [...measuredData ?? [], {timestamp: currentSample.timestamp, flow: currentSample.flow}]
+            ? [...measuredData ?? [], {timestamp: currentSample.timestamp, value: currentSample.value}]
             : measuredData,
         median: removeSamplesBeforeCurrentTime(median ?? []),
         min: removeSamplesBeforeCurrentTime(min ?? []),

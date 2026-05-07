@@ -6,7 +6,8 @@ import {FlowColorEnum, SpotModel} from "../../../../model/SpotModel";
 import {darkMapStyle, lightMapStyle} from "../../map-styles";
 import {useTheme} from "../../../../theme/MswThemeContext";
 import {useGoogleMaps} from "../../../../map-provider/GoogleMapsProvider";
-import {formatFlow} from "../../../../utils/formatFlow";
+import {formatValue} from "../../../../utils/formatValue";
+import {ApiMeasurementType} from "../../../../gen/msw-api-ts";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
 
@@ -126,7 +127,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                     >
                         <p style={{textTransform: "none"}}>
                             {selectedSpot.name}: {selectedSpot.currentSample
-                                ? `${formatFlow(selectedSpot.currentSample.flow)} m³/s`
+                                ? `${formatFlow(selectedSpot.currentSample.value)} {selectedSpot.measurementType === ApiMeasurementType.Height ? "cm" : "m³/s"}`
                                 : 'Data is being fetched...'}
                         </p>
                     </InfoWindow>

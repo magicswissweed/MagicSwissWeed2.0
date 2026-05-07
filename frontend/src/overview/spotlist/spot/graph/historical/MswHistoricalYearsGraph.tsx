@@ -141,8 +141,8 @@ function calculateMaxY(spot: SpotModel): number {
     const maxAllowedFlow = spot.maxValue || 0;
 
     // FIXME: looks like min and max got confused on fetching the data. We simply 'fix' it in the frontend by using min instead of max here
-    let maxOfHistoricalMax = Math.max(...(spot.historical?.min || []).map(m => m.flow));
-    let maxOfCurrentYearMax = Math.max(...(spot.historical?.currentYear || []).map(m => m.flow));
+    let maxOfHistoricalMax = Math.max(...(spot.historical?.min || []).map(m => m.value));
+    let maxOfCurrentYearMax = Math.max(...(spot.historical?.currentYear || []).map(m => m.value));
     const max = Math.max(
         maxOfCurrentYearMax,
         maxOfHistoricalMax,

@@ -41,7 +41,7 @@ export function getTimestamps(data: ApiFlowSample[]): string[] {
 
 // Extract flows from a data series
 export function getFlows(data: ApiFlowSample[]): number[] {
-    return data.map(item => item.flow);
+    return data.map(item => item.value);
 }
 
 // Get timestamps at a specific hour (and minute)

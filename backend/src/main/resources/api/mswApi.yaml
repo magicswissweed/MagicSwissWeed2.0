@@ -290,7 +290,7 @@ components:
         format: uuid
     ApiSample:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value, measurementType ]
       properties:
         timestamp:
           type: string
@@ -298,17 +298,19 @@ components:
         temperature:
           type: number
           format: double
-        flow:
+        value:
           type: number
           format: double
+        measurementType:
+          $ref: '#/components/schemas/ApiMeasurementType'
     ApiFlowSample:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value ]
       properties:
         timestamp:
           type: string
           format: date-time
-        flow:
+        value:
           type: number
           format: double
     ApiLastFewDaysSamples:
@@ -412,12 +414,12 @@ components:
             $ref: '#/components/schemas/ApiLineEntry'
     ApiLineEntry:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value ]
       properties:
         timestamp:
           type: string
           format: date-time
-        flow:
+        value:
           type: number
           format: double
     ApiStationList:

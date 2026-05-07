@@ -59,7 +59,7 @@ export interface ApiFlowSample {
      * @type {number}
      * @memberof ApiFlowSample
      */
-    'flow': number;
+    'value': number;
 }
 /**
  * 
@@ -185,7 +185,7 @@ export interface ApiLineEntry {
      * @type {number}
      * @memberof ApiLineEntry
      */
-    'flow': number;
+    'value': number;
 }
 /**
  * 
@@ -225,8 +225,16 @@ export interface ApiSample {
      * @type {number}
      * @memberof ApiSample
      */
-    'flow': number;
+    'value': number;
+    /**
+     * 
+     * @type {ApiMeasurementType}
+     * @memberof ApiSample
+     */
+    'measurementType': ApiMeasurementType;
 }
+
+
 /**
  * 
  * @export

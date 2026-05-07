@@ -14,7 +14,7 @@ public record Sample(
         @Getter ApiStationId stationId,
         @Getter OffsetDateTime timestamp,
         @Getter Optional<Double> temperature,
-        @Getter double flow,
+        @Getter double value,
         @Getter ApiMeasurementType measurementType)
         implements HasId<SampleId> {
     @Override

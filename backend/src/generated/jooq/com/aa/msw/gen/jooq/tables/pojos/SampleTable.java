@@ -24,7 +24,7 @@ public class SampleTable implements Serializable {
     private final String stationid;
     private final OffsetDateTime timestamp;
     private final Float temperature;
-    private final Float flow;
+    private final Float value;
     private final Country country;
     private final MeasurementType measurementType;
 
@@ -33,7 +33,7 @@ public class SampleTable implements Serializable {
         this.stationid = value.stationid;
         this.timestamp = value.timestamp;
         this.temperature = value.temperature;
-        this.flow = value.flow;
+        this.value = value.value;
         this.country = value.country;
         this.measurementType = value.measurementType;
     }
@@ -43,7 +43,7 @@ public class SampleTable implements Serializable {
         String stationid,
         OffsetDateTime timestamp,
         Float temperature,
-        Float flow,
+        Float value,
         Country country,
         MeasurementType measurementType
     ) {
@@ -51,7 +51,7 @@ public class SampleTable implements Serializable {
         this.stationid = stationid;
         this.timestamp = timestamp;
         this.temperature = temperature;
-        this.flow = flow;
+        this.value = value;
         this.country = country;
         this.measurementType = measurementType;
     }
@@ -85,10 +85,10 @@ public class SampleTable implements Serializable {
     }
 
     /**
-     * Getter for <code>public.sample_table.flow</code>.
+     * Getter for <code>public.sample_table.value</code>.
      */
-    public Float getFlow() {
-        return this.flow;
+    public Float getValue() {
+        return this.value;
     }
 
     /**
@@ -138,11 +138,11 @@ public class SampleTable implements Serializable {
         }
         else if (!this.temperature.equals(other.temperature))
             return false;
-        if (this.flow == null) {
-            if (other.flow != null)
+        if (this.value == null) {
+            if (other.value != null)
                 return false;
         }
-        else if (!this.flow.equals(other.flow))
+        else if (!this.value.equals(other.value))
             return false;
         if (this.country == null) {
             if (other.country != null)
@@ -167,7 +167,7 @@ public class SampleTable implements Serializable {
         result = prime * result + ((this.stationid == null) ? 0 : this.stationid.hashCode());
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
         result = prime * result + ((this.temperature == null) ? 0 : this.temperature.hashCode());
-        result = prime * result + ((this.flow == null) ? 0 : this.flow.hashCode());
+        result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
         return result;
@@ -181,7 +181,7 @@ public class SampleTable implements Serializable {
         sb.append(", ").append(stationid);
         sb.append(", ").append(timestamp);
         sb.append(", ").append(temperature);
-        sb.append(", ").append(flow);
+        sb.append(", ").append(value);
         sb.append(", ").append(country);
         sb.append(", ").append(measurementType);
 

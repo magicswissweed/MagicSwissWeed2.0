@@ -27,7 +27,8 @@ public class SampleApiService {
         return new ApiSample()
                 .timestamp(sample.getTimestamp())
                 .temperature(sample.getTemperature().orElse(null))
-                .flow(sample.flow());
+                .value(sample.value())
+                .measurementType(sample.getMeasurementType());
     }
 
     public ApiSample getCurrentSample(ApiStationId apiStationId, ApiMeasurementType measurementType) throws NoDataAvailableException {
@@ -42,7 +43,7 @@ public class SampleApiService {
                 .stream()
                 .map(sample -> new ApiFlowSample()
                         .timestamp(sample.getKey())
-                        .flow(sample.getValue()))
+                        .value(sample.getValue()))
                 .toList();
     }
 }
