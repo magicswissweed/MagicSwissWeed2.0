@@ -1,9 +1,6 @@
 package com.aa.msw.source;
 
-import com.aa.msw.database.repository.dao.ForecastDao;
-import com.aa.msw.database.repository.dao.LastFewDaysDao;
-import com.aa.msw.database.repository.dao.SampleDao;
-import com.aa.msw.database.repository.dao.StationDao;
+import com.aa.msw.database.repository.dao.*;
 import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
@@ -19,11 +16,10 @@ import com.aa.msw.source.swiss.hydrodaten.forecast.SwissForecastFetchService;
 import com.aa.msw.source.swiss.hydrodaten.historical.lastfourty.SwissLast40DaysSampleFetchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -39,6 +35,7 @@ public class InputDataFetcherService {
     private final SwissForecastFetchService swissForecastFetchService;
     private final SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService;
     private final StationDao stationDao;
+    private final SpotDao spotDao;
     private final SampleDao sampleDao;
     private final ForecastDao forecastDao;
     private final SpotDbService spotDbService;
@@ -51,10 +48,11 @@ public class InputDataFetcherService {
     private final AtomicBoolean isFetchingSwissData = new AtomicBoolean(false);
     private final AtomicBoolean isFetchingFrenchData = new AtomicBoolean(false);
 
-    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
+    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
         this.swissSampleFetchService = swissSampleFetchService;
         this.swissForecastFetchService = swissForecastFetchService;
         this.stationDao = stationDao;
+        this.spotDao = spotDao;
         this.sampleDao = sampleDao;
         this.forecastDao = forecastDao;
         this.spotDbService = spotDbService;
@@ -64,37 +62,33 @@ public class InputDataFetcherService {
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
     }
 
-    public void fetchDataAndWriteToDb() throws IOException, URISyntaxException {
-        fetchSwissDataAndWriteToDb();
-        fetchFrenchDataAndWriteToDb();
+    @Scheduled(cron = "0 1/10 * * * *")
+        // 01, 11, 21, ...
+    void fetchSwissDataAndWriteToDb() {
+        // fetch all known CH stations.
+        Set<ApiStationId> swissStationIds = filterByCountry(getAllStationIds(), CountryEnum.CH);
+        fetchAndWriteToDb(swissStationIds, isFetchingSwissData, CountryEnum.CH, this::fetchAndWriteSwissData);
     }
 
-    @Scheduled(cron = "0 1/10 * * * *") // 01, 11, 21, ...
-    private void fetchSwissDataAndWriteToDb() {
-        fetchAndWriteToDb(isFetchingSwissData, CountryEnum.CH, this::fetchAndWriteSwissData);
-    }
-
-    // 03, 08, 13, 18, 23, 28, ... in theory... In reality fetching takes a long time, and therefore this runs only every 20 minutes or so
+    // 03, 08, 13, 18, 23, 28, ... in theory...
     @Scheduled(cron = "0 3/5 * * * *")
-    private void fetchFrenchDataAndWriteToDb() {
-        fetchAndWriteToDb(isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
+    void fetchFrenchDataAndWriteToDb() {
+        // only fetch stations actually used by a spot, to avoid hammering the rate-limited Vigicrues API.
+        Set<ApiStationId> frenchStationIds = spotDao.getReferencedStationIds(CountryEnum.FR);
+        fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
     }
 
-    private void fetchAndWriteToDb(AtomicBoolean isFetchingForCountry, CountryEnum country, Consumer<Set<ApiStationId>> fetchForCountryFunction) {
+    private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForCountry, CountryEnum country, Consumer<Set<ApiStationId>> fetchForCountryFunction) {
         if (isFetchingForCountry.compareAndSet(false, true)) {
-            LOG.info("Fetching {} data...", country.name());
+            LOG.info("Fetching {} data for {} stations...", country.name(), stationIds.size());
             try {
-                Set<ApiStationId> stationIds = getAllStationIds();
-
                 try {
-                    Set<ApiStationId> filteredStationIds = filterByCountry(stationIds, country);
-                    fetchForCountryFunction.accept(filteredStationIds);
+                    fetchForCountryFunction.accept(stationIds);
                 } catch (Exception e) {
                     LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", country, e);
                 }
 
-                Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
-                notificationService.sendNotificationsForSpots(spotsThatImproved);
+                updateCurrentInfoForAllSpotsOfStationsAndSendNotifications(stationIds);
 
                 fetchedDataSinceRestart = true;
 
@@ -105,6 +99,26 @@ public class InputDataFetcherService {
         } else {
             LOG.warn("Fetch already in progress for {}, skipping this trigger.", country.name());
         }
+    }
+
+    @Async
+    public void triggerFrenchFetchForStationAsync(ApiStationId stationId) {
+        if (stationId == null || stationId.getCountry() != CountryEnum.FR) {
+            return;
+        }
+        LOG.info("Triggering immediate French fetch for station {}", stationId.getExternalId());
+        try {
+            Set<ApiStationId> ids = Set.of(stationId);
+            fetchAndWriteFrenchLast30DaysAndSample(ids);
+            updateCurrentInfoForAllSpotsOfStationsAndSendNotifications(ids);
+        } catch (Exception e) {
+            LOG.error("Error while triggering immediate French fetch for station {}", stationId.getExternalId(), e);
+        }
+    }
+
+    private void updateCurrentInfoForAllSpotsOfStationsAndSendNotifications(Set<ApiStationId> stationIds) {
+        Set<NotificationSpotInfo> spotsThatImproved = spotDbService.updateCurrentInfoForAllSpotsOfStations(stationIds);
+        notificationService.sendNotificationsForSpots(spotsThatImproved);
     }
 
     private static Set<ApiStationId> filterByCountry(Set<ApiStationId> stationIds, CountryEnum country) {

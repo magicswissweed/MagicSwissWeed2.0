@@ -240,12 +240,15 @@ components:
       allOf:
         - $ref: '#/components/schemas/ApiSpot'
         - type: object
-          required: [ currentSample, flowStatusEnum ]
+          required: [ flowStatusEnum, dataPending ]
           properties:
             currentSample:
               $ref: '#/components/schemas/ApiSample'
             flowStatusEnum:
               $ref: '#/components/schemas/ApiFlowStatusEnum'
+            dataPending:
+              type: boolean
+              description: True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a "fetching data" placeholder.
     ApiFlowStatusEnum:
       type: string
       nullable: false

@@ -3,6 +3,7 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.daos.SpotTableDao;
@@ -103,6 +104,16 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
                         .and(TABLE.STATIONID.eq(stationId.getExternalId())))
                 .fetch(this::mapRecord)
+                .stream()
+                .collect(toUnmodifiableSet());
+    }
+
+    @Override
+    public Set<ApiStationId> getReferencedStationIds(CountryEnum country) {
+        return dsl.selectDistinct(TABLE.COUNTRY, TABLE.STATIONID)
+                .from(TABLE)
+                .where(TABLE.COUNTRY.eq(country(country)))
+                .fetch(r -> apiStationId(r.value1(), r.value2()))
                 .stream()
                 .collect(toUnmodifiableSet());
     }

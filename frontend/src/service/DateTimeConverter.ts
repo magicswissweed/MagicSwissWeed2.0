@@ -39,7 +39,10 @@ export class DateTimeConverter {
         };
     }
 
-    public static utcApiSampleToLocalTime(sample: ApiSample) {
+    public static utcApiSampleToLocalTime(sample: ApiSample | undefined): ApiSample | undefined {
+        if (sample === undefined || sample === null) {
+            return undefined;
+        }
         return {
             ...sample,
             timestamp: this.utcToLocalString(sample.timestamp)

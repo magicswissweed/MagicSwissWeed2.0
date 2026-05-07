@@ -12,10 +12,7 @@ import com.aa.msw.database.repository.dao.SpotCurrentInfoDao;
 import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.database.repository.dao.UserToSpotDao;
 import com.aa.msw.database.services.SpotDbService;
-import com.aa.msw.gen.api.ApiFlowStatusEnum;
-import com.aa.msw.gen.api.ApiSpotInformation;
-import com.aa.msw.gen.api.ApiStation;
-import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.api.*;
 import com.aa.msw.model.Spot;
 import com.aa.msw.model.SpotCurrentInfo;
 import com.aa.msw.model.Station;
@@ -77,6 +74,7 @@ public class SpotsApiService {
 
     public void addPrivateSpot(Spot spot, int position, boolean withNotification) throws NoSampleAvailableException {
         spotDbService.addPrivateSpot(spot, position, withNotification);
+        triggerImmediateFrenchFetchIfNeeded(spot.stationId());
     }
 
     public void editSpot(Spot updatedSpot, boolean withNotification) throws NoSampleAvailableException {
@@ -96,6 +94,23 @@ public class SpotsApiService {
         } else {
             editPrivateSpot(updatedSpot);
             userToSpotDao.setWithNotification(updatedSpot.spotId(), withNotification);
+            triggerImmediateFrenchFetchIfNeeded(updatedSpot.stationId());
+        }
+    }
+
+    /**
+     * For French spots we only fetch stations referenced by a spot, so a brand-new station won't be in
+     * any sample table yet. Kick off an immediate fetch so the user doesn't have to wait for the next
+     * scheduled tick (~20 minutes).
+     */
+    private void triggerImmediateFrenchFetchIfNeeded(ApiStationId stationId) {
+        if (stationId == null || stationId.getCountry() != CountryEnum.FR) {
+            return;
+        }
+        try {
+            sampleDao.getCurrentSample(stationId);
+        } catch (NoDataAvailableException e) {
+            inputDataFetcherService.triggerFrenchFetchForStationAsync(stationId);
         }
     }
 
@@ -130,26 +145,30 @@ public class SpotsApiService {
                 Station station = stationApiService.getStation(spot.stationId());
                 ApiStation apiStation = new ApiStation(station.stationId(), station.label(), station.latitude(), station.longitude());
 
+                boolean withNotification = !spot.isPublic() && userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
+
+                ApiSpotInformation info = new ApiSpotInformation()
+                        .id(spot.spotId().getId())
+                        .name(spot.name())
+                        .isPublic(spot.isPublic())
+                        .minFlow(spot.minFlow())
+                        .maxFlow(spot.maxFlow())
+                        .stationId(spot.stationId())
+                        .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
+                        .station(apiStation)
+                        .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
+                        .withNotification(withNotification)
+                        .dataPending(false);
+
                 try {
-                    boolean withNotification = !spot.isPublic() && userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
-                    spotInformationList.add(
-                            new ApiSpotInformation()
-                                    .id(spot.spotId().getId())
-                                    .name(spot.name())
-                                    .isPublic(spot.isPublic())
-                                    .minFlow(spot.minFlow())
-                                    .maxFlow(spot.maxFlow())
-                                    .stationId(spot.stationId())
-                                    .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
-                                    .currentSample(sampleApiService.getCurrentSample(spot.stationId()))
-                                    .station(apiStation)
-                                    .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
-                                    .withNotification(withNotification)
-                    );
+                    info.currentSample(sampleApiService.getCurrentSample(spot.stationId()));
                 } catch (NoDataAvailableException e) {
-                    LOG.error("No data available for spot {}. Skipping this spot from the list of spots.", spot.spotId());
+                    // No sample yet (e.g. a freshly added spot whose station has not been fetched).
+                    // Return the spot anyway so the frontend can show a "fetching data" placeholder.
+                    info.dataPending(true);
                 }
 
+                spotInformationList.add(info);
             } catch (NoSuchElementException e) {
                 LOG.error("Station with ID {} does not exist. Skipping this spot from the list of spots.", spot.stationId());
             }
@@ -170,7 +189,7 @@ public class SpotsApiService {
         userToSpotDao.delete(oldUserToPublicSpotMapping);
     }
 
-    private void editPrivateSpot(Spot updatedSpot) throws NoSampleAvailableException {
+    private void editPrivateSpot(Spot updatedSpot) {
         spotDbService.updatePrivateSpot(updatedSpot);
     }
 }

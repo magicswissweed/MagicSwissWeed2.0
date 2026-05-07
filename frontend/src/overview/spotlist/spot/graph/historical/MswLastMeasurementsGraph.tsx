@@ -20,7 +20,9 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     let lineData = props.spot.lastFewDaysLoaded && props.spot.lastFewDays ?
         [
             ...props.spot.lastFewDays,
-            {timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}
+            ...(props.spot.currentSample
+                ? [{timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}]
+                : [])
         ] :
         [];
 
