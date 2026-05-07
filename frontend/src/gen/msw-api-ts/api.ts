@@ -428,7 +428,8 @@ export interface ApiStationId {
 
 export const CountryEnum = {
     Ch: 'CH',
-    Fr: 'FR'
+    Fr: 'FR',
+    DeBw: 'DE_BW'
 } as const;
 
 export type CountryEnum = typeof CountryEnum[keyof typeof CountryEnum];
