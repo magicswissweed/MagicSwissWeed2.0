@@ -51,6 +51,8 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
 
     useEffect(() => {
         setStations(stationsService.getStations());
+        stationsService.subscribe(setStations);
+        return () => stationsService.unsubscribe(setStations);
     }, []);
 
     // @ts-ignore

@@ -51,6 +51,8 @@ export const MswAddSpot = () => {
 
     useEffect(() => {
         setStations(stationsService.getStations());
+        stationsService.subscribe(setStations);
+        return () => stationsService.unsubscribe(setStations);
     }, []);
 
 
