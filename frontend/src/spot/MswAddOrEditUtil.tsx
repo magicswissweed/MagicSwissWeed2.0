@@ -53,6 +53,8 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                 return '🇨🇭';
             case CountryEnum.Fr:
                 return '🇫🇷';
+            case CountryEnum.DeBw:
+                return '🇩🇪';
             default:
                 return '🌍';
         }
@@ -218,7 +220,8 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                             )}
                             {maxValue !== undefined && minValue !== undefined && maxValue <= minValue && (
                                 <div style={{color: 'red'}}>
-                                    Maximum {unitLabel.toLowerCase()} must be greater than minimum {unitLabel.toLowerCase()}.
+                                    Maximum {unitLabel.toLowerCase()} must be greater than
+                                    minimum {unitLabel.toLowerCase()}.
                                 </div>
                             )}
                         </Form>
