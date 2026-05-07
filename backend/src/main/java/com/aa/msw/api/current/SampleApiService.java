@@ -4,6 +4,7 @@ import com.aa.msw.api.graph.lastFewDays.LastFewDaysApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiFlowSample;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiSample;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Sample;
@@ -29,8 +30,8 @@ public class SampleApiService {
                 .flow(sample.flow());
     }
 
-    public ApiSample getCurrentSample(ApiStationId apiStationId) throws NoDataAvailableException {
-        return mapSample(sampleDao.getCurrentSample(apiStationId));
+    public ApiSample getCurrentSample(ApiStationId apiStationId, ApiMeasurementType measurementType) throws NoDataAvailableException {
+        return mapSample(sampleDao.getCurrentSample(apiStationId, measurementType));
     }
 
     public List<ApiFlowSample> getLastFewDaysSamples(ApiStationId stationId) throws NoDataAvailableException {

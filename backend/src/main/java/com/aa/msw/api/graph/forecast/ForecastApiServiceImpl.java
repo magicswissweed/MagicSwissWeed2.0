@@ -5,6 +5,7 @@ import com.aa.msw.api.spots.SpotsApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.ForecastDao;
 import com.aa.msw.gen.api.ApiForecast;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.StationToApiForecasts;
 import com.aa.msw.model.Forecast;
@@ -37,7 +38,7 @@ public class ForecastApiServiceImpl extends AbstractGraphLineApiService implemen
     }
 
     public ApiForecast getCurrentForecast(ApiStationId stationId) throws NoDataAvailableException {
-        return mapForecast(forecastDao.getCurrentForecast(stationId));
+        return mapForecast(forecastDao.getCurrentForecast(stationId, ApiMeasurementType.FLOW));
     }
 
     @Override

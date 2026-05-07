@@ -1,5 +1,6 @@
 package com.aa.msw.source.german.bw.sample;
 
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.helper.TestResourceLoader;
@@ -21,7 +22,7 @@ class BwSampleFetchIntegrationTest {
     };
 
     @Test
-    void shouldFetchSamplesForKnownStations() {
+    void shouldFetchFlowAndHeightSamplesForKnownStations() {
         Set<ApiStationId> stationIds = Set.of(
                 new ApiStationId(CountryEnum.DE_BW, "00435"),
                 new ApiStationId(CountryEnum.DE_BW, "00007")
@@ -29,20 +30,23 @@ class BwSampleFetchIntegrationTest {
 
         List<Sample> samples = service.fetchSamples(stationIds);
 
-        assertEquals(2, samples.size());
+        assertEquals(4, samples.size());
+        assertEquals(2, samples.stream().filter(s -> s.getMeasurementType() == ApiMeasurementType.FLOW).count());
+        assertEquals(2, samples.stream().filter(s -> s.getMeasurementType() == ApiMeasurementType.HEIGHT).count());
         assertTrue(samples.stream().allMatch(s -> s.flow() >= 0));
         assertTrue(samples.stream().allMatch(s -> s.stationId().getCountry() == CountryEnum.DE_BW));
     }
 
     @Test
-    void shouldIgnoreStationsWithoutFlowData() {
+    void shouldFetchOnlyHeightWhenFlowMissing() {
         Set<ApiStationId> stationIds = Set.of(
                 new ApiStationId(CountryEnum.DE_BW, "00099")
         );
 
         List<Sample> samples = service.fetchSamples(stationIds);
 
-        assertEquals(0, samples.size());
+        assertEquals(1, samples.size());
+        assertEquals(ApiMeasurementType.HEIGHT, samples.get(0).getMeasurementType());
     }
 
     @Test

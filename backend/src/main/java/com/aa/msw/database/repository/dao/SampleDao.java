@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface SampleDao extends TimestampedDao, Dao<SampleId, Sample> {
-    Sample getCurrentSample(ApiStationId apiStationId) throws NoDataAvailableException;
+    Sample getCurrentSample(ApiStationId apiStationId, ApiMeasurementType measurementType) throws NoDataAvailableException;
 
     @Transactional
     void persistSamplesIfNotExist(List<Sample> samples);

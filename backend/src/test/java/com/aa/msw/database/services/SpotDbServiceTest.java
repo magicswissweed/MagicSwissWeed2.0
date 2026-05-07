@@ -50,7 +50,7 @@ class SpotDbServiceTest {
     }
 
     private static Sample createSample(ApiStationId stationId, int flow) {
-        return new Sample(new SampleId(), stationId, OffsetDateTime.now(), Optional.of(15.0), flow);
+        return new Sample(new SampleId(), stationId, OffsetDateTime.now(), Optional.of(15.0), flow, ApiMeasurementType.FLOW);
     }
 
     private static Forecast createForecast(ApiStationId stationId, double minValue, double maxValue) {
@@ -84,7 +84,7 @@ class SpotDbServiceTest {
         void shouldReturnGoodWhenFlowIsInSurfableRange() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
             stubCurrentInfo(spot, FlowStatusEnum.GOOD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -96,8 +96,8 @@ class SpotDbServiceTest {
         void shouldReturnBadWhenFlowIsBelowSurfableRange() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -109,8 +109,8 @@ class SpotDbServiceTest {
         void shouldReturnBadWhenFlowIsAboveSurfableRange() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 300));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 250, 400));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 300));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 250, 400));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -122,8 +122,8 @@ class SpotDbServiceTest {
         void shouldReturnTendencyWhenForecastMinIsInRange() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 90, 250));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 90, 250));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -135,8 +135,8 @@ class SpotDbServiceTest {
         void shouldReturnTendencyWhenForecastMaxIsInRange() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 50, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 50, 100));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -148,8 +148,8 @@ class SpotDbServiceTest {
         void shouldReturnTendencyWhenForecastSpansEntireSurfableRange() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 50, 250));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 50, 250));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -161,7 +161,7 @@ class SpotDbServiceTest {
         void shouldReturnBadWhenNoSampleDataAvailable() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenThrow(new NoDataAvailableException("No data"));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenThrow(new NoDataAvailableException("No data"));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -173,8 +173,8 @@ class SpotDbServiceTest {
         void shouldReturnBadWhenFlowNotInRangeAndNoForecastAvailable() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenThrow(new NoDataAvailableException("No forecast"));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenThrow(new NoDataAvailableException("No forecast"));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -186,8 +186,8 @@ class SpotDbServiceTest {
         void shouldReturnBadWhenFlowIsExactlyAtMinBoundary() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 80));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 80));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -199,8 +199,8 @@ class SpotDbServiceTest {
         void shouldReturnBadWhenFlowIsExactlyAtMaxBoundary() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 200));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 200));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -218,7 +218,7 @@ class SpotDbServiceTest {
             UserToSpot userToSpot = new UserToSpot(new UserToSpotId(), new UserId(), spot.spotId(), 0, true);
 
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
             when(userToSpotDao.getUserToSpots(spot.spotId())).thenReturn(Set.of(userToSpot));
 
@@ -236,8 +236,8 @@ class SpotDbServiceTest {
             UserToSpot userToSpot = new UserToSpot(new UserToSpotId(), new UserId(), spot.spotId(), 0, true);
 
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 90, 250));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 90, 250));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
             when(userToSpotDao.getUserToSpots(spot.spotId())).thenReturn(Set.of(userToSpot));
 
@@ -253,7 +253,7 @@ class SpotDbServiceTest {
             UserToSpot userToSpot = new UserToSpot(new UserToSpotId(), new UserId(), spot.spotId(), 0, true);
 
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
             stubCurrentInfo(spot, FlowStatusEnum.TENDENCY_TO_BECOME_GOOD);
             when(userToSpotDao.getUserToSpots(spot.spotId())).thenReturn(Set.of(userToSpot));
 
@@ -267,7 +267,7 @@ class SpotDbServiceTest {
         void shouldNotDetectImprovementWhenGoodStaysGood() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
             stubCurrentInfo(spot, FlowStatusEnum.GOOD);
 
             Set<NotificationSpotInfo> improved = spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -279,8 +279,8 @@ class SpotDbServiceTest {
         void shouldNotDetectImprovementWhenBadStaysBad() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
             stubCurrentInfo(spot, FlowStatusEnum.BAD);
 
             Set<NotificationSpotInfo> improved = spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -292,8 +292,8 @@ class SpotDbServiceTest {
         void shouldNotDetectImprovementWhenGoodBecomesBad() throws Exception {
             Spot spot = createSpot(STATION_CH_2018, 80, 200);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 50));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 50));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 30, 60));
             stubCurrentInfo(spot, FlowStatusEnum.GOOD);
 
             Set<NotificationSpotInfo> improved = spotDbService.updateCurrentInfoForAllSpotsOfStation(STATION_CH_2018);
@@ -307,7 +307,7 @@ class SpotDbServiceTest {
             UserToSpot userToSpot = new UserToSpot(new UserToSpotId(), new UserId(), spot.spotId(), 0, true);
 
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
             stubNoCurrentInfo(spot);
             when(userToSpotDao.getUserToSpots(spot.spotId())).thenReturn(Set.of(userToSpot));
 
@@ -325,7 +325,7 @@ class SpotDbServiceTest {
             Spot spot1 = createSpot(STATION_CH_2018, 80, 200);
             Spot spot2 = createSpot(STATION_CH_2018, 100, 300);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot1, spot2));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 150));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 150));
             stubCurrentInfo(spot1, FlowStatusEnum.GOOD);
             stubCurrentInfo(spot2, FlowStatusEnum.GOOD);
 
@@ -340,8 +340,8 @@ class SpotDbServiceTest {
             Spot spotInRange = createSpot(STATION_CH_2018, 80, 200);
             Spot spotOutOfRange = createSpot(STATION_CH_2018, 300, 500);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spotInRange, spotOutOfRange));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
-            when(forecastDao.getCurrentForecast(STATION_CH_2018)).thenReturn(createForecast(STATION_CH_2018, 80, 150));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(forecastDao.getCurrentForecast(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createForecast(STATION_CH_2018, 80, 150));
             stubCurrentInfo(spotInRange, FlowStatusEnum.GOOD);
             stubCurrentInfo(spotOutOfRange, FlowStatusEnum.BAD);
 
@@ -361,8 +361,8 @@ class SpotDbServiceTest {
             Spot spot2 = createSpot(STATION_CH_2243, 50, 150);
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot1));
             when(spotDao.getSpotsWithStationId(STATION_CH_2243)).thenReturn(Set.of(spot2));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
-            when(sampleDao.getCurrentSample(STATION_CH_2243)).thenReturn(createSample(STATION_CH_2243, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2243, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2243, 100));
             stubCurrentInfo(spot1, FlowStatusEnum.GOOD);
             stubCurrentInfo(spot2, FlowStatusEnum.GOOD);
 
@@ -382,8 +382,8 @@ class SpotDbServiceTest {
 
             when(spotDao.getSpotsWithStationId(STATION_CH_2018)).thenReturn(Set.of(spot1));
             when(spotDao.getSpotsWithStationId(STATION_CH_2243)).thenReturn(Set.of(spot2));
-            when(sampleDao.getCurrentSample(STATION_CH_2018)).thenReturn(createSample(STATION_CH_2018, 100));
-            when(sampleDao.getCurrentSample(STATION_CH_2243)).thenReturn(createSample(STATION_CH_2243, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2018, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2018, 100));
+            when(sampleDao.getCurrentSample(STATION_CH_2243, ApiMeasurementType.FLOW)).thenReturn(createSample(STATION_CH_2243, 100));
             stubCurrentInfo(spot1, FlowStatusEnum.BAD);
             stubCurrentInfo(spot2, FlowStatusEnum.BAD);
             when(userToSpotDao.getUserToSpots(spot1.spotId())).thenReturn(Set.of(uts1));

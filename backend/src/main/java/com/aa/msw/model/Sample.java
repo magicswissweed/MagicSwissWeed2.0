@@ -2,6 +2,7 @@ package com.aa.msw.model;
 
 import com.aa.msw.database.helpers.id.HasId;
 import com.aa.msw.database.helpers.id.SampleId;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import lombok.Getter;
 
@@ -13,7 +14,8 @@ public record Sample(
         @Getter ApiStationId stationId,
         @Getter OffsetDateTime timestamp,
         @Getter Optional<Double> temperature,
-        @Getter double flow)
+        @Getter double flow,
+        @Getter ApiMeasurementType measurementType)
         implements HasId<SampleId> {
     @Override
     public SampleId getId() {

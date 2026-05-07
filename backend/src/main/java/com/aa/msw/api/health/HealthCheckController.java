@@ -2,6 +2,7 @@ package com.aa.msw.api.health;
 
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
@@ -41,7 +42,7 @@ public class HealthCheckController {
 
         // Sample freshness check
         try {
-            Sample sample = sampleDao.getCurrentSample(STATION);
+            Sample sample = sampleDao.getCurrentSample(STATION, ApiMeasurementType.FLOW);
 
             if (sample.getTimestamp().isBefore(now.minus(MAX_SAMPLE_AGE))) {
                 System.err.println("Healthcheck failed. Exiting.");

@@ -59,10 +59,21 @@ public class HvzBwParser {
                     flowTimestamp = parseOptionalTimestamp(fields.get(9));
                 }
 
+                // Water level (Wasserstand) at index 4, unit at index 5, timestamp at index 6
+                Optional<Double> heightValue = Optional.empty();
+                Optional<OffsetDateTime> heightTimestamp = Optional.empty();
+
+                String heightUnit = asString(fields.get(5));
+                if ("cm".equals(heightUnit)) {
+                    heightValue = parseOptionalDouble(fields.get(4));
+                    heightTimestamp = parseOptionalTimestamp(fields.get(6));
+                }
+
                 stations.add(new HvzBwStation(
                         stationId, stationName, riverName,
                         latitude, longitude,
-                        flowValue, flowTimestamp
+                        flowValue, flowTimestamp,
+                        heightValue, heightTimestamp
                 ));
             } catch (Exception e) {
                 LOG.warn("Failed to parse HVZ BW station line: {}", e.getMessage());

@@ -3,6 +3,7 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.ForecastId;
 import com.aa.msw.database.repository.dao.ForecastDao;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
@@ -28,6 +29,7 @@ import java.util.UUID;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 import static com.aa.msw.database.helpers.EnumConverterHelper.country;
+import static com.aa.msw.database.helpers.EnumConverterHelper.measurementType;
 
 
 @Component
@@ -149,15 +151,15 @@ public class ForecastRepository extends AbstractTimestampedRepository
     }
 
     @Override
-    public Forecast getCurrentForecast(ApiStationId stationId) throws NoDataAvailableException {
+    public Forecast getCurrentForecast(ApiStationId stationId, ApiMeasurementType type) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
                         .and(TABLE.STATIONID.eq(stationId.getExternalId()))
-                        .and(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW)))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type))))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)
-                .orElseThrow(() -> new NoDataAvailableException("No current Forecast found for station " + stationId));
+                .orElseThrow(() -> new NoDataAvailableException("No current " + type.getValue() + " forecast found for station " + stationId));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.aa.msw.source.german.bw.sample;
 
 import com.aa.msw.database.helpers.id.SampleId;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
@@ -32,17 +33,34 @@ public class BwSampleFetchServiceImpl extends AbstractFetchService implements Bw
             String jsContent = fetchHvzBwData();
             List<HvzBwStation> allStations = HvzBwParser.parse(jsContent);
 
-            return allStations.stream()
-                    .filter(station -> externalIds.contains(station.stationId()))
-                    .filter(station -> station.flowValue().isPresent() && station.flowTimestamp().isPresent())
-                    .map(station -> new Sample(
+            List<Sample> samples = new ArrayList<>();
+            for (HvzBwStation station : allStations) {
+                if (!externalIds.contains(station.stationId())) {
+                    continue;
+                }
+                ApiStationId stationId = new ApiStationId(CountryEnum.DE_BW, station.stationId());
+                if (station.flowValue().isPresent() && station.flowTimestamp().isPresent()) {
+                    samples.add(new Sample(
                             new SampleId(),
-                            new ApiStationId(CountryEnum.DE_BW, station.stationId()),
+                            stationId,
                             station.flowTimestamp().get(),
                             Optional.empty(),
-                            station.flowValue().get()
-                    ))
-                    .toList();
+                            station.flowValue().get(),
+                            ApiMeasurementType.FLOW
+                    ));
+                }
+                if (station.heightValue().isPresent() && station.heightTimestamp().isPresent()) {
+                    samples.add(new Sample(
+                            new SampleId(),
+                            stationId,
+                            station.heightTimestamp().get(),
+                            Optional.empty(),
+                            station.heightValue().get(),
+                            ApiMeasurementType.HEIGHT
+                    ));
+                }
+            }
+            return samples;
         } catch (Exception e) {
             LOG.error("Error fetching BW samples: {}", e.getMessage(), e);
             return Collections.emptyList();

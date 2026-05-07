@@ -160,13 +160,14 @@ public class SpotsApiService {
                         .isPublic(spot.isPublic())
                         .measurementType(spot.measurementType())
                                     .minValue(spot.minValue())
-                        .maxValue(spot.maxValue())
-                        .stationId(spot.stationId())
-                        .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
-                        .station(apiStation)
-                        .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
-                        .withNotification(withNotification)
-                        .dataPending(false);
+                                    .maxValue(spot.maxValue())
+                                    .stationId(spot.stationId())
+                                    .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
+                                    .currentSample(sampleApiService.getCurrentSample(spot.stationId(), spot.measurementType()))
+                                    .station(apiStation)
+                                    .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
+                                    .withNotification(withNotification)
+                                    .dataPending(false);
 
                 try {
                     info.currentSample(sampleApiService.getCurrentSample(spot.stationId()));

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiMeasurementType;
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 import static com.aa.msw.database.helpers.EnumConverterHelper.country;
+import static com.aa.msw.database.helpers.EnumConverterHelper.measurementType;
 
 
 @Component
@@ -52,7 +53,8 @@ public class SampleRepository extends AbstractTimestampedRepository
                 apiStationId(record.getCountry(), record.getStationid()),
                 record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
                 optionalTemp,
-                record.getFlow().doubleValue());
+                record.getFlow().doubleValue(),
+                apiMeasurementType(record.getMeasurementType()));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         record.setTimestamp(sample.getTimestamp());
         record.setTemperature(sample.getTemperature().map(Double::floatValue).orElse(null));
         record.setFlow((float) sample.getFlow());
-        record.setMeasurementType(MeasurementType.FLOW);
+        record.setMeasurementType(measurementType(sample.getMeasurementType()));
         return record;
     }
 
@@ -76,20 +78,21 @@ public class SampleRepository extends AbstractTimestampedRepository
                 apiStationId(sampleTable.getCountry(), sampleTable.getStationid()),
                 sampleTable.getTimestamp(),
                 temperature == null ? Optional.empty() : Optional.of(temperature.doubleValue()),
-                sampleTable.getFlow().doubleValue()
+                sampleTable.getFlow().doubleValue(),
+                apiMeasurementType(sampleTable.getMeasurementType())
         );
     }
 
     @Override
-    public Sample getCurrentSample(ApiStationId stationId) throws NoDataAvailableException {
+    public Sample getCurrentSample(ApiStationId stationId, ApiMeasurementType type) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
                         .and(TABLE.STATIONID.eq(stationId.getExternalId()))
-                        .and(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW)))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type))))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)
-                .orElseThrow(() -> new NoDataAvailableException("No current sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
+                .orElseThrow(() -> new NoDataAvailableException("No current " + type.getValue() + " sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
     }
 
     @Override

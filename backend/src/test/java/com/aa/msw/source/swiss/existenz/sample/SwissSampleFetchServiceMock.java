@@ -1,6 +1,7 @@
 package com.aa.msw.source.swiss.existenz.sample;
 
 import com.aa.msw.database.helpers.id.SampleId;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
@@ -41,7 +42,8 @@ class SwissSampleFetchServiceMock implements SwissSampleFetchService {
                 stationId,
                 OffsetDateTime.of(2025, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
                 temperature,
-                flow);
+                flow,
+                ApiMeasurementType.FLOW);
     }
 
     private ApiStationId apiStationId(CountryEnum country, String stationId) {

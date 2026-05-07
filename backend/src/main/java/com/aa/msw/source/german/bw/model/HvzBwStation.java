@@ -10,6 +10,8 @@ public record HvzBwStation(
         Double latitude,
         Double longitude,
         Optional<Double> flowValue,
-        Optional<OffsetDateTime> flowTimestamp
+        Optional<OffsetDateTime> flowTimestamp,
+        Optional<Double> heightValue,
+        Optional<OffsetDateTime> heightTimestamp
 ) {
 }

@@ -1,6 +1,7 @@
 package com.aa.msw.source.swiss.existenz.sample;
 
 import com.aa.msw.database.helpers.id.SampleId;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
@@ -65,7 +66,8 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
                 new ApiStationId(CountryEnum.CH, stationId),
                 timestamp,
                 temp,
-                flow);
+                flow,
+                ApiMeasurementType.FLOW);
     }
 
     public List<Sample> fetchSamples(Set<ApiStationId> stationIds) {

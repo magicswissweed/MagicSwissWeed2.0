@@ -66,7 +66,8 @@ public class PublicSpotListConfiguration {
                         stationId,
                         OffsetDateTime.now(),
                         Optional.of(15.0),
-                        100
+                        100,
+                        ApiMeasurementType.FLOW
                 ))
                 .toList();
 
