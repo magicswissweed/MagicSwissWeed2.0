@@ -44,12 +44,12 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
                 .filter(sample -> sample.stationId().equals(stationId))
                 .toList();
 
-        Integer flow = null;
+        Double flow = null;
         Optional<Double> temp = Optional.empty();
         OffsetDateTime timestamp = null;
         for (ExistenzSample sample : stationSamples) {
             if (sample.par().equals("flow")) {
-                flow = (int) sample.value();
+                flow = sample.value();
                 timestamp = Instant.ofEpochSecond(sample.timestamp()).atOffset(ZoneOffset.UTC);
             } else if (sample.par().equals("temperature")) {
                 temp = Optional.of(sample.value());

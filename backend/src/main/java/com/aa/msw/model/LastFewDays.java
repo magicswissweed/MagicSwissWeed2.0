@@ -29,7 +29,7 @@ public record LastFewDays(
                     stationId,
                     latestEntryValue.getKey(),
                     Optional.empty(),
-                    latestEntryValue.getValue().intValue()
+                    latestEntryValue.getValue()
             );
         }
         return null;

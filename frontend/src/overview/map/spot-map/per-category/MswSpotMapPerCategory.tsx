@@ -6,6 +6,7 @@ import {FlowColorEnum, SpotModel} from "../../../../model/SpotModel";
 import {darkMapStyle, lightMapStyle} from "../../map-styles";
 import {useTheme} from "../../../../theme/MswThemeContext";
 import {useGoogleMaps} from "../../../../map-provider/GoogleMapsProvider";
+import {formatFlow} from "../../../../utils/formatFlow";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
 
@@ -123,7 +124,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                         position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
                         onCloseClick={() => setSelectedSpot(null)}
                     >
-                        <p style={{textTransform: "none"}}>{selectedSpot.name}: {selectedSpot.currentSample.flow} m³/s</p>
+                        <p style={{textTransform: "none"}}>{selectedSpot.name}: {formatFlow(selectedSpot.currentSample.flow)} m³/s</p>
                     </InfoWindow>
                 )}
             </GoogleMap>

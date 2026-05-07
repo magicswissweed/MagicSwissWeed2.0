@@ -1,6 +1,7 @@
 import './MswMeasurement.scss'
 import {Component} from 'react';
 import {SpotModel} from "../../../../model/SpotModel";
+import {formatFlow} from "../../../../utils/formatFlow";
 
 interface MeasurementsProps {
     spot: SpotModel
@@ -34,7 +35,7 @@ export class MswMeasurement extends Component<MeasurementsProps> {
 
     private getFlow() {
         return <>
-            <div className={this.spot.flowStatus}>{this.spot.currentSample.flow}</div>
+            <div className={this.spot.flowStatus}>{formatFlow(this.spot.currentSample.flow)}</div>
             <div className="unit">
                 m<sup>3</sup>/s
             </div>

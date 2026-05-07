@@ -120,14 +120,14 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
      * Fetch records that have <code>flow BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfFlow(Integer lowerInclusive, Integer upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfFlow(Float lowerInclusive, Float upperInclusive) {
         return fetchRange(SampleTable.SAMPLE_TABLE.FLOW, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>flow IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByFlow(Integer... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByFlow(Float... values) {
         return fetch(SampleTable.SAMPLE_TABLE.FLOW, values);
     }
 

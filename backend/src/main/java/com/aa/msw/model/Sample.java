@@ -13,7 +13,7 @@ public record Sample(
         @Getter ApiStationId stationId,
         @Getter OffsetDateTime timestamp,
         @Getter Optional<Double> temperature,
-        @Getter int flow)
+        @Getter double flow)
         implements HasId<SampleId> {
     @Override
     public SampleId getId() {

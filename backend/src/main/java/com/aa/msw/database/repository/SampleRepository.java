@@ -46,7 +46,7 @@ public class SampleRepository extends AbstractTimestampedRepository
                 apiStationId(record.getCountry(), record.getStationid()),
                 record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
                 optionalTemp,
-                record.getFlow());
+                record.getFlow().doubleValue());
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         record.setStationid(sample.getStationId().getExternalId());
         record.setTimestamp(sample.getTimestamp());
         record.setTemperature(sample.getTemperature().map(Double::floatValue).orElse(null));
-        record.setFlow(sample.getFlow());
+        record.setFlow((float) sample.getFlow());
         return record;
     }
 
@@ -69,7 +69,7 @@ public class SampleRepository extends AbstractTimestampedRepository
                 apiStationId(sampleTable.getCountry(), sampleTable.getStationid()),
                 sampleTable.getTimestamp(),
                 temperature == null ? Optional.empty() : Optional.of(temperature.doubleValue()),
-                sampleTable.getFlow()
+                sampleTable.getFlow().doubleValue()
         );
     }
 

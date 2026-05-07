@@ -77,7 +77,7 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     /**
      * The column <code>public.sample_table.flow</code>.
      */
-    public final TableField<SampleTableRecord, Integer> FLOW = createField(DSL.name("flow"), SQLDataType.INTEGER, this, "");
+    public final TableField<SampleTableRecord, Float> FLOW = createField(DSL.name("flow"), SQLDataType.REAL, this, "");
 
     /**
      * The column <code>public.sample_table.country</code>.
