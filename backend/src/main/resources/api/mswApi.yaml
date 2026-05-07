@@ -212,7 +212,7 @@ components:
         $ref: '#/components/schemas/ApiSpotInformation'
     ApiSpot:
       type: object
-      required: [ id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification ]
+      required: [ id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification ]
       properties:
         id:
           type: string
@@ -228,14 +228,25 @@ components:
             - BUNGEE_SURF
         isPublic:
           type: boolean
-        minFlow:
-          type: integer
-        maxFlow:
-          type: integer
+        measurementType:
+          $ref: '#/components/schemas/ApiMeasurementType'
+        minValue:
+          type: number
+          format: double
+        maxValue:
+          type: number
+          format: double
         station:
           $ref: '#/components/schemas/ApiStation'
         withNotification:
           type: boolean
+    ApiMeasurementType:
+      type: string
+      nullable: false
+      enum:
+        - FLOW
+        - HEIGHT
+        - TEMPERATURE
     ApiSpotInformation:
       allOf:
         - $ref: '#/components/schemas/ApiSpot'

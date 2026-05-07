@@ -104,8 +104,8 @@ export const commonPlotlyConfig: Partial<Config> = {
 export function getCommonPlotlyLayout(
     isMini: boolean,
     allTimestamps: string[],
-    minFlow: number,
-    maxFlow: number,
+    minValue: number,
+    maxValue: number,
     showCurrentTimeLine: boolean,
     theme: MswTheme
 ): Partial<Layout> {
@@ -163,12 +163,12 @@ export function getCommonPlotlyLayout(
                     : []
             ),
             // Horizontal band for acceptable flow range
-            ...(minFlow !== undefined && maxFlow !== undefined && allTimestamps.length > 0 ? [{
+            ...(minValue !== undefined && maxValue !== undefined && allTimestamps.length > 0 ? [{
                 type: 'rect' as const,
                 x0: allTimestamps[0],
                 x1: allTimestamps[allTimestamps.length - 1],
-                y0: minFlow,
-                y1: maxFlow,
+                y0: minValue,
+                y1: maxValue,
                 fillcolor: plotColors.acceptableRange.fill,
                 line: {width: 0},
                 layer: 'below' as const

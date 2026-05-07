@@ -17,21 +17,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets ApiFlowStatusEnum
+ * Gets or Sets ApiMeasurementType
  */
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T12:50:04.100380+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
-public enum ApiFlowStatusEnum {
+public enum ApiMeasurementType {
   
-  GOOD("GOOD"),
+  FLOW("FLOW"),
   
-  BAD("BAD"),
+  HEIGHT("HEIGHT"),
   
-  TENDENCY_TO_BECOME_GOOD("TENDENCY_TO_BECOME_GOOD");
+  TEMPERATURE("TEMPERATURE");
 
   private String value;
 
-  ApiFlowStatusEnum(String value) {
+  ApiMeasurementType(String value) {
     this.value = value;
   }
 
@@ -46,8 +46,8 @@ public enum ApiFlowStatusEnum {
   }
 
   @JsonCreator
-  public static ApiFlowStatusEnum fromValue(String value) {
-    for (ApiFlowStatusEnum b : ApiFlowStatusEnum.values()) {
+  public static ApiMeasurementType fromValue(String value) {
+    for (ApiMeasurementType b : ApiMeasurementType.values()) {
       if (b.value.equals(value)) {
         return b;
       }

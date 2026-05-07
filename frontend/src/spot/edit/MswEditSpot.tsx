@@ -2,6 +2,7 @@ import './MswEditSpot.scss';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import React, {useEffect, useRef, useState} from "react";
 import {
+    ApiMeasurementType,
     ApiSpot,
     ApiSpotSpotTypeEnum,
     ApiStation,
@@ -40,8 +41,9 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     const [spotName, setSpotName] = useState(spot.name || "");
     const [type, setType] = useState<ApiSpotSpotTypeEnum>(spot.spotType || ApiSpotSpotTypeEnum.RiverSurf);
     const [stationId, setStationId] = useState<ApiStationId | undefined>(spot.stationId);
-    const [minFlow, setMinFlow] = useState<number | undefined>(spot.minFlow);
-    const [maxFlow, setMaxFlow] = useState<number | undefined>(spot.maxFlow);
+    const [minValue, setMinValue] = useState<number | undefined>(spot.minValue);
+    const [maxValue, setMaxValue] = useState<number | undefined>(spot.maxValue);
+    const [measurementType] = useState<ApiMeasurementType>(spot.measurementType);
     const [withNotification, setWithNotification] = useState(spot.withNotification);
     const [stations, setStations] = useState<ApiStation[]>([])
     const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
@@ -76,8 +78,9 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             stationId: stationId,
             spotType: type,
             isPublic: false,
-            minFlow: minFlow!,
-            maxFlow: maxFlow!,
+            measurementType: measurementType,
+            minValue: minValue!,
+            maxValue: maxValue!,
             station: stations.filter(s => s.id.country === stationId.country && s.id.externalId === stationId.externalId).pop()!,
             withNotification: withNotification
         };
@@ -120,10 +123,10 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             stations,
             stationId,
             stationSelectionError,
-            minFlow,
-            setMinFlow,
-            maxFlow,
-            setMaxFlow,
+            minValue,
+            setMinValue,
+            maxValue,
+            setMaxValue,
             withNotification,
             setWithNotification,
             isSubmitButtonDisabled,

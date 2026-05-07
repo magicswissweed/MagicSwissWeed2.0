@@ -53,8 +53,9 @@ public class SpotsApiController implements SpotsApi {
                 getSpotTypeEnum(apiSpot.getSpotType()),
                 apiSpot.getName(),
                 apiSpot.getStationId(),
-                apiSpot.getMinFlow(),
-                apiSpot.getMaxFlow()
+                apiSpot.getMeasurementType(),
+                apiSpot.getMinValue(),
+                apiSpot.getMaxValue()
         );
         try {
             spotsApiService.addPrivateSpot(
@@ -78,8 +79,9 @@ public class SpotsApiController implements SpotsApi {
                 getSpotTypeEnum(apiSpot.getSpotType()),
                 apiSpot.getName(),
                 apiSpot.getStationId(),
-                apiSpot.getMinFlow(),
-                apiSpot.getMaxFlow()
+                apiSpot.getMeasurementType(),
+                apiSpot.getMinValue(),
+                apiSpot.getMaxValue()
         );
         try {
             spotsApiService.editSpot(updatedSpot, apiSpot.getWithNotification());

@@ -2,6 +2,7 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStation;
 import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * ApiSpot
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T09:33:27.589237+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T12:50:04.100380+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpot {
 
   private UUID id;
@@ -70,9 +71,11 @@ public class ApiSpot {
 
   private Boolean isPublic;
 
-  private Integer minFlow;
+  private ApiMeasurementType measurementType;
 
-  private Integer maxFlow;
+  private Double minValue;
+
+  private Double maxValue;
 
   private ApiStation station;
 
@@ -85,14 +88,15 @@ public class ApiSpot {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpot(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, Boolean withNotification) {
+  public ApiSpot(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, ApiMeasurementType measurementType, Double minValue, Double maxValue, ApiStation station, Boolean withNotification) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
     this.spotType = spotType;
     this.isPublic = isPublic;
-    this.minFlow = minFlow;
-    this.maxFlow = maxFlow;
+    this.measurementType = measurementType;
+    this.minValue = minValue;
+    this.maxValue = maxValue;
     this.station = station;
     this.withNotification = withNotification;
   }
@@ -197,44 +201,64 @@ public class ApiSpot {
     this.isPublic = isPublic;
   }
 
-  public ApiSpot minFlow(Integer minFlow) {
-    this.minFlow = minFlow;
+  public ApiSpot measurementType(ApiMeasurementType measurementType) {
+    this.measurementType = measurementType;
     return this;
   }
 
   /**
-   * Get minFlow
-   * @return minFlow
+   * Get measurementType
+   * @return measurementType
   */
-  @NotNull 
-  @Schema(name = "minFlow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("minFlow")
-  public Integer getMinFlow() {
-    return minFlow;
+  @NotNull @Valid 
+  @Schema(name = "measurementType", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("measurementType")
+  public ApiMeasurementType getMeasurementType() {
+    return measurementType;
   }
 
-  public void setMinFlow(Integer minFlow) {
-    this.minFlow = minFlow;
+  public void setMeasurementType(ApiMeasurementType measurementType) {
+    this.measurementType = measurementType;
   }
 
-  public ApiSpot maxFlow(Integer maxFlow) {
-    this.maxFlow = maxFlow;
+  public ApiSpot minValue(Double minValue) {
+    this.minValue = minValue;
     return this;
   }
 
   /**
-   * Get maxFlow
-   * @return maxFlow
+   * Get minValue
+   * @return minValue
   */
   @NotNull 
-  @Schema(name = "maxFlow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("maxFlow")
-  public Integer getMaxFlow() {
-    return maxFlow;
+  @Schema(name = "minValue", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("minValue")
+  public Double getMinValue() {
+    return minValue;
   }
 
-  public void setMaxFlow(Integer maxFlow) {
-    this.maxFlow = maxFlow;
+  public void setMinValue(Double minValue) {
+    this.minValue = minValue;
+  }
+
+  public ApiSpot maxValue(Double maxValue) {
+    this.maxValue = maxValue;
+    return this;
+  }
+
+  /**
+   * Get maxValue
+   * @return maxValue
+  */
+  @NotNull 
+  @Schema(name = "maxValue", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("maxValue")
+  public Double getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(Double maxValue) {
+    this.maxValue = maxValue;
   }
 
   public ApiSpot station(ApiStation station) {
@@ -291,15 +315,16 @@ public class ApiSpot {
         Objects.equals(this.stationId, apiSpot.stationId) &&
         Objects.equals(this.spotType, apiSpot.spotType) &&
         Objects.equals(this.isPublic, apiSpot.isPublic) &&
-        Objects.equals(this.minFlow, apiSpot.minFlow) &&
-        Objects.equals(this.maxFlow, apiSpot.maxFlow) &&
+        Objects.equals(this.measurementType, apiSpot.measurementType) &&
+        Objects.equals(this.minValue, apiSpot.minValue) &&
+        Objects.equals(this.maxValue, apiSpot.maxValue) &&
         Objects.equals(this.station, apiSpot.station) &&
         Objects.equals(this.withNotification, apiSpot.withNotification);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification);
+    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification);
   }
 
   @Override
@@ -311,8 +336,9 @@ public class ApiSpot {
     sb.append("    stationId: ").append(toIndentedString(stationId)).append("\n");
     sb.append("    spotType: ").append(toIndentedString(spotType)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
-    sb.append("    minFlow: ").append(toIndentedString(minFlow)).append("\n");
-    sb.append("    maxFlow: ").append(toIndentedString(maxFlow)).append("\n");
+    sb.append("    measurementType: ").append(toIndentedString(measurementType)).append("\n");
+    sb.append("    minValue: ").append(toIndentedString(minValue)).append("\n");
+    sb.append("    maxValue: ").append(toIndentedString(maxValue)).append("\n");
     sb.append("    station: ").append(toIndentedString(station)).append("\n");
     sb.append("    withNotification: ").append(toIndentedString(withNotification)).append("\n");
     sb.append("}");

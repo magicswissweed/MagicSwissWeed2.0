@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.daos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.records.SpotTableRecord;
@@ -117,36 +118,6 @@ public class SpotTableDao extends DAOImpl<SpotTableRecord, com.aa.msw.gen.jooq.t
     }
 
     /**
-     * Fetch records that have <code>minflow BETWEEN lowerInclusive AND
-     * upperInclusive</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfMinflow(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRange(SpotTable.SPOT_TABLE.MINFLOW, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>minflow IN (values)</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByMinflow(Integer... values) {
-        return fetch(SpotTable.SPOT_TABLE.MINFLOW, values);
-    }
-
-    /**
-     * Fetch records that have <code>maxflow BETWEEN lowerInclusive AND
-     * upperInclusive</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfMaxflow(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRange(SpotTable.SPOT_TABLE.MAXFLOW, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>maxflow IN (values)</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByMaxflow(Integer... values) {
-        return fetch(SpotTable.SPOT_TABLE.MAXFLOW, values);
-    }
-
-    /**
      * Fetch records that have <code>ispublic BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
@@ -174,5 +145,50 @@ public class SpotTableDao extends DAOImpl<SpotTableRecord, com.aa.msw.gen.jooq.t
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByCountry(Country... values) {
         return fetch(SpotTable.SPOT_TABLE.COUNTRY, values);
+    }
+
+    /**
+     * Fetch records that have <code>measurement_type BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfMeasurementType(MeasurementType lowerInclusive, MeasurementType upperInclusive) {
+        return fetchRange(SpotTable.SPOT_TABLE.MEASUREMENT_TYPE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>measurement_type IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByMeasurementType(MeasurementType... values) {
+        return fetch(SpotTable.SPOT_TABLE.MEASUREMENT_TYPE, values);
+    }
+
+    /**
+     * Fetch records that have <code>min_value BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfMinValue(Float lowerInclusive, Float upperInclusive) {
+        return fetchRange(SpotTable.SPOT_TABLE.MIN_VALUE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>min_value IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByMinValue(Float... values) {
+        return fetch(SpotTable.SPOT_TABLE.MIN_VALUE, values);
+    }
+
+    /**
+     * Fetch records that have <code>max_value BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfMaxValue(Float lowerInclusive, Float upperInclusive) {
+        return fetchRange(SpotTable.SPOT_TABLE.MAX_VALUE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>max_value IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByMaxValue(Float... values) {
+        return fetch(SpotTable.SPOT_TABLE.MAX_VALUE, values);
     }
 }

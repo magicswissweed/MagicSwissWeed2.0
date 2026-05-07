@@ -85,8 +85,9 @@ public class SpotsApiService {
                     updatedSpot.type(),
                     updatedSpot.name(),
                     updatedSpot.stationId(),
-                    updatedSpot.minFlow(),
-                    updatedSpot.maxFlow()
+                    updatedSpot.measurementType(),
+                    updatedSpot.minValue(),
+                    updatedSpot.maxValue()
             );
             UserToSpot oldUserToPublicSpotMapping = userToSpotDao.get(UserContext.getCurrentUser().userId(), updatedSpot.spotId());
             deleteMapping(oldUserToPublicSpotMapping);
@@ -151,8 +152,9 @@ public class SpotsApiService {
                         .id(spot.spotId().getId())
                         .name(spot.name())
                         .isPublic(spot.isPublic())
-                        .minFlow(spot.minFlow())
-                        .maxFlow(spot.maxFlow())
+                        .measurementType(spot.measurementType())
+                                    .minValue(spot.minValue())
+                        .maxValue(spot.maxValue())
                         .stationId(spot.stationId())
                         .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
                         .station(apiStation)

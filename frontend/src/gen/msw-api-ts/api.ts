@@ -190,6 +190,21 @@ export interface ApiLineEntry {
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const ApiMeasurementType = {
+    Flow: 'FLOW',
+    Height: 'HEIGHT',
+    Temperature: 'TEMPERATURE'
+} as const;
+
+export type ApiMeasurementType = typeof ApiMeasurementType[keyof typeof ApiMeasurementType];
+
+
+/**
+ * 
+ * @export
  * @interface ApiSample
  */
 export interface ApiSample {
@@ -250,16 +265,22 @@ export interface ApiSpot {
     'isPublic': boolean;
     /**
      * 
-     * @type {number}
+     * @type {ApiMeasurementType}
      * @memberof ApiSpot
      */
-    'minFlow': number;
+    'measurementType': ApiMeasurementType;
     /**
      * 
      * @type {number}
      * @memberof ApiSpot
      */
-    'maxFlow': number;
+    'minValue': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ApiSpot
+     */
+    'maxValue': number;
     /**
      * 
      * @type {ApiStation}
@@ -319,16 +340,22 @@ export interface ApiSpotInformation {
     'isPublic': boolean;
     /**
      * 
-     * @type {number}
+     * @type {ApiMeasurementType}
      * @memberof ApiSpotInformation
      */
-    'minFlow': number;
+    'measurementType': ApiMeasurementType;
     /**
      * 
      * @type {number}
      * @memberof ApiSpotInformation
      */
-    'maxFlow': number;
+    'minValue': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ApiSpotInformation
+     */
+    'maxValue': number;
     /**
      * 
      * @type {ApiStation}

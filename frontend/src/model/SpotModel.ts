@@ -3,6 +3,7 @@ import {
     ApiFlowStatusEnum,
     ApiForecast,
     ApiHistoricalYears,
+    ApiMeasurementType,
     ApiSample,
     ApiSpotInformationSpotTypeEnum,
     ApiStation,
@@ -15,8 +16,9 @@ export class SpotModel {
     stationId: ApiStationId;
     spotType: ApiSpotInformationSpotTypeEnum;
     isPublic: boolean;
-    minFlow: number;
-    maxFlow: number;
+    measurementType: ApiMeasurementType;
+    minValue: number;
+    maxValue: number;
     station: ApiStation;
     currentSample: ApiSample | undefined;
     flowStatus: FlowColorEnum;
@@ -34,8 +36,9 @@ export class SpotModel {
         stationId: ApiStationId,
         spotType: ApiSpotInformationSpotTypeEnum,
         isPublic: boolean,
-        minFlow: number,
-        maxFlow: number,
+        measurementType: ApiMeasurementType,
+        minValue: number,
+        maxValue: number,
         station: ApiStation,
         currentSample: ApiSample | undefined,
         flowStatus: FlowColorEnum,
@@ -51,8 +54,9 @@ export class SpotModel {
         this.stationId = stationId;
         this.spotType = spotType;
         this.isPublic = isPublic;
-        this.minFlow = minFlow;
-        this.maxFlow = maxFlow;
+        this.measurementType = measurementType;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
         this.station = station;
         this.currentSample = currentSample;
         this.flowStatus = flowStatus

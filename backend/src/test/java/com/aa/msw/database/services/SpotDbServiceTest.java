@@ -4,6 +4,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.UserToSpot;
 import com.aa.msw.database.helpers.id.*;
 import com.aa.msw.database.repository.dao.*;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.*;
@@ -44,8 +45,8 @@ class SpotDbServiceTest {
     private static final ApiStationId STATION_CH_2018 = new ApiStationId(CountryEnum.CH, "2018");
     private static final ApiStationId STATION_CH_2243 = new ApiStationId(CountryEnum.CH, "2243");
 
-    private static Spot createSpot(ApiStationId stationId, int minFlow, int maxFlow) {
-        return new Spot(new SpotId(), true, SpotTypeEnum.RIVER_SURF, "Test Spot", stationId, minFlow, maxFlow);
+    private static Spot createSpot(ApiStationId stationId, double minValue, double maxValue) {
+        return new Spot(new SpotId(), true, SpotTypeEnum.RIVER_SURF, "Test Spot", stationId, ApiMeasurementType.FLOW, minValue, maxValue);
     }
 
     private static Sample createSample(ApiStationId stationId, int flow) {

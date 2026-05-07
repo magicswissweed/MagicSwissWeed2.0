@@ -178,7 +178,7 @@ public class SpotDbService {
 
                 if (isInSurfableRange(spot, min) ||
                         isInSurfableRange(spot, max) ||
-                        (min < spot.minFlow() && max > spot.maxFlow())) {
+                        (min < spot.minValue() && max > spot.maxValue())) {
                     return FlowStatusEnum.TENDENCY_TO_BECOME_GOOD;
                 }
             }
@@ -189,6 +189,6 @@ public class SpotDbService {
     }
 
     private boolean isInSurfableRange(Spot spot, Double flow) {
-        return flow > spot.minFlow() && flow < spot.maxFlow();
+        return flow > spot.minValue() && flow < spot.maxValue();
     }
 }

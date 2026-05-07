@@ -28,8 +28,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         let baseLayout = getCommonPlotlyLayout(
             props.isMini,
             getTimestamps(props.spot.historical?.median || []),
-            props.spot.minFlow,
-            props.spot.maxFlow,
+            props.spot.minValue,
+            props.spot.maxValue,
             true,
             theme);
         return {
@@ -79,8 +79,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
     }, [
         props.isMini,
         getTimestamps(props.spot.historical?.median || []),
-        props.spot.minFlow,
-        props.spot.maxFlow,
+        props.spot.minValue,
+        props.spot.maxValue,
         theme,
         maxY
     ]);
@@ -138,7 +138,7 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
 
 function calculateMaxY(spot: SpotModel): number {
     const paddingPercent = 10;
-    const maxAllowedFlow = spot.maxFlow || 0;
+    const maxAllowedFlow = spot.maxValue || 0;
 
     // FIXME: looks like min and max got confused on fetching the data. We simply 'fix' it in the frontend by using min instead of max here
     let maxOfHistoricalMax = Math.max(...(spot.historical?.min || []).map(m => m.flow));
