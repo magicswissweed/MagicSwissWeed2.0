@@ -34,7 +34,7 @@ export class MswMeasurement extends Component<MeasurementsProps> {
                     {this.getMeasurement()}
                 </div>
 
-                {this.spot.currentSample.temperature &&
+                {this.spot.currentTemperature &&
                     <div className="measurement_row meas temp">
                         {this.getTemp(this.spot.currentSample.temperature)}
                     </div>
@@ -55,9 +55,10 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
 
-    private getTemp(temperature: number) {
+    private getTemp() {
+        let temp: number = this.spot.currentTemperature?.value ?? 0;
         return <>
-            <div>{temperature}</div>
+            <div>{temp.toFixed(1)}</div>
             <div className="unit">°C</div>
         </>;
     }

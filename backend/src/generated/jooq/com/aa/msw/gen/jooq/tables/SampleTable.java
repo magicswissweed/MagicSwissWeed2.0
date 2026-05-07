@@ -71,11 +71,6 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     public final TableField<SampleTableRecord, OffsetDateTime> TIMESTAMP = createField(DSL.name("timestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
-     * The column <code>public.sample_table.temperature</code>.
-     */
-    public final TableField<SampleTableRecord, Float> TEMPERATURE = createField(DSL.name("temperature"), SQLDataType.REAL, this, "");
-
-    /**
      * The column <code>public.sample_table.value</code>.
      */
     public final TableField<SampleTableRecord, Float> VALUE = createField(DSL.name("value"), SQLDataType.REAL, this, "");

@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:18:36.055071+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:36:05.793586+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;
@@ -84,6 +84,8 @@ public class ApiSpotInformation {
   private Boolean withNotification;
 
   private ApiSample currentSample;
+
+  private ApiSample currentTemperature;
 
   private ApiFlowStatusEnum flowStatusEnum;
 
@@ -329,6 +331,26 @@ public class ApiSpotInformation {
     this.currentSample = currentSample;
   }
 
+  public ApiSpotInformation currentTemperature(ApiSample currentTemperature) {
+    this.currentTemperature = currentTemperature;
+    return this;
+  }
+
+  /**
+   * Get currentTemperature
+   * @return currentTemperature
+  */
+  @Valid 
+  @Schema(name = "currentTemperature", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("currentTemperature")
+  public ApiSample getCurrentTemperature() {
+    return currentTemperature;
+  }
+
+  public void setCurrentTemperature(ApiSample currentTemperature) {
+    this.currentTemperature = currentTemperature;
+  }
+
   public ApiSpotInformation flowStatusEnum(ApiFlowStatusEnum flowStatusEnum) {
     this.flowStatusEnum = flowStatusEnum;
     return this;
@@ -369,12 +391,13 @@ public class ApiSpotInformation {
         Objects.equals(this.station, apiSpotInformation.station) &&
         Objects.equals(this.withNotification, apiSpotInformation.withNotification) &&
         Objects.equals(this.currentSample, apiSpotInformation.currentSample) &&
+        Objects.equals(this.currentTemperature, apiSpotInformation.currentTemperature) &&
         Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, flowStatusEnum);
+    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, currentTemperature, flowStatusEnum);
   }
 
   @Override
@@ -392,6 +415,7 @@ public class ApiSpotInformation {
     sb.append("    station: ").append(toIndentedString(station)).append("\n");
     sb.append("    withNotification: ").append(toIndentedString(withNotification)).append("\n");
     sb.append("    currentSample: ").append(toIndentedString(currentSample)).append("\n");
+    sb.append("    currentTemperature: ").append(toIndentedString(currentTemperature)).append("\n");
     sb.append("    flowStatusEnum: ").append(toIndentedString(flowStatusEnum)).append("\n");
     sb.append("}");
     return sb.toString();

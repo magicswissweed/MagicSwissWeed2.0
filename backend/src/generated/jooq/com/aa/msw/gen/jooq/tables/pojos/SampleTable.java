@@ -23,7 +23,6 @@ public class SampleTable implements Serializable {
     private final UUID id;
     private final String stationid;
     private final OffsetDateTime timestamp;
-    private final Float temperature;
     private final Float value;
     private final Country country;
     private final MeasurementType measurementType;
@@ -32,7 +31,6 @@ public class SampleTable implements Serializable {
         this.id = value.id;
         this.stationid = value.stationid;
         this.timestamp = value.timestamp;
-        this.temperature = value.temperature;
         this.value = value.value;
         this.country = value.country;
         this.measurementType = value.measurementType;
@@ -42,7 +40,6 @@ public class SampleTable implements Serializable {
         UUID id,
         String stationid,
         OffsetDateTime timestamp,
-        Float temperature,
         Float value,
         Country country,
         MeasurementType measurementType
@@ -50,7 +47,6 @@ public class SampleTable implements Serializable {
         this.id = id;
         this.stationid = stationid;
         this.timestamp = timestamp;
-        this.temperature = temperature;
         this.value = value;
         this.country = country;
         this.measurementType = measurementType;
@@ -75,13 +71,6 @@ public class SampleTable implements Serializable {
      */
     public OffsetDateTime getTimestamp() {
         return this.timestamp;
-    }
-
-    /**
-     * Getter for <code>public.sample_table.temperature</code>.
-     */
-    public Float getTemperature() {
-        return this.temperature;
     }
 
     /**
@@ -132,12 +121,6 @@ public class SampleTable implements Serializable {
         }
         else if (!this.timestamp.equals(other.timestamp))
             return false;
-        if (this.temperature == null) {
-            if (other.temperature != null)
-                return false;
-        }
-        else if (!this.temperature.equals(other.temperature))
-            return false;
         if (this.value == null) {
             if (other.value != null)
                 return false;
@@ -166,7 +149,6 @@ public class SampleTable implements Serializable {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.stationid == null) ? 0 : this.stationid.hashCode());
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
-        result = prime * result + ((this.temperature == null) ? 0 : this.temperature.hashCode());
         result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
         result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
@@ -180,7 +162,6 @@ public class SampleTable implements Serializable {
         sb.append(id);
         sb.append(", ").append(stationid);
         sb.append(", ").append(timestamp);
-        sb.append(", ").append(temperature);
         sb.append(", ").append(value);
         sb.append(", ").append(country);
         sb.append(", ").append(measurementType);

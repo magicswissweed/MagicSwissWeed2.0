@@ -44,7 +44,6 @@ public class BwSampleFetchServiceImpl extends AbstractFetchService implements Bw
                             new SampleId(),
                             stationId,
                             station.flowTimestamp().get(),
-                            Optional.empty(),
                             station.flowValue().get(),
                             ApiMeasurementType.FLOW
                     ));
@@ -54,7 +53,6 @@ public class BwSampleFetchServiceImpl extends AbstractFetchService implements Bw
                             new SampleId(),
                             stationId,
                             station.heightTimestamp().get(),
-                            Optional.empty(),
                             station.heightValue().get(),
                             ApiMeasurementType.HEIGHT
                     ));

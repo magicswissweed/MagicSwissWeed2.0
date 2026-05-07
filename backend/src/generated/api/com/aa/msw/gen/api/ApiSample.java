@@ -22,13 +22,11 @@ import jakarta.annotation.Generated;
  * ApiSample
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:18:36.055071+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:36:05.793586+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSample {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime timestamp;
-
-  private Double temperature;
 
   private Double value;
 
@@ -65,26 +63,6 @@ public class ApiSample {
 
   public void setTimestamp(OffsetDateTime timestamp) {
     this.timestamp = timestamp;
-  }
-
-  public ApiSample temperature(Double temperature) {
-    this.temperature = temperature;
-    return this;
-  }
-
-  /**
-   * Get temperature
-   * @return temperature
-  */
-  
-  @Schema(name = "temperature", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("temperature")
-  public Double getTemperature() {
-    return temperature;
-  }
-
-  public void setTemperature(Double temperature) {
-    this.temperature = temperature;
   }
 
   public ApiSample value(Double value) {
@@ -137,14 +115,13 @@ public class ApiSample {
     }
     ApiSample apiSample = (ApiSample) o;
     return Objects.equals(this.timestamp, apiSample.timestamp) &&
-        Objects.equals(this.temperature, apiSample.temperature) &&
         Objects.equals(this.value, apiSample.value) &&
         Objects.equals(this.measurementType, apiSample.measurementType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(timestamp, temperature, value, measurementType);
+    return Objects.hash(timestamp, value, measurementType);
   }
 
   @Override
@@ -152,7 +129,6 @@ public class ApiSample {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiSample {\n");
     sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
-    sb.append("    temperature: ").append(toIndentedString(temperature)).append("\n");
     sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("    measurementType: ").append(toIndentedString(measurementType)).append("\n");
     sb.append("}");

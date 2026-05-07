@@ -25,7 +25,6 @@ public class SampleApiService {
     private static ApiSample mapSample(Sample sample) {
         return new ApiSample()
                 .timestamp(sample.getTimestamp())
-                .temperature(sample.getTemperature().orElse(null))
                 .value(sample.value())
                 .measurementType(sample.getMeasurementType());
     }

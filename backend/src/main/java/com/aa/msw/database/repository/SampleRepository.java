@@ -14,11 +14,9 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,18 +39,10 @@ public class SampleRepository extends AbstractTimestampedRepository
 
     @Override
     protected Sample mapRecord(SampleTableRecord record) {
-        Optional<Double> optionalTemp = Optional.empty();
-        if (record.getTemperature() != null) {
-            DecimalFormat roundToOneDigit = new DecimalFormat("##.#");
-            optionalTemp = Optional.of(
-                    Double.parseDouble(roundToOneDigit.format(record.getTemperature())));
-        }
-
         return new Sample(
                 new SampleId(record.getId()),
                 apiStationId(record.getCountry(), record.getStationid()),
                 record.getTimestamp().withOffsetSameInstant(ZoneOffset.UTC),
-                optionalTemp,
                 record.getValue().doubleValue(),
                 apiMeasurementType(record.getMeasurementType()));
     }
@@ -64,7 +54,6 @@ public class SampleRepository extends AbstractTimestampedRepository
         record.setCountry(country(sample.getStationId().getCountry()));
         record.setStationid(sample.getStationId().getExternalId());
         record.setTimestamp(sample.getTimestamp());
-        record.setTemperature(sample.getTemperature().map(Double::floatValue).orElse(null));
         record.setValue((float) sample.getValue());
         record.setMeasurementType(measurementType(sample.getMeasurementType()));
         return record;
@@ -72,12 +61,10 @@ public class SampleRepository extends AbstractTimestampedRepository
 
     @Override
     protected Sample mapEntity(com.aa.msw.gen.jooq.tables.pojos.SampleTable sampleTable) {
-        Float temperature = sampleTable.getTemperature();
         return new Sample(
                 new SampleId(sampleTable.getId()),
                 apiStationId(sampleTable.getCountry(), sampleTable.getStationid()),
                 sampleTable.getTimestamp(),
-                temperature == null ? Optional.empty() : Optional.of(temperature.doubleValue()),
                 sampleTable.getValue().doubleValue(),
                 apiMeasurementType(sampleTable.getMeasurementType())
         );

@@ -65,6 +65,9 @@ class SpotsService {
         if (res && res.data) {
             let spots: Array<SpotModel> = res.data.map(s => {
                 let currentSample = DateTimeConverter.utcApiSampleToLocalTime(s.currentSample);
+                let currentTemperature = s.currentTemperature
+                    ? DateTimeConverter.utcApiSampleToLocalTime(s.currentTemperature)
+                    : undefined;
                 return new SpotModel(
                     s.id,
                     s.name,
@@ -76,6 +79,7 @@ class SpotsService {
                     s.maxValue,
                     s.station,
                     currentSample,
+                    currentTemperature,
                     getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
                     false,
                     undefined,

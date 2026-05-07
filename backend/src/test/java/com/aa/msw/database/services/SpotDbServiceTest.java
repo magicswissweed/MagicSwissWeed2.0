@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,7 +49,7 @@ class SpotDbServiceTest {
     }
 
     private static Sample createSample(ApiStationId stationId, int flow) {
-        return new Sample(new SampleId(), stationId, OffsetDateTime.now(), Optional.of(15.0), flow, ApiMeasurementType.FLOW);
+        return new Sample(new SampleId(), stationId, OffsetDateTime.now(), flow, ApiMeasurementType.FLOW);
     }
 
     private static Forecast createForecast(ApiStationId stationId, double minValue, double maxValue) {

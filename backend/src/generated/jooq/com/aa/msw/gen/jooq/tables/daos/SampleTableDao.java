@@ -103,21 +103,6 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
     }
 
     /**
-     * Fetch records that have <code>temperature BETWEEN lowerInclusive AND
-     * upperInclusive</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfTemperature(Float lowerInclusive, Float upperInclusive) {
-        return fetchRange(SampleTable.SAMPLE_TABLE.TEMPERATURE, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>temperature IN (values)</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByTemperature(Float... values) {
-        return fetch(SampleTable.SAMPLE_TABLE.TEMPERATURE, values);
-    }
-
-    /**
      * Fetch records that have <code>value BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */

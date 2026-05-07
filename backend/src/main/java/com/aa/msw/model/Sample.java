@@ -7,13 +7,11 @@ import com.aa.msw.gen.api.ApiStationId;
 import lombok.Getter;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
 
 public record Sample(
         SampleId sampleId,
         @Getter ApiStationId stationId,
         @Getter OffsetDateTime timestamp,
-        @Getter Optional<Double> temperature,
         @Getter double value,
         @Getter ApiMeasurementType measurementType)
         implements HasId<SampleId> {

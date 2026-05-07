@@ -1,5 +1,6 @@
 package com.aa.msw.source.swiss.existenz.sample;
 
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.helper.TestResourceLoader;
@@ -29,23 +30,28 @@ class SwissSampleFetchIntegrationTest {
 
         List<Sample> samples = service.fetchSamples(stationIds);
 
-        assertEquals(2, samples.size());
+        assertEquals(4, samples.size());
 
-        Sample station2018 = samples.stream()
-                .filter(s -> s.stationId().getExternalId().equals("2018"))
-                .findFirst().orElseThrow();
-        assertEquals(81.77, station2018.value(), 0.01);
-        assertTrue(station2018.temperature().isPresent());
-        assertEquals(8.62, station2018.temperature().get(), 0.01);
-        assertEquals(CountryEnum.CH, station2018.stationId().getCountry());
-        assertNotNull(station2018.timestamp());
+        Sample flow2018 = findSample(samples, "2018", ApiMeasurementType.FLOW);
+        assertEquals(81.77, flow2018.value(), 0.01);
+        assertEquals(CountryEnum.CH, flow2018.stationId().getCountry());
+        assertNotNull(flow2018.timestamp());
 
-        Sample station2243 = samples.stream()
-                .filter(s -> s.stationId().getExternalId().equals("2243"))
-                .findFirst().orElseThrow();
-        assertEquals(62.25, station2243.value(), 0.01);
-        assertTrue(station2243.temperature().isPresent());
-        assertEquals(7.46, station2243.temperature().get(), 0.01);
+        Sample temp2018 = findSample(samples, "2018", ApiMeasurementType.TEMPERATURE);
+        assertEquals(8.62, temp2018.value(), 0.01);
+
+        Sample flow2243 = findSample(samples, "2243", ApiMeasurementType.FLOW);
+        assertEquals(62.25, flow2243.value(), 0.01);
+
+        Sample temp2243 = findSample(samples, "2243", ApiMeasurementType.TEMPERATURE);
+        assertEquals(7.46, temp2243.value(), 0.01);
+    }
+
+    private static Sample findSample(List<Sample> samples, String externalId, ApiMeasurementType type) {
+        return samples.stream()
+                .filter(s -> s.stationId().getExternalId().equals(externalId) && s.getMeasurementType() == type)
+                .findFirst()
+                .orElseThrow();
     }
 
     @Test

@@ -29,7 +29,6 @@ public record LastFewDays(
                     new SampleId(),
                     stationId,
                     latestEntryValue.getKey(),
-                    Optional.empty(),
                     latestEntryValue.getValue(),
                     ApiMeasurementType.FLOW
             );

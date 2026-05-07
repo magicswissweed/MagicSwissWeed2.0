@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
@@ -65,7 +64,6 @@ public class PublicSpotListConfiguration {
                         new SampleId(),
                         stationId,
                         OffsetDateTime.now(),
-                        Optional.of(15.0),
                         100,
                         ApiMeasurementType.FLOW
                 ))

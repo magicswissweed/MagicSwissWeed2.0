@@ -255,6 +255,8 @@ components:
           properties:
             currentSample:
               $ref: '#/components/schemas/ApiSample'
+            currentTemperature:
+              $ref: '#/components/schemas/ApiSample'
             flowStatusEnum:
               $ref: '#/components/schemas/ApiFlowStatusEnum'
             dataPending:
@@ -295,9 +297,6 @@ components:
         timestamp:
           type: string
           format: date-time
-        temperature:
-          type: number
-          format: double
         value:
           type: number
           format: double

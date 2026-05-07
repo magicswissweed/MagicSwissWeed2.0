@@ -20,6 +20,7 @@ export class SpotModel {
     maxValue: number;
     station: ApiStation;
     currentSample: ApiSample | undefined;
+    currentTemperature: ApiSample | undefined;
     flowStatus: FlowColorEnum;
     forecastLoaded: boolean;
     forecast: ApiForecast | undefined;
@@ -40,6 +41,7 @@ export class SpotModel {
         maxValue: number,
         station: ApiStation,
         currentSample: ApiSample | undefined,
+        currentTemperature: ApiSample | undefined,
         flowStatus: FlowColorEnum,
         forecastLoaded: boolean,
         forecast: ApiForecast | undefined,
@@ -58,6 +60,7 @@ export class SpotModel {
         this.maxValue = maxValue;
         this.station = station;
         this.currentSample = currentSample;
+        this.currentTemperature = currentTemperature;
         this.flowStatus = flowStatus
         this.forecastLoaded = forecastLoaded;
         this.lastFewDaysLoaded = lastFewDaysLoaded;

@@ -200,12 +200,6 @@ export interface ApiSample {
      * @type {number}
      * @memberof ApiSample
      */
-    'temperature'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiSample
-     */
     'value': number;
     /**
      * 
@@ -363,6 +357,12 @@ export interface ApiSpotInformation {
      * @memberof ApiSpotInformation
      */
     'currentSample'?: ApiSample;
+    /**
+     * 
+     * @type {ApiSample}
+     * @memberof ApiSpotInformation
+     */
+    'currentTemperature'?: ApiSample;
     /**
      * 
      * @type {ApiFlowStatusEnum}

@@ -28,6 +28,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.aa.msw.gen.api.ApiMeasurementType.TEMPERATURE;
+
 @Service
 public class SpotsApiService {
     private static final Logger LOG = LoggerFactory.getLogger(SpotsApiService.class);
@@ -164,6 +166,7 @@ public class SpotsApiService {
                                     .stationId(spot.stationId())
                                     .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
                                     .currentSample(sampleApiService.getCurrentSample(spot.stationId(), spot.measurementType()))
+                                    .currentTemperature(getCurrentTemperatureOrNull(spot.stationId()))
                                     .station(apiStation)
                                     .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
                                     .withNotification(withNotification)
@@ -183,6 +186,14 @@ public class SpotsApiService {
             }
         }
         return spotInformationList;
+    }
+
+    private ApiSample getCurrentTemperatureOrNull(ApiStationId stationId) {
+        try {
+            return sampleApiService.getCurrentSample(stationId, TEMPERATURE);
+        } catch (NoDataAvailableException e) {
+            return null;
+        }
     }
 
     private ApiFlowStatusEnum getFlowStatusEnum(SpotId spotId) {

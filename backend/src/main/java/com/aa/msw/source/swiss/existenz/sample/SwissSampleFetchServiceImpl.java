@@ -6,7 +6,6 @@ import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
 import com.aa.msw.source.AbstractFetchService;
-import com.aa.msw.source.swiss.existenz.exception.IncorrectDataReceivedException;
 import com.aa.msw.source.swiss.existenz.sample.model.ExistenzResponseSample;
 import com.aa.msw.source.swiss.existenz.sample.model.ExistenzSample;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,7 +22,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,34 +38,25 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
         return "https://api.existenz.ch/apiv1/hydro/latest?locations=" + locationsString + "&parameters=flow%2C%20temperature&app=MagicSwissWeed&version=0.2.0";
     }
 
-    private static Sample extractSampleForStationId(List<ExistenzSample> samples, String stationId) throws IncorrectDataReceivedException {
-        List<ExistenzSample> stationSamples = samples.stream()
-                .filter(sample -> sample.stationId().equals(stationId))
-                .toList();
-
-        Double flow = null;
-        Optional<Double> temp = Optional.empty();
-        OffsetDateTime timestamp = null;
-        for (ExistenzSample sample : stationSamples) {
-            if (sample.par().equals("flow")) {
-                flow = sample.value();
-                timestamp = Instant.ofEpochSecond(sample.timestamp()).atOffset(ZoneOffset.UTC);
-            } else if (sample.par().equals("temperature")) {
-                temp = Optional.of(sample.value());
+    private static List<Sample> extractSamplesForStationId(List<ExistenzSample> samples, String stationId) {
+        ApiStationId apiStationId = new ApiStationId(CountryEnum.CH, stationId);
+        List<Sample> result = new ArrayList<>();
+        for (ExistenzSample sample : samples) {
+            if (!sample.stationId().equals(stationId)) {
+                continue;
             }
+            ApiMeasurementType type = switch (sample.par()) {
+                case "flow" -> ApiMeasurementType.FLOW;
+                case "temperature" -> ApiMeasurementType.TEMPERATURE;
+                default -> null;
+            };
+            if (type == null) {
+                continue;
+            }
+            OffsetDateTime timestamp = Instant.ofEpochSecond(sample.timestamp()).atOffset(ZoneOffset.UTC);
+            result.add(new Sample(new SampleId(), apiStationId, timestamp, sample.value(), type));
         }
-
-        if (flow == null) {
-            throw new IncorrectDataReceivedException("Unable to extract flow and temp for the station " + stationId + " in " + CountryEnum.CH.getValue());
-        }
-
-        return new Sample(
-                new SampleId(),
-                new ApiStationId(CountryEnum.CH, stationId),
-                timestamp,
-                temp,
-                flow,
-                ApiMeasurementType.FLOW);
+        return result;
     }
 
     public List<Sample> fetchSamples(Set<ApiStationId> stationIds) {
@@ -79,15 +68,9 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
             LOG.error("Error while fetching samples from existenz for stationIds {}. Ignore the current fetch.", stationIds, e);
             return List.of();
         }
-        List<Sample> samples = new ArrayList<>();
-        for (ApiStationId stationId : stationIds) {
-            try {
-                samples.add(extractSampleForStationId(existenzSamples, stationId.getExternalId()));
-            } catch (IncorrectDataReceivedException e) {
-                // ignore -> dont fetch sample
-            }
-        }
-        return samples;
+        return stationIds.stream()
+                .flatMap(id -> extractSamplesForStationId(existenzSamples, id.getExternalId()).stream())
+                .collect(Collectors.toList());
     }
 
     private ExistenzResponseSample fetchData(String url) throws IOException, URISyntaxException {
