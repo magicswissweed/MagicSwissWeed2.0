@@ -1,8 +1,10 @@
-import {ApiFlowSample} from "../../../../../gen/msw-api-ts";
 import {SpotModel} from "../../../../../model/SpotModel";
 import {Config, Layout} from 'plotly.js';
 import {MswTheme} from "../../../../../theme/MswThemeContext";
 import {getThemeDependingColors, ThemeDependingColors} from "../../../../../theme/MswThemeHelper";
+
+// Structural type covering ApiSample, ApiLineEntry, and ad-hoc {timestamp, value} points.
+export type TimeSeriesPoint = { timestamp: string; value: number };
 
 export class MswGraphProps {
     spot: SpotModel;
@@ -35,12 +37,12 @@ export const plotColors = {
 };
 
 // Extract timestamps from a data series
-export function getTimestamps(data: ApiFlowSample[]): string[] {
+export function getTimestamps(data: TimeSeriesPoint[]): string[] {
     return data.map(item => item.timestamp).sort()
 }
 
-// Extract flows from a data series
-export function getFlows(data: ApiFlowSample[]): number[] {
+// Extract values from a data series
+export function getValues(data: TimeSeriesPoint[]): number[] {
     return data.map(item => item.value);
 }
 
@@ -54,7 +56,7 @@ export function getTicksAt(hour: number, timestamps: Array<string>, minute: numb
 
 // Create a trace for Plotly with common defaults
 export function createTrace(
-    data: ApiFlowSample[],
+    data: TimeSeriesPoint[],
     showTooltip: boolean,
     isMini: boolean,
     color?: string,
@@ -62,7 +64,7 @@ export function createTrace(
     const isMobile = window.innerWidth <= 720;
     return {
         x: getTimestamps(data),
-        y: getFlows(data),
+        y: getValues(data),
         type: 'scatter' as const,
         mode: 'lines' as const,
         line: {width: 1, shape: 'spline' as const, color},
@@ -74,8 +76,8 @@ export function createTrace(
 }
 
 export function createAreaTrace(
-    upperData: ApiFlowSample[],
-    lowerData: ApiFlowSample[],
+    upperData: TimeSeriesPoint[],
+    lowerData: TimeSeriesPoint[],
     name: string,
     fillcolor: string,
     isMini: boolean) {

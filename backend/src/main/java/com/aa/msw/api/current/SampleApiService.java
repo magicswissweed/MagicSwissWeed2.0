@@ -3,7 +3,6 @@ package com.aa.msw.api.current;
 import com.aa.msw.api.graph.lastFewDays.LastFewDaysApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
-import com.aa.msw.gen.api.ApiFlowSample;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiSample;
 import com.aa.msw.gen.api.ApiStationId;
@@ -35,15 +34,16 @@ public class SampleApiService {
         return mapSample(sampleDao.getCurrentSample(apiStationId, measurementType));
     }
 
-    public List<ApiFlowSample> getLastFewDaysSamples(ApiStationId stationId) throws NoDataAvailableException {
+    public List<ApiSample> getLastFewDaysSamples(ApiStationId stationId) throws NoDataAvailableException {
         return lastFewDaysApiService
                 .getLastFewDays(stationId)
                 .lastFewDaysSamples()
                 .entrySet()
                 .stream()
-                .map(sample -> new ApiFlowSample()
+                .map(sample -> new ApiSample()
                         .timestamp(sample.getKey())
-                        .value(sample.getValue()))
+                        .value(sample.getValue())
+                        .measurementType(ApiMeasurementType.FLOW))
                 .toList();
     }
 }

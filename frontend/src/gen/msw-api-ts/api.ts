@@ -45,25 +45,6 @@ export interface AddPrivateSpotRequest {
 /**
  * 
  * @export
- * @interface ApiFlowSample
- */
-export interface ApiFlowSample {
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiFlowSample
-     */
-    'timestamp': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiFlowSample
-     */
-    'value': number;
-}
-/**
- * 
- * @export
  * @enum {string}
  */
 
@@ -554,10 +535,10 @@ export interface StationToLastFewDays {
     'station': ApiStationId;
     /**
      * 
-     * @type {Array<ApiFlowSample>}
+     * @type {Array<ApiSample>}
      * @memberof StationToLastFewDays
      */
-    'lastFewDays': Array<ApiFlowSample>;
+    'lastFewDays': Array<ApiSample>;
 }
 
 /**

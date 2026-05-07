@@ -303,20 +303,10 @@ components:
           format: double
         measurementType:
           $ref: '#/components/schemas/ApiMeasurementType'
-    ApiFlowSample:
-      type: object
-      required: [ timestamp, value ]
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        value:
-          type: number
-          format: double
     ApiLastFewDaysSamples:
       type: array
       items:
-        $ref: '#/components/schemas/ApiFlowSample'
+        $ref: '#/components/schemas/ApiSample'
     ApiForecast:
       type: object
       required: [ timestamp, measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min ]

@@ -1,5 +1,4 @@
 import {
-    ApiFlowSample,
     ApiFlowStatusEnum,
     ApiForecast,
     ApiHistoricalYears,
@@ -25,7 +24,7 @@ export class SpotModel {
     forecastLoaded: boolean;
     forecast: ApiForecast | undefined;
     lastFewDaysLoaded: boolean;
-    lastFewDays: Array<ApiFlowSample> | undefined;
+    lastFewDays: Array<ApiSample> | undefined;
     historical: ApiHistoricalYears | undefined;
     withNotification: boolean;
     dataPending: boolean;
@@ -45,7 +44,7 @@ export class SpotModel {
         forecastLoaded: boolean,
         forecast: ApiForecast | undefined,
         lastFewDaysLoaded: boolean,
-        lastFewDays: Array<ApiFlowSample> | undefined,
+        lastFewDays: Array<ApiSample> | undefined,
         historical: ApiHistoricalYears | undefined,
         withNotification: boolean,
         dataPending: boolean) {

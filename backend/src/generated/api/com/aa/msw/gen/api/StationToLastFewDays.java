@@ -2,7 +2,7 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
-import com.aa.msw.gen.api.ApiFlowSample;
+import com.aa.msw.gen.api.ApiSample;
 import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -23,13 +23,13 @@ import jakarta.annotation.Generated;
  * StationToLastFewDays
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:06:17.017634+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:18:36.055071+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class StationToLastFewDays {
 
   private ApiStationId station;
 
   @Valid
-  private List<@Valid ApiFlowSample> lastFewDays = new ArrayList<>();
+  private List<@Valid ApiSample> lastFewDays = new ArrayList<>();
 
   public StationToLastFewDays() {
     super();
@@ -38,7 +38,7 @@ public class StationToLastFewDays {
   /**
    * Constructor with only required parameters
    */
-  public StationToLastFewDays(ApiStationId station, List<@Valid ApiFlowSample> lastFewDays) {
+  public StationToLastFewDays(ApiStationId station, List<@Valid ApiSample> lastFewDays) {
     this.station = station;
     this.lastFewDays = lastFewDays;
   }
@@ -63,12 +63,12 @@ public class StationToLastFewDays {
     this.station = station;
   }
 
-  public StationToLastFewDays lastFewDays(List<@Valid ApiFlowSample> lastFewDays) {
+  public StationToLastFewDays lastFewDays(List<@Valid ApiSample> lastFewDays) {
     this.lastFewDays = lastFewDays;
     return this;
   }
 
-  public StationToLastFewDays addLastFewDaysItem(ApiFlowSample lastFewDaysItem) {
+  public StationToLastFewDays addLastFewDaysItem(ApiSample lastFewDaysItem) {
     if (this.lastFewDays == null) {
       this.lastFewDays = new ArrayList<>();
     }
@@ -83,11 +83,11 @@ public class StationToLastFewDays {
   @NotNull @Valid 
   @Schema(name = "lastFewDays", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("lastFewDays")
-  public List<@Valid ApiFlowSample> getLastFewDays() {
+  public List<@Valid ApiSample> getLastFewDays() {
     return lastFewDays;
   }
 
-  public void setLastFewDays(List<@Valid ApiFlowSample> lastFewDays) {
+  public void setLastFewDays(List<@Valid ApiSample> lastFewDays) {
     this.lastFewDays = lastFewDays;
   }
 

@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:06:17.017634+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:18:36.055071+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "sample", description = "the sample API")
 public interface SampleApi {
@@ -71,7 +71,7 @@ public interface SampleApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"station\" : { \"externalId\" : \"externalId\" }, \"lastFewDays\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] }, { \"station\" : { \"externalId\" : \"externalId\" }, \"lastFewDays\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] } ]";
+                    String exampleString = "[ { \"station\" : { \"externalId\" : \"externalId\" }, \"lastFewDays\" : [ { \"temperature\" : 0.8008281904610115, \"value\" : 6.027456183070403, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"temperature\" : 0.8008281904610115, \"value\" : 6.027456183070403, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] }, { \"station\" : { \"externalId\" : \"externalId\" }, \"lastFewDays\" : [ { \"temperature\" : 0.8008281904610115, \"value\" : 6.027456183070403, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"temperature\" : 0.8008281904610115, \"value\" : 6.027456183070403, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ] } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
