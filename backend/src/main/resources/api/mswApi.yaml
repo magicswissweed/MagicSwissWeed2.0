@@ -426,7 +426,7 @@ components:
         $ref: '#/components/schemas/ApiStation'
     ApiStation:
       type: object
-      required: [ id, label, latitude, longitude ]
+      required: [ id, label, latitude, longitude, supportedMeasurements ]
       properties:
         id:
           $ref: '#/components/schemas/ApiStationId'
@@ -438,6 +438,10 @@ components:
         longitude:
           type: number
           format: double
+        supportedMeasurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiMeasurementType'
     PushNotificationSubscription:
       type: object
       required: [ token ]

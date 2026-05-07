@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T12:50:04.100380+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T13:14:35.058042+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "station", description = "the station API")
 public interface StationApi {
@@ -68,7 +68,7 @@ public interface StationApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 }, { \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 } ]";
+                    String exampleString = "[ { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 }, { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

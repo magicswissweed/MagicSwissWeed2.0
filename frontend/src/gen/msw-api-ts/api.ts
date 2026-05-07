@@ -425,6 +425,12 @@ export interface ApiStation {
      * @memberof ApiStation
      */
     'longitude': number;
+    /**
+     * 
+     * @type {Array<ApiMeasurementType>}
+     * @memberof ApiStation
+     */
+    'supportedMeasurements': Array<ApiMeasurementType>;
 }
 /**
  * 

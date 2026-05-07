@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T12:50:04.100380+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T13:14:35.058042+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;

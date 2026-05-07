@@ -41,9 +41,9 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
     const [spotName, setSpotName] = useState(spot.name || "");
     const [type, setType] = useState<ApiSpotSpotTypeEnum>(spot.spotType || ApiSpotSpotTypeEnum.RiverSurf);
     const [stationId, setStationId] = useState<ApiStationId | undefined>(spot.stationId);
+    const [measurementType, setMeasurementType] = useState<ApiMeasurementType>(spot.measurementType);
     const [minValue, setMinValue] = useState<number | undefined>(spot.minValue);
     const [maxValue, setMaxValue] = useState<number | undefined>(spot.maxValue);
-    const [measurementType] = useState<ApiMeasurementType>(spot.measurementType);
     const [withNotification, setWithNotification] = useState(spot.withNotification);
     const [stations, setStations] = useState<ApiStation[]>([])
     const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
@@ -123,6 +123,8 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
             stations,
             stationId,
             stationSelectionError,
+            measurementType,
+            setMeasurementType,
             minValue,
             setMinValue,
             maxValue,

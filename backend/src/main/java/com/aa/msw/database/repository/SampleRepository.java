@@ -3,6 +3,7 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.database.repository.dao.SampleDao;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
@@ -16,8 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DecimalFormat;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiMeasurementType;
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
@@ -85,6 +90,18 @@ public class SampleRepository extends AbstractTimestampedRepository
                 .limit(1)
                 .fetchOptional(this::mapRecord)
                 .orElseThrow(() -> new NoDataAvailableException("No current sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
+    }
+
+    @Override
+    public Map<ApiStationId, Set<ApiMeasurementType>> getSupportedMeasurementsByStation() {
+        return dsl.selectDistinct(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
+                .from(TABLE)
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        r -> apiStationId(r.value1(), r.value2()),
+                        Collectors.mapping(r -> apiMeasurementType(r.value3()), Collectors.toSet())
+                ));
     }
 
     @Override

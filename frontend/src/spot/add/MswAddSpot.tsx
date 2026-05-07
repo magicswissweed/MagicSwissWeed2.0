@@ -21,6 +21,7 @@ export const MswAddSpot = () => {
         setSpotName("");
         setType(ApiSpotSpotTypeEnum.RiverSurf);
         setStationId(undefined);
+        setMeasurementType(ApiMeasurementType.Flow);
         setMinValue(undefined);
         setMaxValue(undefined);
     }
@@ -40,6 +41,7 @@ export const MswAddSpot = () => {
     const [spotName, setSpotName] = useState("");
     const [type, setType] = useState<ApiSpotSpotTypeEnum>(ApiSpotSpotTypeEnum.RiverSurf);
     const [stationId, setStationId] = useState<ApiStationId | undefined>(undefined);
+    const [measurementType, setMeasurementType] = useState<ApiMeasurementType>(ApiMeasurementType.Flow);
     const [minValue, setMinValue] = useState<number | undefined>(undefined);
     const [maxValue, setMaxValue] = useState<number | undefined>(undefined);
     const [withNotification, setWithNotification] = useState(false);
@@ -74,7 +76,7 @@ export const MswAddSpot = () => {
             stationId: stationId,
             spotType: type,
             isPublic: false,
-            measurementType: ApiMeasurementType.Flow,
+            measurementType: measurementType,
             minValue: minValue!,
             maxValue: maxValue!,
             station: stations.filter(s => s.id.country === stationId.country && s.id.externalId === stationId.externalId).pop()!,
@@ -98,6 +100,6 @@ export const MswAddSpot = () => {
         >
             <img className="button" alt="" title="Add a new spot to your dashboard." src={plus_icon}/>
         </Button>
-        {MswAddOrEditSpotModal(showAddSpotModal, handleCancelAddSpotModal, formRef, handleAddSpotAndCloseModal, spotName, setSpotName, type, setType, setStationId, setStationSelectionError, stations, stationId, stationSelectionError, minValue, setMinValue, maxValue, setMaxValue, withNotification, setWithNotification, isSubmitButtonDisabled, setIsSubmitButtonDisabled, isEditMode)}
+        {MswAddOrEditSpotModal(showAddSpotModal, handleCancelAddSpotModal, formRef, handleAddSpotAndCloseModal, spotName, setSpotName, type, setType, setStationId, setStationSelectionError, stations, stationId, stationSelectionError, measurementType, setMeasurementType, minValue, setMinValue, maxValue, setMaxValue, withNotification, setWithNotification, isSubmitButtonDisabled, setIsSubmitButtonDisabled, isEditMode)}
     </>;
 }

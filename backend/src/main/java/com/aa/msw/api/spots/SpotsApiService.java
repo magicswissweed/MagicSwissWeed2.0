@@ -141,10 +141,16 @@ public class SpotsApiService {
 
     private List<ApiSpotInformation> getApiSpotInformationList(List<Spot> spots) {
         List<ApiSpotInformation> spotInformationList = new ArrayList<>();
+        var supportedByStation = sampleDao.getSupportedMeasurementsByStation();
         for (Spot spot : spots) {
             try {
                 Station station = stationApiService.getStation(spot.stationId());
-                ApiStation apiStation = new ApiStation(station.stationId(), station.label(), station.latitude(), station.longitude());
+                ApiStation apiStation = new ApiStation(
+                        station.stationId(),
+                        station.label(),
+                        station.latitude(),
+                        station.longitude(),
+                        new ArrayList<>(supportedByStation.getOrDefault(spot.stationId(), java.util.Set.of())));
 
                 boolean withNotification = !spot.isPublic() && userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
 
