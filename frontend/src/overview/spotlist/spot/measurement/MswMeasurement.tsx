@@ -31,23 +31,23 @@ export class MswMeasurement extends Component<MeasurementsProps> {
             <div className="measurements"
                  tabIndex={0}>
                 <div className="measurement_row meas flow">
-                    {this.getMeasurement()}
+                    {this.getMeasurement(this.spot.currentSample.value)}
                 </div>
 
                 {this.spot.currentTemperature &&
                     <div className="measurement_row meas temp">
-                        {this.getTemp(this.spot.currentSample.temperature)}
+                        {this.getTemp(this.spot.currentTemperature.value)}
                     </div>
                 }
             </div>
         </>;
     }
 
-    private getMeasurement() {
+    private getMeasurement(value: number) {
         let flowUnit = <>m<sup>3</sup>/s</>;
         let heightUnit = "cm";
         return <>
-            <div className={this.spot.flowStatus}>{formatValue(this.spot.currentSample.value)}</div>
+            <div className={this.spot.flowStatus}>{formatValue(value)}</div>
             <div className="unit">
                 {this.spot.measurementType === ApiMeasurementType.Height ? heightUnit : flowUnit}
             </div>
@@ -55,8 +55,7 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
 
-    private getTemp() {
-        let temp: number = this.spot.currentTemperature?.value ?? 0;
+    private getTemp(temp: number) {
         return <>
             <div>{temp.toFixed(1)}</div>
             <div className="unit">°C</div>

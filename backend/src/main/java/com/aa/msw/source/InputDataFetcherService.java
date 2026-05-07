@@ -63,6 +63,7 @@ public class InputDataFetcherService {
         this.lastFewDaysDao = lastFewDaysDao;
         this.notificationService = notificationService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
+        this.bwSampleFetchService = bwSampleFetchService;
     }
 
     @Scheduled(cron = "0 1/10 * * * *")
@@ -81,9 +82,11 @@ public class InputDataFetcherService {
         fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
     }
 
-    @Scheduled(cron = "0 5/10 * * * *") // 05, 15, 25, ...
-    private void fetchBwDataAndWriteToDb() {
-        fetchAndWriteToDb(isFetchingBwData, CountryEnum.DE_BW, this::fetchAndWriteBwSamples);
+    // 05, 15, 25, ...
+    @Scheduled(cron = "0 5/10 * * * *")
+    void fetchBwDataAndWriteToDb() {
+        Set<ApiStationId> stationIds = filterByCountry(getAllStationIds(), CountryEnum.DE_BW);
+        fetchAndWriteToDb(stationIds, isFetchingBwData, CountryEnum.DE_BW, this::fetchAndWriteBwSamples);
     }
 
     private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForCountry, CountryEnum country, Consumer<Set<ApiStationId>> fetchForCountryFunction) {

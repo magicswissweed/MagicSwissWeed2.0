@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * ApiStationId
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:36:05.793586+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:57:59.542031+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiStationId {
 
   private CountryEnum country;

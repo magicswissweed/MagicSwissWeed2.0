@@ -17,7 +17,7 @@ export class DateTimeConverter {
         }
     }
 
-    public static utcLastFewDaysToLocalTime(lastFewDays: Array<ApiSample> | undefined): Array<ApiSample> | undefined {
+    public static utcLastFewDaysToLocalTime(lastFewDays: Array<ApiSample>): Array<ApiSample> | undefined {
         if (lastFewDays === undefined || lastFewDays === null || lastFewDays.length === 0) {
             return lastFewDays;
         }
@@ -61,7 +61,14 @@ export class DateTimeConverter {
     }
 
     private static utcApiSampleArrayToLocalTime(apiSamples: Array<ApiSample>): Array<ApiSample> {
-        return apiSamples.map(d => this.utcApiSampleToLocalTime(d)).sort();
+        return apiSamples.map(d => this.apiSampleToLocalTime(d)).sort();
+    }
+
+    private static apiSampleToLocalTime(sample: ApiSample): ApiSample {
+        return {
+            ...sample,
+            timestamp: this.utcToLocalString(sample.timestamp)
+        }
     }
 
     private static utcToLocalString(timestamp: string): string {

@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:36:05.793586+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:57:59.542031+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;
@@ -89,6 +89,8 @@ public class ApiSpotInformation {
 
   private ApiFlowStatusEnum flowStatusEnum;
 
+  private Boolean dataPending;
+
   public ApiSpotInformation() {
     super();
   }
@@ -96,7 +98,7 @@ public class ApiSpotInformation {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpotInformation(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, ApiMeasurementType measurementType, Double minValue, Double maxValue, ApiStation station, Boolean withNotification, ApiSample currentSample, ApiFlowStatusEnum flowStatusEnum) {
+  public ApiSpotInformation(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, ApiMeasurementType measurementType, Double minValue, Double maxValue, ApiStation station, Boolean withNotification, ApiFlowStatusEnum flowStatusEnum, Boolean dataPending) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
@@ -107,8 +109,8 @@ public class ApiSpotInformation {
     this.maxValue = maxValue;
     this.station = station;
     this.withNotification = withNotification;
-    this.currentSample = currentSample;
     this.flowStatusEnum = flowStatusEnum;
+    this.dataPending = dataPending;
   }
 
   public ApiSpotInformation id(UUID id) {
@@ -320,8 +322,8 @@ public class ApiSpotInformation {
    * Get currentSample
    * @return currentSample
   */
-  @NotNull @Valid 
-  @Schema(name = "currentSample", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "currentSample", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("currentSample")
   public ApiSample getCurrentSample() {
     return currentSample;
@@ -371,6 +373,26 @@ public class ApiSpotInformation {
     this.flowStatusEnum = flowStatusEnum;
   }
 
+  public ApiSpotInformation dataPending(Boolean dataPending) {
+    this.dataPending = dataPending;
+    return this;
+  }
+
+  /**
+   * True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a \"fetching data\" placeholder.
+   * @return dataPending
+  */
+  @NotNull 
+  @Schema(name = "dataPending", description = "True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a \"fetching data\" placeholder.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("dataPending")
+  public Boolean getDataPending() {
+    return dataPending;
+  }
+
+  public void setDataPending(Boolean dataPending) {
+    this.dataPending = dataPending;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -392,12 +414,13 @@ public class ApiSpotInformation {
         Objects.equals(this.withNotification, apiSpotInformation.withNotification) &&
         Objects.equals(this.currentSample, apiSpotInformation.currentSample) &&
         Objects.equals(this.currentTemperature, apiSpotInformation.currentTemperature) &&
-        Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum);
+        Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum) &&
+        Objects.equals(this.dataPending, apiSpotInformation.dataPending);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, currentTemperature, flowStatusEnum);
+    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, currentTemperature, flowStatusEnum, dataPending);
   }
 
   @Override
@@ -417,6 +440,7 @@ public class ApiSpotInformation {
     sb.append("    currentSample: ").append(toIndentedString(currentSample)).append("\n");
     sb.append("    currentTemperature: ").append(toIndentedString(currentTemperature)).append("\n");
     sb.append("    flowStatusEnum: ").append(toIndentedString(flowStatusEnum)).append("\n");
+    sb.append("    dataPending: ").append(toIndentedString(dataPending)).append("\n");
     sb.append("}");
     return sb.toString();
   }
