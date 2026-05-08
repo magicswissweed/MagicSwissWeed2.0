@@ -14,6 +14,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,17 @@ public class SampleRepository extends AbstractTimestampedRepository
                 .limit(1)
                 .fetchOptional(this::mapRecord)
                 .orElseThrow(() -> new NoDataAvailableException("No current " + type.getValue() + " sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
+    }
+
+    @Override
+    public List<Sample> getSamplesOfLastNDays(ApiStationId stationId, ApiMeasurementType type, int days) {
+        return dsl.selectFrom(TABLE)
+                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                        .and(TABLE.STATIONID.eq(stationId.getExternalId()))
+                        .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type)))
+                        .and(TABLE.TIMESTAMP.greaterOrEqual(OffsetDateTime.now().minusDays(days))))
+                .orderBy(TABLE.TIMESTAMP.asc())
+                .fetch(this::mapRecord);
     }
 
     @Override

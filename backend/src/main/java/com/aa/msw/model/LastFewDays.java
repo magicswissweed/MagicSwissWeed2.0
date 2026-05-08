@@ -1,6 +1,5 @@
 package com.aa.msw.model;
 
-import com.aa.msw.database.helpers.id.HasId;
 import com.aa.msw.database.helpers.id.LastFewDaysId;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.gen.api.ApiMeasurementType;
@@ -14,11 +13,7 @@ import java.util.Optional;
 public record LastFewDays(
         @Getter LastFewDaysId databaseId,
         @Getter ApiStationId stationId,
-        @Getter Map<OffsetDateTime, Double> lastFewDaysSamples) implements HasId<LastFewDaysId> {
-    @Override
-    public LastFewDaysId getId() {
-        return databaseId;
-    }
+        @Getter Map<OffsetDateTime, Double> lastFewDaysSamples) {
 
     public Sample getLatestMeasurementAsSample() {
         Optional<Map.Entry<OffsetDateTime, Double>> latestEntry = lastFewDaysSamples.entrySet().stream()

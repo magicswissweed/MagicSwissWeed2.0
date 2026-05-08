@@ -1,6 +1,5 @@
 package com.aa.msw.api.current;
 
-import com.aa.msw.api.graph.lastFewDays.LastFewDaysApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
@@ -14,12 +13,12 @@ import java.util.List;
 @Service
 public class SampleApiService {
 
-    private final SampleDao sampleDao;
-    private final LastFewDaysApiService lastFewDaysApiService;
+    private static final int LAST_FEW_DAYS_WINDOW = 10;
 
-    SampleApiService(final SampleDao sampleDao, LastFewDaysApiService lastFewDaysApiService) {
+    private final SampleDao sampleDao;
+
+    SampleApiService(final SampleDao sampleDao) {
         this.sampleDao = sampleDao;
-        this.lastFewDaysApiService = lastFewDaysApiService;
     }
 
     private static ApiSample mapSample(Sample sample) {
@@ -33,16 +32,10 @@ public class SampleApiService {
         return mapSample(sampleDao.getCurrentSample(apiStationId, measurementType));
     }
 
-    public List<ApiSample> getLastFewDaysSamples(ApiStationId stationId) throws NoDataAvailableException {
-        return lastFewDaysApiService
-                .getLastFewDays(stationId)
-                .lastFewDaysSamples()
-                .entrySet()
+    public List<ApiSample> getLastFewDaysSamples(ApiStationId stationId) {
+        return sampleDao.getSamplesOfLastNDays(stationId, ApiMeasurementType.FLOW, LAST_FEW_DAYS_WINDOW)
                 .stream()
-                .map(sample -> new ApiSample()
-                        .timestamp(sample.getKey())
-                        .value(sample.getValue())
-                        .measurementType(ApiMeasurementType.FLOW))
+                .map(SampleApiService::mapSample)
                 .toList();
     }
 }
