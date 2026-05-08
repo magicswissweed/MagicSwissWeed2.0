@@ -5,7 +5,6 @@ import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.database.repository.dao.StationDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.model.LastFewDays;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30DaysSampleFetchService;
@@ -167,8 +166,8 @@ public class StationApiServiceImpl implements StationApiService {
 
     private boolean canFetchDataForFr(ApiStationId stationId) {
         try {
-            Set<LastFewDays> dataSet = frenchLast30DaysSampleFetchService.fetchLast30DaysSamples(Set.of(stationId));
-            return dataSet.size() == 1;
+            List<Sample> samples = frenchLast30DaysSampleFetchService.fetchLatestSamples(Set.of(stationId));
+            return samples.size() == 1;
         } catch (Exception e) {
             return false;
         }

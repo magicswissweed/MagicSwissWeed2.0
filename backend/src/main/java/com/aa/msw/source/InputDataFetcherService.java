@@ -8,7 +8,6 @@ import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Forecast;
-import com.aa.msw.model.LastFewDays;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.notifications.NotificationService;
@@ -24,7 +23,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -147,13 +145,8 @@ public class InputDataFetcherService {
 
     private void fetchAndWriteFrenchLatestSample(Set<ApiStationId> stationIds) {
         // France does not have a call for the latest sample, so we fetch the last 30 days and use the newest as our current sample.
-        Set<LastFewDays> lastFewDaysSet = frenchLast30DaysSampleFetchService.fetchLast30DaysSamples(stationIds);
-        if (!lastFewDaysSet.isEmpty()) {
-            List<Sample> currentSamples = lastFewDaysSet.stream()
-                    .map(LastFewDays::getLatestMeasurementAsSample)
-                    .filter(Objects::nonNull)
-                    .toList();
-
+        List<Sample> currentSamples = frenchLast30DaysSampleFetchService.fetchLatestSamples(stationIds);
+        if (!currentSamples.isEmpty()) {
             sampleDao.persistSamplesIfNotExist(currentSamples);
         }
     }
