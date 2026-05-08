@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class SampleApiService {
 
-    private static final int LAST_FEW_DAYS_WINDOW = 10;
+    private static final int LAST_FEW_DAYS_WINDOW = 8;
 
     private final SampleDao sampleDao;
 
