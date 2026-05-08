@@ -1,6 +1,7 @@
 package com.aa.msw.integrationtest.spots;
 
 import com.aa.msw.gen.api.AddPrivateSpotRequest;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiSpot;
 import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.integrationtest.IntegrationTest;
@@ -42,8 +43,9 @@ public class SpotsTest extends IntegrationTest {
                                                 apiStationId(Country.CH, "2018"),
                                                 ApiSpot.SpotTypeEnum.RIVER_SURF,
                                                 false,
-                                                20,
-                                                30,
+                                                ApiMeasurementType.FLOW,
+                                                20.0,
+                                                30.0,
                                                 null,
                                                 false
                                         ),

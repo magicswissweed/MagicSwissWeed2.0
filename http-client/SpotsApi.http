@@ -24,8 +24,9 @@ Content-Type: application/json
     "stationId": 2099,
     "spotType": "RIVER_SURF",
     "isPublic": false,
-    "minFlow": 800,
-    "maxFlow": 1000
+    "measurementType": "FLOW",
+    "minValue": 800,
+    "maxValue": 1000
   },
   "position": 0
 }
@@ -45,7 +46,8 @@ Content-Type: application/json
     "stationId": 2099,
     "spotType": "RIVER_SURF",
     "isPublic": false,
-    "minFlow": 400,
-    "maxFlow": 500
+    "measurementType": "FLOW",
+    "minValue": 400,
+    "maxValue": 500
   }
 }

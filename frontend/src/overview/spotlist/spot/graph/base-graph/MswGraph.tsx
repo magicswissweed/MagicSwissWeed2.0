@@ -1,8 +1,10 @@
-import {ApiFlowSample} from "../../../../../gen/msw-api-ts";
 import {SpotModel} from "../../../../../model/SpotModel";
 import {Config, Layout} from 'plotly.js';
 import {MswTheme} from "../../../../../theme/MswThemeContext";
 import {getThemeDependingColors, ThemeDependingColors} from "../../../../../theme/MswThemeHelper";
+
+// Structural type covering ApiSample, ApiLineEntry, and ad-hoc {timestamp, value} points.
+export type TimeSeriesPoint = { timestamp: string; value: number };
 
 export class MswGraphProps {
     spot: SpotModel;
@@ -35,13 +37,13 @@ export const plotColors = {
 };
 
 // Extract timestamps from a data series
-export function getTimestamps(data: ApiFlowSample[]): string[] {
+export function getTimestamps(data: TimeSeriesPoint[]): string[] {
     return data.map(item => item.timestamp).sort()
 }
 
-// Extract flows from a data series
-export function getFlows(data: ApiFlowSample[]): number[] {
-    return data.map(item => item.flow);
+// Extract values from a data series
+export function getValues(data: TimeSeriesPoint[]): number[] {
+    return data.map(item => item.value);
 }
 
 // Get timestamps at a specific hour (and minute)
@@ -54,7 +56,7 @@ export function getTicksAt(hour: number, timestamps: Array<string>, minute: numb
 
 // Create a trace for Plotly with common defaults
 export function createTrace(
-    data: ApiFlowSample[],
+    data: TimeSeriesPoint[],
     showTooltip: boolean,
     isMini: boolean,
     color?: string,
@@ -62,7 +64,7 @@ export function createTrace(
     const isMobile = window.innerWidth <= 720;
     return {
         x: getTimestamps(data),
-        y: getFlows(data),
+        y: getValues(data),
         type: 'scatter' as const,
         mode: 'lines' as const,
         line: {width: 1, shape: 'spline' as const, color},
@@ -74,8 +76,8 @@ export function createTrace(
 }
 
 export function createAreaTrace(
-    upperData: ApiFlowSample[],
-    lowerData: ApiFlowSample[],
+    upperData: TimeSeriesPoint[],
+    lowerData: TimeSeriesPoint[],
     name: string,
     fillcolor: string,
     isMini: boolean) {
@@ -104,8 +106,8 @@ export const commonPlotlyConfig: Partial<Config> = {
 export function getCommonPlotlyLayout(
     isMini: boolean,
     allTimestamps: string[],
-    minFlow: number,
-    maxFlow: number,
+    minValue: number,
+    maxValue: number,
     showCurrentTimeLine: boolean,
     theme: MswTheme
 ): Partial<Layout> {
@@ -163,12 +165,12 @@ export function getCommonPlotlyLayout(
                     : []
             ),
             // Horizontal band for acceptable flow range
-            ...(minFlow !== undefined && maxFlow !== undefined && allTimestamps.length > 0 ? [{
+            ...(minValue !== undefined && maxValue !== undefined && allTimestamps.length > 0 ? [{
                 type: 'rect' as const,
                 x0: allTimestamps[0],
                 x1: allTimestamps[allTimestamps.length - 1],
-                y0: minFlow,
-                y1: maxFlow,
+                y0: minValue,
+                y1: maxValue,
                 fillcolor: plotColors.acceptableRange.fill,
                 line: {width: 0},
                 layer: 'below' as const

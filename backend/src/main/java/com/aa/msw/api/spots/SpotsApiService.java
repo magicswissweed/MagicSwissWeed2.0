@@ -28,6 +28,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.aa.msw.gen.api.ApiMeasurementType.TEMPERATURE;
+
 @Service
 public class SpotsApiService {
     private static final Logger LOG = LoggerFactory.getLogger(SpotsApiService.class);
@@ -74,7 +76,7 @@ public class SpotsApiService {
 
     public void addPrivateSpot(Spot spot, int position, boolean withNotification) throws NoSampleAvailableException {
         spotDbService.addPrivateSpot(spot, position, withNotification);
-        triggerImmediateFrenchFetchIfNeeded(spot.stationId());
+        triggerImmediateFrenchFetchIfNeeded(spot.stationId(), spot.measurementType());
     }
 
     public void editSpot(Spot updatedSpot, boolean withNotification) throws NoSampleAvailableException {
@@ -85,8 +87,9 @@ public class SpotsApiService {
                     updatedSpot.type(),
                     updatedSpot.name(),
                     updatedSpot.stationId(),
-                    updatedSpot.minFlow(),
-                    updatedSpot.maxFlow()
+                    updatedSpot.measurementType(),
+                    updatedSpot.minValue(),
+                    updatedSpot.maxValue()
             );
             UserToSpot oldUserToPublicSpotMapping = userToSpotDao.get(UserContext.getCurrentUser().userId(), updatedSpot.spotId());
             deleteMapping(oldUserToPublicSpotMapping);
@@ -94,7 +97,7 @@ public class SpotsApiService {
         } else {
             editPrivateSpot(updatedSpot);
             userToSpotDao.setWithNotification(updatedSpot.spotId(), withNotification);
-            triggerImmediateFrenchFetchIfNeeded(updatedSpot.stationId());
+            triggerImmediateFrenchFetchIfNeeded(updatedSpot.stationId(), updatedSpot.measurementType());
         }
     }
 
@@ -103,12 +106,12 @@ public class SpotsApiService {
      * any sample table yet. Kick off an immediate fetch so the user doesn't have to wait for the next
      * scheduled tick (~20 minutes).
      */
-    private void triggerImmediateFrenchFetchIfNeeded(ApiStationId stationId) {
+    private void triggerImmediateFrenchFetchIfNeeded(ApiStationId stationId, ApiMeasurementType measurementType) {
         if (stationId == null || stationId.getCountry() != CountryEnum.FR) {
             return;
         }
         try {
-            sampleDao.getCurrentSample(stationId);
+            sampleDao.getCurrentSample(stationId, measurementType);
         } catch (NoDataAvailableException e) {
             inputDataFetcherService.triggerFrenchFetchForStationAsync(stationId);
         }
@@ -140,10 +143,16 @@ public class SpotsApiService {
 
     private List<ApiSpotInformation> getApiSpotInformationList(List<Spot> spots) {
         List<ApiSpotInformation> spotInformationList = new ArrayList<>();
+        var supportedByStation = sampleDao.getSupportedMeasurementsByStation();
         for (Spot spot : spots) {
             try {
                 Station station = stationApiService.getStation(spot.stationId());
-                ApiStation apiStation = new ApiStation(station.stationId(), station.label(), station.latitude(), station.longitude());
+                ApiStation apiStation = new ApiStation(
+                        station.stationId(),
+                        station.label(),
+                        station.latitude(),
+                        station.longitude(),
+                        new ArrayList<>(supportedByStation.getOrDefault(spot.stationId(), java.util.Set.of())));
 
                 boolean withNotification = !spot.isPublic() && userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
 
@@ -151,17 +160,19 @@ public class SpotsApiService {
                         .id(spot.spotId().getId())
                         .name(spot.name())
                         .isPublic(spot.isPublic())
-                        .minFlow(spot.minFlow())
-                        .maxFlow(spot.maxFlow())
+                        .measurementType(spot.measurementType())
+                        .minValue(spot.minValue())
+                        .maxValue(spot.maxValue())
                         .stationId(spot.stationId())
                         .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
+                        .currentTemperature(getCurrentTemperatureOrNull(spot.stationId()))
                         .station(apiStation)
                         .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
                         .withNotification(withNotification)
                         .dataPending(false);
 
                 try {
-                    info.currentSample(sampleApiService.getCurrentSample(spot.stationId()));
+                    info.currentSample(sampleApiService.getCurrentSample(spot.stationId(), spot.measurementType()));
                 } catch (NoDataAvailableException e) {
                     // No sample yet (e.g. a freshly added spot whose station has not been fetched).
                     // Return the spot anyway so the frontend can show a "fetching data" placeholder.
@@ -174,6 +185,14 @@ public class SpotsApiService {
             }
         }
         return spotInformationList;
+    }
+
+    private ApiSample getCurrentTemperatureOrNull(ApiStationId stationId) {
+        try {
+            return sampleApiService.getCurrentSample(stationId, TEMPERATURE);
+        } catch (NoDataAvailableException e) {
+            return null;
+        }
     }
 
     private ApiFlowStatusEnum getFlowStatusEnum(SpotId spotId) {

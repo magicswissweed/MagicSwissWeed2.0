@@ -2,9 +2,13 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -19,7 +23,7 @@ import jakarta.annotation.Generated;
  * ApiStation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T09:33:27.589237+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:57:59.542031+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiStation {
 
   private ApiStationId id;
@@ -30,6 +34,9 @@ public class ApiStation {
 
   private Double longitude;
 
+  @Valid
+  private List<ApiMeasurementType> supportedMeasurements = new ArrayList<>();
+
   public ApiStation() {
     super();
   }
@@ -37,11 +44,12 @@ public class ApiStation {
   /**
    * Constructor with only required parameters
    */
-  public ApiStation(ApiStationId id, String label, Double latitude, Double longitude) {
+  public ApiStation(ApiStationId id, String label, Double latitude, Double longitude, List<ApiMeasurementType> supportedMeasurements) {
     this.id = id;
     this.label = label;
     this.latitude = latitude;
     this.longitude = longitude;
+    this.supportedMeasurements = supportedMeasurements;
   }
 
   public ApiStation id(ApiStationId id) {
@@ -124,6 +132,34 @@ public class ApiStation {
     this.longitude = longitude;
   }
 
+  public ApiStation supportedMeasurements(List<ApiMeasurementType> supportedMeasurements) {
+    this.supportedMeasurements = supportedMeasurements;
+    return this;
+  }
+
+  public ApiStation addSupportedMeasurementsItem(ApiMeasurementType supportedMeasurementsItem) {
+    if (this.supportedMeasurements == null) {
+      this.supportedMeasurements = new ArrayList<>();
+    }
+    this.supportedMeasurements.add(supportedMeasurementsItem);
+    return this;
+  }
+
+  /**
+   * Get supportedMeasurements
+   * @return supportedMeasurements
+  */
+  @NotNull @Valid 
+  @Schema(name = "supportedMeasurements", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("supportedMeasurements")
+  public List<ApiMeasurementType> getSupportedMeasurements() {
+    return supportedMeasurements;
+  }
+
+  public void setSupportedMeasurements(List<ApiMeasurementType> supportedMeasurements) {
+    this.supportedMeasurements = supportedMeasurements;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -136,12 +172,13 @@ public class ApiStation {
     return Objects.equals(this.id, apiStation.id) &&
         Objects.equals(this.label, apiStation.label) &&
         Objects.equals(this.latitude, apiStation.latitude) &&
-        Objects.equals(this.longitude, apiStation.longitude);
+        Objects.equals(this.longitude, apiStation.longitude) &&
+        Objects.equals(this.supportedMeasurements, apiStation.supportedMeasurements);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, label, latitude, longitude);
+    return Objects.hash(id, label, latitude, longitude, supportedMeasurements);
   }
 
   @Override
@@ -152,6 +189,7 @@ public class ApiStation {
     sb.append("    label: ").append(toIndentedString(label)).append("\n");
     sb.append("    latitude: ").append(toIndentedString(latitude)).append("\n");
     sb.append("    longitude: ").append(toIndentedString(longitude)).append("\n");
+    sb.append("    supportedMeasurements: ").append(toIndentedString(supportedMeasurements)).append("\n");
     sb.append("}");
     return sb.toString();
   }

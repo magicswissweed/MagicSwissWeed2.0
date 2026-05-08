@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.records;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 
 import java.time.OffsetDateTime;
@@ -68,40 +69,25 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     }
 
     /**
-     * Setter for <code>public.sample_table.temperature</code>.
+     * Setter for <code>public.sample_table.value</code>.
      */
-    public SampleTableRecord setTemperature(Float value) {
+    public SampleTableRecord setValue(Float value) {
         set(3, value);
         return this;
     }
 
     /**
-     * Getter for <code>public.sample_table.temperature</code>.
+     * Getter for <code>public.sample_table.value</code>.
      */
-    public Float getTemperature() {
+    public Float getValue() {
         return (Float) get(3);
-    }
-
-    /**
-     * Setter for <code>public.sample_table.flow</code>.
-     */
-    public SampleTableRecord setFlow(Float value) {
-        set(4, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>public.sample_table.flow</code>.
-     */
-    public Float getFlow() {
-        return (Float) get(4);
     }
 
     /**
      * Setter for <code>public.sample_table.country</code>.
      */
     public SampleTableRecord setCountry(Country value) {
-        set(5, value);
+        set(4, value);
         return this;
     }
 
@@ -109,7 +95,22 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
      * Getter for <code>public.sample_table.country</code>.
      */
     public Country getCountry() {
-        return (Country) get(5);
+        return (Country) get(4);
+    }
+
+    /**
+     * Setter for <code>public.sample_table.measurement_type</code>.
+     */
+    public SampleTableRecord setMeasurementType(MeasurementType value) {
+        set(5, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.sample_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return (MeasurementType) get(5);
     }
 
     // -------------------------------------------------------------------------
@@ -135,15 +136,15 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Create a detached, initialised SampleTableRecord
      */
-    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float temperature, Float flow, Country country) {
+    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float value, Country country, MeasurementType measurementType) {
         super(SampleTable.SAMPLE_TABLE);
 
         setId(id);
         setStationid(stationid);
         setTimestamp(timestamp);
-        setTemperature(temperature);
-        setFlow(flow);
+        setValue(value);
         setCountry(country);
+        setMeasurementType(measurementType);
         resetChangedOnNotNull();
     }
 
@@ -157,9 +158,9 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
             setId(value.getId());
             setStationid(value.getStationid());
             setTimestamp(value.getTimestamp());
-            setTemperature(value.getTemperature());
-            setFlow(value.getFlow());
+            setValue(value.getValue());
             setCountry(value.getCountry());
+            setMeasurementType(value.getMeasurementType());
             resetChangedOnNotNull();
         }
     }

@@ -2,6 +2,7 @@ package com.aa.msw.database.repository;
 
 import com.aa.msw.database.helpers.id.HistoricalYearsDataId;
 import com.aa.msw.database.repository.dao.HistoricalYearsDataDao;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 import com.aa.msw.gen.jooq.tables.daos.HistoricalYearsDataTableDao;
 import com.aa.msw.gen.jooq.tables.records.HistoricalYearsDataTableRecord;
@@ -103,6 +104,7 @@ public class HistoricalYearsDataRepository extends AbstractRepository
         record.setMin(orderedMapToJsonb(historicalYearsData.getMin()));
         record.setMax(orderedMapToJsonb(historicalYearsData.getMax()));
         record.setCurrentYear(orderedMapToJsonb(historicalYearsData.getCurrentYear()));
+        record.setMeasurementType(MeasurementType.FLOW);
         return record;
     }
 
@@ -123,12 +125,14 @@ public class HistoricalYearsDataRepository extends AbstractRepository
     @Override
     public Set<HistoricalYearsData> getAllHistoricalYearsData() {
         return dsl.selectFrom(TABLE)
+                .where(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW))
                 .fetchSet(this::mapRecord);
     }
 
     @Override
     public void deleteAll() {
         dsl.deleteFrom(TABLE)
+                .where(TABLE.MEASUREMENT_TYPE.eq(MeasurementType.FLOW))
                 .execute();
     }
 }

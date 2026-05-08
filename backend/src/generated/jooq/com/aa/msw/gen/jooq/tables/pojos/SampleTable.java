@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.pojos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,33 +23,33 @@ public class SampleTable implements Serializable {
     private final UUID id;
     private final String stationid;
     private final OffsetDateTime timestamp;
-    private final Float temperature;
-    private final Float flow;
+    private final Float value;
     private final Country country;
+    private final MeasurementType measurementType;
 
     public SampleTable(SampleTable value) {
         this.id = value.id;
         this.stationid = value.stationid;
         this.timestamp = value.timestamp;
-        this.temperature = value.temperature;
-        this.flow = value.flow;
+        this.value = value.value;
         this.country = value.country;
+        this.measurementType = value.measurementType;
     }
 
     public SampleTable(
         UUID id,
         String stationid,
         OffsetDateTime timestamp,
-        Float temperature,
-        Float flow,
-        Country country
+        Float value,
+        Country country,
+        MeasurementType measurementType
     ) {
         this.id = id;
         this.stationid = stationid;
         this.timestamp = timestamp;
-        this.temperature = temperature;
-        this.flow = flow;
+        this.value = value;
         this.country = country;
+        this.measurementType = measurementType;
     }
 
     /**
@@ -73,17 +74,10 @@ public class SampleTable implements Serializable {
     }
 
     /**
-     * Getter for <code>public.sample_table.temperature</code>.
+     * Getter for <code>public.sample_table.value</code>.
      */
-    public Float getTemperature() {
-        return this.temperature;
-    }
-
-    /**
-     * Getter for <code>public.sample_table.flow</code>.
-     */
-    public Float getFlow() {
-        return this.flow;
+    public Float getValue() {
+        return this.value;
     }
 
     /**
@@ -91,6 +85,13 @@ public class SampleTable implements Serializable {
      */
     public Country getCountry() {
         return this.country;
+    }
+
+    /**
+     * Getter for <code>public.sample_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return this.measurementType;
     }
 
     @Override
@@ -120,23 +121,23 @@ public class SampleTable implements Serializable {
         }
         else if (!this.timestamp.equals(other.timestamp))
             return false;
-        if (this.temperature == null) {
-            if (other.temperature != null)
+        if (this.value == null) {
+            if (other.value != null)
                 return false;
         }
-        else if (!this.temperature.equals(other.temperature))
-            return false;
-        if (this.flow == null) {
-            if (other.flow != null)
-                return false;
-        }
-        else if (!this.flow.equals(other.flow))
+        else if (!this.value.equals(other.value))
             return false;
         if (this.country == null) {
             if (other.country != null)
                 return false;
         }
         else if (!this.country.equals(other.country))
+            return false;
+        if (this.measurementType == null) {
+            if (other.measurementType != null)
+                return false;
+        }
+        else if (!this.measurementType.equals(other.measurementType))
             return false;
         return true;
     }
@@ -148,9 +149,9 @@ public class SampleTable implements Serializable {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.stationid == null) ? 0 : this.stationid.hashCode());
         result = prime * result + ((this.timestamp == null) ? 0 : this.timestamp.hashCode());
-        result = prime * result + ((this.temperature == null) ? 0 : this.temperature.hashCode());
-        result = prime * result + ((this.flow == null) ? 0 : this.flow.hashCode());
+        result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
+        result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
         return result;
     }
 
@@ -161,9 +162,9 @@ public class SampleTable implements Serializable {
         sb.append(id);
         sb.append(", ").append(stationid);
         sb.append(", ").append(timestamp);
-        sb.append(", ").append(temperature);
-        sb.append(", ").append(flow);
+        sb.append(", ").append(value);
         sb.append(", ").append(country);
+        sb.append(", ").append(measurementType);
 
         sb.append(")");
         return sb.toString();

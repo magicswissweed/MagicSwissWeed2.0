@@ -3,6 +3,7 @@ package com.aa.msw.model;
 import com.aa.msw.database.helpers.id.HasId;
 import com.aa.msw.database.helpers.id.LastFewDaysId;
 import com.aa.msw.database.helpers.id.SampleId;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import lombok.Getter;
 
@@ -28,8 +29,8 @@ public record LastFewDays(
                     new SampleId(),
                     stationId,
                     latestEntryValue.getKey(),
-                    Optional.empty(),
-                    latestEntryValue.getValue()
+                    latestEntryValue.getValue(),
+                    ApiMeasurementType.FLOW
             );
         }
         return null;

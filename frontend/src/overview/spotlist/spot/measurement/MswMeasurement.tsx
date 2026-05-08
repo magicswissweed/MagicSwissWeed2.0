@@ -1,7 +1,8 @@
 import './MswMeasurement.scss'
 import {Component} from 'react';
 import {SpotModel} from "../../../../model/SpotModel";
-import {formatFlow} from "../../../../utils/formatFlow";
+import {formatValue} from "../../../../utils/formatValue";
+import {ApiMeasurementType} from "../../../../gen/msw-api-ts";
 
 interface MeasurementsProps {
     spot: SpotModel
@@ -30,31 +31,33 @@ export class MswMeasurement extends Component<MeasurementsProps> {
             <div className="measurements"
                  tabIndex={0}>
                 <div className="measurement_row meas flow">
-                    {this.getFlow(this.spot.currentSample.flow)}
+                    {this.getMeasurement(this.spot.currentSample.value)}
                 </div>
 
-                {this.spot.currentSample.temperature &&
+                {this.spot.currentTemperature &&
                     <div className="measurement_row meas temp">
-                        {this.getTemp(this.spot.currentSample.temperature)}
+                        {this.getTemp(this.spot.currentTemperature.value)}
                     </div>
                 }
             </div>
         </>;
     }
 
-    private getFlow(flow: number) {
+    private getMeasurement(value: number) {
+        let flowUnit = <>m<sup>3</sup>/s</>;
+        let heightUnit = "cm";
         return <>
-            <div className={this.spot.flowStatus}>{formatFlow(flow)}</div>
+            <div className={this.spot.flowStatus}>{formatValue(value)}</div>
             <div className="unit">
-                m<sup>3</sup>/s
+                {this.spot.measurementType === ApiMeasurementType.Height ? heightUnit : flowUnit}
             </div>
         </>;
     }
 
 
-    private getTemp(temperature: number) {
+    private getTemp(temp: number) {
         return <>
-            <div>{temperature}</div>
+            <div>{temp.toFixed(1)}</div>
             <div className="unit">°C</div>
         </>;
     }

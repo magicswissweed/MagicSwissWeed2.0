@@ -1,0 +1,1 @@
+ALTER TYPE country ADD VALUE 'DE_BW';

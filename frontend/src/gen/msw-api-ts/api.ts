@@ -45,25 +45,6 @@ export interface AddPrivateSpotRequest {
 /**
  * 
  * @export
- * @interface ApiFlowSample
- */
-export interface ApiFlowSample {
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiFlowSample
-     */
-    'timestamp': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiFlowSample
-     */
-    'flow': number;
-}
-/**
- * 
- * @export
  * @enum {string}
  */
 
@@ -185,8 +166,23 @@ export interface ApiLineEntry {
      * @type {number}
      * @memberof ApiLineEntry
      */
-    'flow': number;
+    'value': number;
 }
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const ApiMeasurementType = {
+    Flow: 'FLOW',
+    Height: 'HEIGHT',
+    Temperature: 'TEMPERATURE'
+} as const;
+
+export type ApiMeasurementType = typeof ApiMeasurementType[keyof typeof ApiMeasurementType];
+
+
 /**
  * 
  * @export
@@ -204,14 +200,16 @@ export interface ApiSample {
      * @type {number}
      * @memberof ApiSample
      */
-    'temperature'?: number;
+    'value': number;
     /**
      * 
-     * @type {number}
+     * @type {ApiMeasurementType}
      * @memberof ApiSample
      */
-    'flow': number;
+    'measurementType': ApiMeasurementType;
 }
+
+
 /**
  * 
  * @export
@@ -250,16 +248,22 @@ export interface ApiSpot {
     'isPublic': boolean;
     /**
      * 
-     * @type {number}
+     * @type {ApiMeasurementType}
      * @memberof ApiSpot
      */
-    'minFlow': number;
+    'measurementType': ApiMeasurementType;
     /**
      * 
      * @type {number}
      * @memberof ApiSpot
      */
-    'maxFlow': number;
+    'minValue': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ApiSpot
+     */
+    'maxValue': number;
     /**
      * 
      * @type {ApiStation}
@@ -319,16 +323,22 @@ export interface ApiSpotInformation {
     'isPublic': boolean;
     /**
      * 
-     * @type {number}
+     * @type {ApiMeasurementType}
      * @memberof ApiSpotInformation
      */
-    'minFlow': number;
+    'measurementType': ApiMeasurementType;
     /**
      * 
      * @type {number}
      * @memberof ApiSpotInformation
      */
-    'maxFlow': number;
+    'minValue': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ApiSpotInformation
+     */
+    'maxValue': number;
     /**
      * 
      * @type {ApiStation}
@@ -347,6 +357,12 @@ export interface ApiSpotInformation {
      * @memberof ApiSpotInformation
      */
     'currentSample'?: ApiSample;
+    /**
+     * 
+     * @type {ApiSample}
+     * @memberof ApiSpotInformation
+     */
+    'currentTemperature'?: ApiSample;
     /**
      * 
      * @type {ApiFlowStatusEnum}
@@ -398,6 +414,12 @@ export interface ApiStation {
      * @memberof ApiStation
      */
     'longitude': number;
+    /**
+     * 
+     * @type {Array<ApiMeasurementType>}
+     * @memberof ApiStation
+     */
+    'supportedMeasurements': Array<ApiMeasurementType>;
 }
 /**
  * 
@@ -428,7 +450,8 @@ export interface ApiStationId {
 
 export const CountryEnum = {
     Ch: 'CH',
-    Fr: 'FR'
+    Fr: 'FR',
+    DeBw: 'DE_BW'
 } as const;
 
 export type CountryEnum = typeof CountryEnum[keyof typeof CountryEnum];
@@ -512,10 +535,10 @@ export interface StationToLastFewDays {
     'station': ApiStationId;
     /**
      * 
-     * @type {Array<ApiFlowSample>}
+     * @type {Array<ApiSample>}
      * @memberof StationToLastFewDays
      */
-    'lastFewDays': Array<ApiFlowSample>;
+    'lastFewDays': Array<ApiSample>;
 }
 
 /**

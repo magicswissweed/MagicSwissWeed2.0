@@ -7,6 +7,7 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 
 import java.time.OffsetDateTime;
@@ -70,19 +71,19 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     public final TableField<SampleTableRecord, OffsetDateTime> TIMESTAMP = createField(DSL.name("timestamp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
-     * The column <code>public.sample_table.temperature</code>.
+     * The column <code>public.sample_table.value</code>.
      */
-    public final TableField<SampleTableRecord, Float> TEMPERATURE = createField(DSL.name("temperature"), SQLDataType.REAL, this, "");
-
-    /**
-     * The column <code>public.sample_table.flow</code>.
-     */
-    public final TableField<SampleTableRecord, Float> FLOW = createField(DSL.name("flow"), SQLDataType.REAL, this, "");
+    public final TableField<SampleTableRecord, Float> VALUE = createField(DSL.name("value"), SQLDataType.REAL, this, "");
 
     /**
      * The column <code>public.sample_table.country</code>.
      */
     public final TableField<SampleTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+
+    /**
+     * The column <code>public.sample_table.measurement_type</code>.
+     */
+    public final TableField<SampleTableRecord, MeasurementType> MEASUREMENT_TYPE = createField(DSL.name("measurement_type"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'FLOW'::measurement_type"), SQLDataType.VARCHAR)).asEnumDataType(MeasurementType.class), this, "");
 
     private SampleTable(Name alias, Table<SampleTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

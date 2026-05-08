@@ -164,11 +164,11 @@ public class SpotDbService {
 
     private FlowStatusEnum getCurrentFlowStatusEnum(Spot spot) {
         try {
-            Sample currentSample = sampleDao.getCurrentSample(spot.stationId());
-            if (isInSurfableRange(spot, currentSample.flow())) {
+            Sample currentSample = sampleDao.getCurrentSample(spot.stationId(), spot.measurementType());
+            if (isInSurfableRange(spot, currentSample.value())) {
                 return FlowStatusEnum.GOOD;
             }
-            Forecast forecast = forecastDao.getCurrentForecast(spot.stationId());
+            Forecast forecast = forecastDao.getCurrentForecast(spot.stationId(), spot.measurementType());
             Optional<Double> minOfForecast = forecast.min().values().stream().min(Double::compareTo);
             Optional<Double> maxOfForecast = forecast.max().values().stream().max(Double::compareTo);
 
@@ -178,7 +178,7 @@ public class SpotDbService {
 
                 if (isInSurfableRange(spot, min) ||
                         isInSurfableRange(spot, max) ||
-                        (min < spot.minFlow() && max > spot.maxFlow())) {
+                        (min < spot.minValue() && max > spot.maxValue())) {
                     return FlowStatusEnum.TENDENCY_TO_BECOME_GOOD;
                 }
             }
@@ -188,7 +188,7 @@ public class SpotDbService {
         return FlowStatusEnum.BAD;
     }
 
-    private boolean isInSurfableRange(Spot spot, Double flow) {
-        return flow > spot.minFlow() && flow < spot.maxFlow();
+    private boolean isInSurfableRange(Spot spot, Double value) {
+        return value > spot.minValue() && value < spot.maxValue();
     }
 }

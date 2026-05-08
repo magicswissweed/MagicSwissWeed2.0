@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.daos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 
@@ -102,33 +103,18 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
     }
 
     /**
-     * Fetch records that have <code>temperature BETWEEN lowerInclusive AND
+     * Fetch records that have <code>value BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfTemperature(Float lowerInclusive, Float upperInclusive) {
-        return fetchRange(SampleTable.SAMPLE_TABLE.TEMPERATURE, lowerInclusive, upperInclusive);
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfValue(Float lowerInclusive, Float upperInclusive) {
+        return fetchRange(SampleTable.SAMPLE_TABLE.VALUE, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>temperature IN (values)</code>
+     * Fetch records that have <code>value IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByTemperature(Float... values) {
-        return fetch(SampleTable.SAMPLE_TABLE.TEMPERATURE, values);
-    }
-
-    /**
-     * Fetch records that have <code>flow BETWEEN lowerInclusive AND
-     * upperInclusive</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfFlow(Float lowerInclusive, Float upperInclusive) {
-        return fetchRange(SampleTable.SAMPLE_TABLE.FLOW, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>flow IN (values)</code>
-     */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByFlow(Float... values) {
-        return fetch(SampleTable.SAMPLE_TABLE.FLOW, values);
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByValue(Float... values) {
+        return fetch(SampleTable.SAMPLE_TABLE.VALUE, values);
     }
 
     /**
@@ -144,5 +130,20 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
      */
     public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByCountry(Country... values) {
         return fetch(SampleTable.SAMPLE_TABLE.COUNTRY, values);
+    }
+
+    /**
+     * Fetch records that have <code>measurement_type BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfMeasurementType(MeasurementType lowerInclusive, MeasurementType upperInclusive) {
+        return fetchRange(SampleTable.SAMPLE_TABLE.MEASUREMENT_TYPE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>measurement_type IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByMeasurementType(MeasurementType... values) {
+        return fetch(SampleTable.SAMPLE_TABLE.MEASUREMENT_TYPE, values);
     }
 }

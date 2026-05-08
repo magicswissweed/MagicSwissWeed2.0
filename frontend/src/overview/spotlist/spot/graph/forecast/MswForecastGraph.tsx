@@ -20,7 +20,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
 
     // Get data for plotting
     const {currentSample} = props.spot ?? {};
-    const {minFlow, maxFlow} = props.spot ?? {};
+    const {minValue, maxValue} = props.spot ?? {};
     const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.spot.forecast ?? {};
 
     // Get timestamps for x-axis grid and labels
@@ -39,7 +39,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     // Process all data series
     const processedData = {
         measured: currentSample
-            ? [...measuredData ?? [], {timestamp: currentSample.timestamp, flow: currentSample.flow}]
+            ? [...measuredData ?? [], {timestamp: currentSample.timestamp, value: currentSample.value}]
             : measuredData,
         median: removeSamplesBeforeCurrentTime(median ?? []),
         min: removeSamplesBeforeCurrentTime(min ?? []),
@@ -52,7 +52,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     let midDayTicks = getTicksAt(12, allTimestamps);
     let startOfDayTicks = getTicksAt(0, allTimestamps)
     const layout = useMemo(() => {
-        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow, true, theme);
+        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minValue, maxValue, true, theme);
 
         return {
             ...baseLayout,
@@ -93,8 +93,8 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     }, [
         props.isMini,
         allTimestamps,
-        minFlow,
-        maxFlow,
+        minValue,
+        maxValue,
         theme
     ]);
 

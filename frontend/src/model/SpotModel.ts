@@ -1,8 +1,8 @@
 import {
-    ApiFlowSample,
     ApiFlowStatusEnum,
     ApiForecast,
     ApiHistoricalYears,
+    ApiMeasurementType,
     ApiSample,
     ApiSpotInformationSpotTypeEnum,
     ApiStation,
@@ -15,15 +15,17 @@ export class SpotModel {
     stationId: ApiStationId;
     spotType: ApiSpotInformationSpotTypeEnum;
     isPublic: boolean;
-    minFlow: number;
-    maxFlow: number;
+    measurementType: ApiMeasurementType;
+    minValue: number;
+    maxValue: number;
     station: ApiStation;
     currentSample: ApiSample | undefined;
+    currentTemperature: ApiSample | undefined;
     flowStatus: FlowColorEnum;
     forecastLoaded: boolean;
     forecast: ApiForecast | undefined;
     lastFewDaysLoaded: boolean;
-    lastFewDays: Array<ApiFlowSample> | undefined;
+    lastFewDays: Array<ApiSample> | undefined;
     historical: ApiHistoricalYears | undefined;
     withNotification: boolean;
     dataPending: boolean;
@@ -34,15 +36,17 @@ export class SpotModel {
         stationId: ApiStationId,
         spotType: ApiSpotInformationSpotTypeEnum,
         isPublic: boolean,
-        minFlow: number,
-        maxFlow: number,
+        measurementType: ApiMeasurementType,
+        minValue: number,
+        maxValue: number,
         station: ApiStation,
         currentSample: ApiSample | undefined,
+        currentTemperature: ApiSample | undefined,
         flowStatus: FlowColorEnum,
         forecastLoaded: boolean,
         forecast: ApiForecast | undefined,
         lastFewDaysLoaded: boolean,
-        lastFewDays: Array<ApiFlowSample> | undefined,
+        lastFewDays: Array<ApiSample> | undefined,
         historical: ApiHistoricalYears | undefined,
         withNotification: boolean,
         dataPending: boolean) {
@@ -51,10 +55,12 @@ export class SpotModel {
         this.stationId = stationId;
         this.spotType = spotType;
         this.isPublic = isPublic;
-        this.minFlow = minFlow;
-        this.maxFlow = maxFlow;
+        this.measurementType = measurementType;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
         this.station = station;
         this.currentSample = currentSample;
+        this.currentTemperature = currentTemperature;
         this.flowStatus = flowStatus
         this.forecastLoaded = forecastLoaded;
         this.lastFewDaysLoaded = lastFewDaysLoaded;

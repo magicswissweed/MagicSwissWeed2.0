@@ -21,7 +21,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         [
             ...props.spot.lastFewDays,
             ...(props.spot.currentSample
-                ? [{timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}]
+                ? [{timestamp: props.spot.currentSample.timestamp, value: props.spot.currentSample.value}]
                 : [])
         ] :
         [];
@@ -40,8 +40,8 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         const baseLayout = getCommonPlotlyLayout(
             props.isMini,
             getTimestamps(lineData),
-            props.spot.minFlow,
-            props.spot.maxFlow,
+            props.spot.minValue,
+            props.spot.maxValue,
             false,
             theme);
         return {
@@ -82,8 +82,8 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         };
     }, [
         props.isMini,
-        props.spot.minFlow,
-        props.spot.maxFlow,
+        props.spot.minValue,
+        props.spot.maxValue,
         lineData,
         theme
     ]);

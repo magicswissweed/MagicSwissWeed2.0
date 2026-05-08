@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.pojos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -24,24 +25,28 @@ public class LastFewDaysSamplesTable implements Serializable {
     private final String stationId;
     private final JSONB lastfewdayssamples;
     private final Country country;
+    private final MeasurementType measurementType;
 
     public LastFewDaysSamplesTable(LastFewDaysSamplesTable value) {
         this.dbId = value.dbId;
         this.stationId = value.stationId;
         this.lastfewdayssamples = value.lastfewdayssamples;
         this.country = value.country;
+        this.measurementType = value.measurementType;
     }
 
     public LastFewDaysSamplesTable(
         UUID dbId,
         String stationId,
         JSONB lastfewdayssamples,
-        Country country
+        Country country,
+        MeasurementType measurementType
     ) {
         this.dbId = dbId;
         this.stationId = stationId;
         this.lastfewdayssamples = lastfewdayssamples;
         this.country = country;
+        this.measurementType = measurementType;
     }
 
     /**
@@ -71,6 +76,14 @@ public class LastFewDaysSamplesTable implements Serializable {
      */
     public Country getCountry() {
         return this.country;
+    }
+
+    /**
+     * Getter for
+     * <code>public.last_few_days_samples_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return this.measurementType;
     }
 
     @Override
@@ -106,6 +119,12 @@ public class LastFewDaysSamplesTable implements Serializable {
         }
         else if (!this.country.equals(other.country))
             return false;
+        if (this.measurementType == null) {
+            if (other.measurementType != null)
+                return false;
+        }
+        else if (!this.measurementType.equals(other.measurementType))
+            return false;
         return true;
     }
 
@@ -117,6 +136,7 @@ public class LastFewDaysSamplesTable implements Serializable {
         result = prime * result + ((this.stationId == null) ? 0 : this.stationId.hashCode());
         result = prime * result + ((this.lastfewdayssamples == null) ? 0 : this.lastfewdayssamples.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
+        result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
         return result;
     }
 
@@ -128,6 +148,7 @@ public class LastFewDaysSamplesTable implements Serializable {
         sb.append(", ").append(stationId);
         sb.append(", ").append(lastfewdayssamples);
         sb.append(", ").append(country);
+        sb.append(", ").append(measurementType);
 
         sb.append(")");
         return sb.toString();

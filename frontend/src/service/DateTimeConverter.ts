@@ -1,4 +1,4 @@
-import {ApiFlowSample, ApiForecast, ApiHistoricalYears, ApiLineEntry, ApiSample} from "../gen/msw-api-ts";
+import {ApiForecast, ApiHistoricalYears, ApiLineEntry, ApiSample} from "../gen/msw-api-ts";
 import {DateTime} from "luxon";
 
 export class DateTimeConverter {
@@ -17,11 +17,11 @@ export class DateTimeConverter {
         }
     }
 
-    public static utcLastFewDaysToLocalTime(lastFewDays: Array<ApiFlowSample> | undefined): Array<ApiFlowSample> | undefined {
+    public static utcLastFewDaysToLocalTime(lastFewDays: Array<ApiSample>): Array<ApiSample> | undefined {
         if (lastFewDays === undefined || lastFewDays === null || lastFewDays.length === 0) {
             return lastFewDays;
         }
-        return this.utcApiFlowSampleArrayToLocalTime(lastFewDays);
+        return this.utcApiSampleArrayToLocalTime(lastFewDays);
     }
 
     public static utcHistoricalToLocalTime(historical: ApiHistoricalYears | undefined): ApiHistoricalYears | undefined {
@@ -60,14 +60,14 @@ export class DateTimeConverter {
         }
     }
 
-    private static utcApiFlowSampleArrayToLocalTime(apiFlowSamples: Array<ApiFlowSample>): Array<ApiFlowSample> {
-        return apiFlowSamples.map(d => this.utcApiFlowSampleToLocalTime(d)).sort();
+    private static utcApiSampleArrayToLocalTime(apiSamples: Array<ApiSample>): Array<ApiSample> {
+        return apiSamples.map(d => this.apiSampleToLocalTime(d)).sort();
     }
 
-    private static utcApiFlowSampleToLocalTime(apiFlowSample: ApiFlowSample): ApiFlowSample {
+    private static apiSampleToLocalTime(sample: ApiSample): ApiSample {
         return {
-            ...apiFlowSample,
-            timestamp: this.utcToLocalString(apiFlowSample.timestamp),
+            ...sample,
+            timestamp: this.utcToLocalString(sample.timestamp)
         }
     }
 

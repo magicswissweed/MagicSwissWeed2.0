@@ -11,6 +11,7 @@ import com.aa.msw.model.Station;
 import com.aa.msw.notifications.NotificationService;
 import com.aa.msw.notifications.NotificationSpotInfo;
 import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30DaysSampleFetchService;
+import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.forecast.SwissForecastFetchService;
 import com.aa.msw.source.swiss.hydrodaten.historical.lastfourty.SwissLast40DaysSampleFetchService;
@@ -42,13 +43,15 @@ public class InputDataFetcherService {
     private final LastFewDaysDao lastFewDaysDao;
     private final NotificationService notificationService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
+    private final BwSampleFetchService bwSampleFetchService;
 
     private boolean fetchedDataSinceRestart = false;
 
     private final AtomicBoolean isFetchingSwissData = new AtomicBoolean(false);
     private final AtomicBoolean isFetchingFrenchData = new AtomicBoolean(false);
+    private final AtomicBoolean isFetchingBwData = new AtomicBoolean(false);
 
-    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService) {
+    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
         this.swissSampleFetchService = swissSampleFetchService;
         this.swissForecastFetchService = swissForecastFetchService;
         this.stationDao = stationDao;
@@ -60,6 +63,7 @@ public class InputDataFetcherService {
         this.lastFewDaysDao = lastFewDaysDao;
         this.notificationService = notificationService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
+        this.bwSampleFetchService = bwSampleFetchService;
     }
 
     @Scheduled(cron = "0 1/10 * * * *")
@@ -76,6 +80,13 @@ public class InputDataFetcherService {
         // only fetch stations actually used by a spot, to avoid hammering the rate-limited Vigicrues API.
         Set<ApiStationId> frenchStationIds = spotDao.getReferencedStationIds(CountryEnum.FR);
         fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
+    }
+
+    // 05, 15, 25, ...
+    @Scheduled(cron = "0 5/10 * * * *")
+    void fetchBwDataAndWriteToDb() {
+        Set<ApiStationId> stationIds = filterByCountry(getAllStationIds(), CountryEnum.DE_BW);
+        fetchAndWriteToDb(stationIds, isFetchingBwData, CountryEnum.DE_BW, this::fetchAndWriteBwSamples);
     }
 
     private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForCountry, CountryEnum country, Consumer<Set<ApiStationId>> fetchForCountryFunction) {
@@ -150,6 +161,11 @@ public class InputDataFetcherService {
 
             sampleDao.persistSamplesIfNotExist(currentSamples);
         }
+    }
+
+    private void fetchAndWriteBwSamples(Set<ApiStationId> stationIds) {
+        List<Sample> samples = bwSampleFetchService.fetchSamples(stationIds);
+        sampleDao.persistSamplesIfNotExist(samples);
     }
 
     private void fetchAndWriteSwissSamples(Set<ApiStationId> stationIds) {

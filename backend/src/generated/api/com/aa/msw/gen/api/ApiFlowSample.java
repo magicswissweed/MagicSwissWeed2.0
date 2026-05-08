@@ -20,13 +20,13 @@ import jakarta.annotation.Generated;
  * ApiFlowSample
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T09:33:27.589237+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T14:06:17.017634+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiFlowSample {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime timestamp;
 
-  private Double flow;
+  private Double value;
 
   public ApiFlowSample() {
     super();
@@ -35,9 +35,9 @@ public class ApiFlowSample {
   /**
    * Constructor with only required parameters
    */
-  public ApiFlowSample(OffsetDateTime timestamp, Double flow) {
+  public ApiFlowSample(OffsetDateTime timestamp, Double value) {
     this.timestamp = timestamp;
-    this.flow = flow;
+    this.value = value;
   }
 
   public ApiFlowSample timestamp(OffsetDateTime timestamp) {
@@ -60,24 +60,24 @@ public class ApiFlowSample {
     this.timestamp = timestamp;
   }
 
-  public ApiFlowSample flow(Double flow) {
-    this.flow = flow;
+  public ApiFlowSample value(Double value) {
+    this.value = value;
     return this;
   }
 
   /**
-   * Get flow
-   * @return flow
+   * Get value
+   * @return value
   */
   @NotNull 
-  @Schema(name = "flow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("flow")
-  public Double getFlow() {
-    return flow;
+  @Schema(name = "value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("value")
+  public Double getValue() {
+    return value;
   }
 
-  public void setFlow(Double flow) {
-    this.flow = flow;
+  public void setValue(Double value) {
+    this.value = value;
   }
 
   @Override
@@ -90,12 +90,12 @@ public class ApiFlowSample {
     }
     ApiFlowSample apiFlowSample = (ApiFlowSample) o;
     return Objects.equals(this.timestamp, apiFlowSample.timestamp) &&
-        Objects.equals(this.flow, apiFlowSample.flow);
+        Objects.equals(this.value, apiFlowSample.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(timestamp, flow);
+    return Objects.hash(timestamp, value);
   }
 
   @Override
@@ -103,7 +103,7 @@ public class ApiFlowSample {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiFlowSample {\n");
     sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
-    sb.append("    flow: ").append(toIndentedString(flow)).append("\n");
+    sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("}");
     return sb.toString();
   }

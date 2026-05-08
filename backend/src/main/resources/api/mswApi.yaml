@@ -212,7 +212,7 @@ components:
         $ref: '#/components/schemas/ApiSpotInformation'
     ApiSpot:
       type: object
-      required: [ id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification ]
+      required: [ id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification ]
       properties:
         id:
           type: string
@@ -228,14 +228,25 @@ components:
             - BUNGEE_SURF
         isPublic:
           type: boolean
-        minFlow:
-          type: integer
-        maxFlow:
-          type: integer
+        measurementType:
+          $ref: '#/components/schemas/ApiMeasurementType'
+        minValue:
+          type: number
+          format: double
+        maxValue:
+          type: number
+          format: double
         station:
           $ref: '#/components/schemas/ApiStation'
         withNotification:
           type: boolean
+    ApiMeasurementType:
+      type: string
+      nullable: false
+      enum:
+        - FLOW
+        - HEIGHT
+        - TEMPERATURE
     ApiSpotInformation:
       allOf:
         - $ref: '#/components/schemas/ApiSpot'
@@ -243,6 +254,8 @@ components:
           required: [ flowStatusEnum, dataPending ]
           properties:
             currentSample:
+              $ref: '#/components/schemas/ApiSample'
+            currentTemperature:
               $ref: '#/components/schemas/ApiSample'
             flowStatusEnum:
               $ref: '#/components/schemas/ApiFlowStatusEnum'
@@ -262,6 +275,7 @@ components:
       enum:
         - CH
         - FR
+        - DE_BW
     ApiStationId:
       type: object
       required: [ country, externalId ]
@@ -278,31 +292,20 @@ components:
         format: uuid
     ApiSample:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value, measurementType ]
       properties:
         timestamp:
           type: string
           format: date-time
-        temperature:
+        value:
           type: number
           format: double
-        flow:
-          type: number
-          format: double
-    ApiFlowSample:
-      type: object
-      required: [ timestamp, flow ]
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        flow:
-          type: number
-          format: double
+        measurementType:
+          $ref: '#/components/schemas/ApiMeasurementType'
     ApiLastFewDaysSamples:
       type: array
       items:
-        $ref: '#/components/schemas/ApiFlowSample'
+        $ref: '#/components/schemas/ApiSample'
     ApiForecast:
       type: object
       required: [ timestamp, measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min ]
@@ -400,12 +403,12 @@ components:
             $ref: '#/components/schemas/ApiLineEntry'
     ApiLineEntry:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value ]
       properties:
         timestamp:
           type: string
           format: date-time
-        flow:
+        value:
           type: number
           format: double
     ApiStationList:
@@ -414,7 +417,7 @@ components:
         $ref: '#/components/schemas/ApiStation'
     ApiStation:
       type: object
-      required: [ id, label, latitude, longitude ]
+      required: [ id, label, latitude, longitude, supportedMeasurements ]
       properties:
         id:
           $ref: '#/components/schemas/ApiStationId'
@@ -426,6 +429,10 @@ components:
         longitude:
           type: number
           format: double
+        supportedMeasurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiMeasurementType'
     PushNotificationSubscription:
       type: object
       required: [ token ]

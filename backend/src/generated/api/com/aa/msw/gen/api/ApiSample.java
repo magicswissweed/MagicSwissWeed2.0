@@ -2,8 +2,10 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -20,15 +22,15 @@ import jakarta.annotation.Generated;
  * ApiSample
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T09:33:27.589237+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:57:59.542031+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSample {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime timestamp;
 
-  private Double temperature;
+  private Double value;
 
-  private Double flow;
+  private ApiMeasurementType measurementType;
 
   public ApiSample() {
     super();
@@ -37,9 +39,10 @@ public class ApiSample {
   /**
    * Constructor with only required parameters
    */
-  public ApiSample(OffsetDateTime timestamp, Double flow) {
+  public ApiSample(OffsetDateTime timestamp, Double value, ApiMeasurementType measurementType) {
     this.timestamp = timestamp;
-    this.flow = flow;
+    this.value = value;
+    this.measurementType = measurementType;
   }
 
   public ApiSample timestamp(OffsetDateTime timestamp) {
@@ -62,44 +65,44 @@ public class ApiSample {
     this.timestamp = timestamp;
   }
 
-  public ApiSample temperature(Double temperature) {
-    this.temperature = temperature;
+  public ApiSample value(Double value) {
+    this.value = value;
     return this;
   }
 
   /**
-   * Get temperature
-   * @return temperature
-  */
-  
-  @Schema(name = "temperature", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("temperature")
-  public Double getTemperature() {
-    return temperature;
-  }
-
-  public void setTemperature(Double temperature) {
-    this.temperature = temperature;
-  }
-
-  public ApiSample flow(Double flow) {
-    this.flow = flow;
-    return this;
-  }
-
-  /**
-   * Get flow
-   * @return flow
+   * Get value
+   * @return value
   */
   @NotNull 
-  @Schema(name = "flow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("flow")
-  public Double getFlow() {
-    return flow;
+  @Schema(name = "value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("value")
+  public Double getValue() {
+    return value;
   }
 
-  public void setFlow(Double flow) {
-    this.flow = flow;
+  public void setValue(Double value) {
+    this.value = value;
+  }
+
+  public ApiSample measurementType(ApiMeasurementType measurementType) {
+    this.measurementType = measurementType;
+    return this;
+  }
+
+  /**
+   * Get measurementType
+   * @return measurementType
+  */
+  @NotNull @Valid 
+  @Schema(name = "measurementType", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("measurementType")
+  public ApiMeasurementType getMeasurementType() {
+    return measurementType;
+  }
+
+  public void setMeasurementType(ApiMeasurementType measurementType) {
+    this.measurementType = measurementType;
   }
 
   @Override
@@ -112,13 +115,13 @@ public class ApiSample {
     }
     ApiSample apiSample = (ApiSample) o;
     return Objects.equals(this.timestamp, apiSample.timestamp) &&
-        Objects.equals(this.temperature, apiSample.temperature) &&
-        Objects.equals(this.flow, apiSample.flow);
+        Objects.equals(this.value, apiSample.value) &&
+        Objects.equals(this.measurementType, apiSample.measurementType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(timestamp, temperature, flow);
+    return Objects.hash(timestamp, value, measurementType);
   }
 
   @Override
@@ -126,8 +129,8 @@ public class ApiSample {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiSample {\n");
     sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
-    sb.append("    temperature: ").append(toIndentedString(temperature)).append("\n");
-    sb.append("    flow: ").append(toIndentedString(flow)).append("\n");
+    sb.append("    value: ").append(toIndentedString(value)).append("\n");
+    sb.append("    measurementType: ").append(toIndentedString(measurementType)).append("\n");
     sb.append("}");
     return sb.toString();
   }

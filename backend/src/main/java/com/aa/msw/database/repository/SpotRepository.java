@@ -16,8 +16,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Set;
 
+import static com.aa.msw.database.helpers.EnumConverterHelper.apiMeasurementType;
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 import static com.aa.msw.database.helpers.EnumConverterHelper.country;
+import static com.aa.msw.database.helpers.EnumConverterHelper.measurementType;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 
@@ -40,8 +42,9 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
                 mapDbToDomainEnum(record.getType()),
                 record.getName(),
                 apiStationId(record.getCountry(), record.getStationid()),
-                record.getMinflow(),
-                record.getMaxflow()
+                apiMeasurementType(record.getMeasurementType()),
+                record.getMinValue().doubleValue(),
+                record.getMaxValue().doubleValue()
         );
     }
 
@@ -54,8 +57,9 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
         record.setCountry(country(spot.stationId().getCountry()));
         record.setStationid(spot.stationId().getExternalId());
         record.setName(spot.name());
-        record.setMinflow(spot.minFlow());
-        record.setMaxflow(spot.maxFlow());
+        record.setMeasurementType(measurementType(spot.measurementType()));
+        record.setMinValue(spot.minValue().floatValue());
+        record.setMaxValue(spot.maxValue().floatValue());
         return record;
     }
 
@@ -67,8 +71,9 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
                 mapDbToDomainEnum(spotTable.getType()),
                 spotTable.getName(),
                 apiStationId(spotTable.getCountry(), spotTable.getStationid()),
-                spotTable.getMinflow(),
-                spotTable.getMaxflow()
+                apiMeasurementType(spotTable.getMeasurementType()),
+                spotTable.getMinValue().doubleValue(),
+                spotTable.getMaxValue().doubleValue()
         );
     }
 
