@@ -46,12 +46,22 @@ export function getValues(data: TimeSeriesPoint[]): number[] {
     return data.map(item => item.value);
 }
 
-// Get timestamps at a specific hour (and minute)
+// One tick per distinct UTC day, anchored at the given hour:minute (UTC).
 export function getTicksAt(hour: number, timestamps: Array<string>, minute: number = 0): Array<string> {
-    let matchingTimestamps = timestamps.filter(ts => new Date(ts).getHours() === hour);
-    matchingTimestamps = matchingTimestamps.filter(ts => new Date(ts).getMinutes() === minute);
-
-    return matchingTimestamps;
+    const seenDays = new Set<string>();
+    return timestamps
+        .filter(ts => {
+            const d = new Date(ts);
+            const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
+            if (seenDays.has(key)) return false;
+            seenDays.add(key);
+            return true;
+        })
+        .map(ts => {
+            const d = new Date(ts);
+            d.setUTCHours(hour, minute, 0, 0);
+            return d.toISOString();
+        });
 }
 
 // Create a trace for Plotly with common defaults
