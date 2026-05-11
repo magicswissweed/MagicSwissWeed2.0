@@ -71,11 +71,19 @@ export const Spot = (props: SpotProps) => {
 
     function getStationLinkBaseUrl(country: CountryEnum) {
         switch (country) {
-            case "CH":
+            case CountryEnum.Ch:
                 return "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/";
-            case "FR":
+            case CountryEnum.Fr:
                 return "https://www.vigicrues.gouv.fr/station/"
+            case CountryEnum.DeBw:
+                return "https://www.hvz.baden-wuerttemberg.de/pegel.html?id="
         }
+        return assertUnreachable(country);
+    }
+
+    // This is a bit of a hack to make the switch exhaustive and remind us to add new enum types here.
+    function assertUnreachable(x: never): never {
+        throw new Error("Forgot to declare a link to a station in the switch statement.");
     }
 
     function getSpotSummaryContent(spot: SpotModel) {
