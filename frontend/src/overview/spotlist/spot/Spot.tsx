@@ -1,6 +1,6 @@
 import './Spot.scss'
-import React, {useState} from 'react';
-import {CountryEnum, SpotsApi} from '../../../gen/msw-api-ts';
+import React, {useEffect, useState} from 'react';
+import {ApiSample, CountryEnum, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import {ReactComponent as ArrowDownIcon} from '../../../assets/arrow_down.svg';
@@ -18,6 +18,7 @@ import {MswLastMeasurementsGraph} from "./graph/historical/MswLastMeasurementsGr
 import {GraphTypeEnum} from "../../MswOverviewPage";
 import {SpotModel} from "../../../model/SpotModel";
 import {MswLoader} from "../../../loader/MswLoader";
+import {DateTimeConverter} from "../../../service/DateTimeConverter";
 
 interface SpotProps {
     spot: SpotModel,
@@ -31,6 +32,34 @@ export const Spot = (props: SpotProps) => {
 
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [isSpotOpen, setIsSpotOpen] = useState(false);
+
+    const [lastFewDays, setLastFewDays] = useState<Array<ApiSample> | undefined>(undefined);
+    const [lastFewDaysLoaded, setLastFewDaysLoaded] = useState(false);
+
+    const showLastMeasurementsGraph =
+        props.showGraphOfType === GraphTypeEnum.Forecast
+        && props.spot.forecastLoaded
+        && !props.spot.forecast;
+
+    useEffect(() => {
+        if (!showLastMeasurementsGraph) return;
+        let cancelled = false;
+        setLastFewDaysLoaded(false);
+        setLastFewDays(undefined);
+        (async () => {
+            const config = await authConfiguration(token);
+            try {
+                const res = await new SampleApi(config).getLastFewDaysSamples(props.spot.id);
+                if (cancelled) return;
+                setLastFewDays(DateTimeConverter.utcLastFewDaysToLocalTime(res.data));
+            } finally {
+                if (!cancelled) setLastFewDaysLoaded(true);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [showLastMeasurementsGraph, props.spot.id, props.spot.currentSample, token]);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
@@ -170,7 +199,7 @@ export const Spot = (props: SpotProps) => {
         </>;
 
         let lastMeasurementsContent = <>
-            <MswLastMeasurementsGraph spot={spot} isMini={isMini}/>
+            <MswLastMeasurementsGraph spot={spot} isMini={isMini} lastFewDays={lastFewDays} loaded={lastFewDaysLoaded}/>
         </>;
 
         let historicalYearsContent = <>
