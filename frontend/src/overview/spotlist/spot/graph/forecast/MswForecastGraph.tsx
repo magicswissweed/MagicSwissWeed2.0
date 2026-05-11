@@ -131,6 +131,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                     props.isMini,
                     plotColors.median,
                     'Median',
+                    props.spot.measurementType,
                 ),
                 createTrace(
                     processedData.measured!,
@@ -138,6 +139,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                     props.isMini,
                     plotColors.measured,
                     'Measured',
+                    props.spot.measurementType,
                 )
             ]}
             layout={layout}

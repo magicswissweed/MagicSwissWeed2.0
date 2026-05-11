@@ -1,7 +1,9 @@
 import {SpotModel} from "../../../../../model/SpotModel";
+import {ApiMeasurementType} from "../../../../../gen/msw-api-ts";
 import {Config, Layout} from 'plotly.js';
 import {MswTheme} from "../../../../../theme/MswThemeContext";
 import {getThemeDependingColors, ThemeDependingColors} from "../../../../../theme/MswThemeHelper";
+import {measurementLabel} from "../../../../../helper/ApiMeasurementTypeHelper";
 
 // Structural type covering ApiSample, ApiLineEntry, and ad-hoc {timestamp, value} points.
 export type TimeSeriesPoint = { timestamp: string; value: number };
@@ -70,7 +72,8 @@ export function createTrace(
     showTooltip: boolean,
     isMini: boolean,
     color?: string,
-    name?: string) {
+    name?: string,
+    measurementType?: ApiMeasurementType) {
     const isMobile = window.innerWidth <= 720;
     return {
         x: getTimestamps(data),
@@ -81,7 +84,7 @@ export function createTrace(
         name,
         showlegend: !isMini && !isMobile,
         hoverinfo: showTooltip ? 'all' as const : 'skip' as const,
-        hovertemplate: showTooltip ? '%{x|%d.%m.%Y %H:%M}<br>Flow: %{y:.1f}<extra></extra>' : undefined,
+        hovertemplate: showTooltip ? `%{x|%d.%m.%Y %H:%M}<br>${measurementLabel(measurementType)}: %{y:.1f}<extra></extra>` : undefined,
     };
 }
 

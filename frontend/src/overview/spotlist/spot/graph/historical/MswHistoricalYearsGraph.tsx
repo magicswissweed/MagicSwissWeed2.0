@@ -117,13 +117,15 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                     props.isMini,
                     plotColors.median,
                     'Median',
+                    props.spot.measurementType,
                 ),
                 createTrace(
                     props.spot.historical?.currentYear!,
                     !props.isMini,
                     props.isMini,
                     plotColors.measured,
-                    'Measured')
+                    'Measured',
+                    props.spot.measurementType)
             ]}
             layout={layout}
             style={{
