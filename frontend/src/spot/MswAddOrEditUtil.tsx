@@ -24,7 +24,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
     // If the selected measurement type isn't supported by the chosen station, snap to a supported one.
     useEffect(() => {
         if (!supportedMeasurements.includes(measurementType)) {
-            setMeasurementType(supportedMeasurements[0]);
+            setMeasurementType(measurementType ?? supportedMeasurements[0]);
         }
     }, [supportedMeasurements, measurementType, setMeasurementType]);
 
