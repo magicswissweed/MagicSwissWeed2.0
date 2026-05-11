@@ -12,14 +12,42 @@ import {
 import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
 import {useTheme} from "../../../../../theme/MswThemeContext";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
+import {ApiSample, SampleApi} from "../../../../../gen/msw-api-ts";
+import {authConfiguration} from "../../../../../api/config/AuthConfiguration";
+import {useUserAuth} from "../../../../../user/UserAuthContext";
+import {DateTimeConverter} from "../../../../../service/DateTimeConverter";
 
 export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     const {theme} = useTheme();
+    // @ts-ignore
+    const {token} = useUserAuth();
 
-    let lineData = props.spot.lastFewDaysLoaded && props.spot.lastFewDays ?
+    const [lastFewDays, setLastFewDays] = useState<Array<ApiSample> | undefined>(undefined);
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        setLoaded(false);
+        setLastFewDays(undefined);
+        (async () => {
+            const config = await authConfiguration(token);
+            try {
+                const res = await new SampleApi(config).getLastFewDaysSamples(props.spot.id);
+                if (cancelled) return;
+                setLastFewDays(DateTimeConverter.utcLastFewDaysToLocalTime(res.data));
+            } finally {
+                if (!cancelled) setLoaded(true);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [props.spot.id, props.spot.currentSample, token]);
+
+    let lineData = loaded && lastFewDays ?
         [
-            ...props.spot.lastFewDays,
+            ...lastFewDays,
             ...(props.spot.currentSample
                 ? [{timestamp: props.spot.currentSample.timestamp, value: props.spot.currentSample.value}]
                 : [])
@@ -88,7 +116,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         theme
     ]);
 
-    if (props.spot.lastFewDaysLoaded) {
+    if (loaded) {
         if (!lineData || lineData.length === 0) {
             return <div>Detailed Graph not possible at the moment...</div>
         }
