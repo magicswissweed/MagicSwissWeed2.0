@@ -1,6 +1,5 @@
 import {
     ApiFlowStatusEnum,
-    ApiForecast,
     ApiHistoricalYears,
     ApiMeasurementType,
     ApiSample,
@@ -22,8 +21,6 @@ export class SpotModel {
     currentSample: ApiSample | undefined;
     currentTemperature: ApiSample | undefined;
     flowStatus: FlowColorEnum;
-    forecastLoaded: boolean;
-    forecast: ApiForecast | undefined;
     historical: ApiHistoricalYears | undefined;
     withNotification: boolean;
     dataPending: boolean;
@@ -41,8 +38,6 @@ export class SpotModel {
         currentSample: ApiSample | undefined,
         currentTemperature: ApiSample | undefined,
         flowStatus: FlowColorEnum,
-        forecastLoaded: boolean,
-        forecast: ApiForecast | undefined,
         historical: ApiHistoricalYears | undefined,
         withNotification: boolean,
         dataPending: boolean) {
@@ -58,8 +53,6 @@ export class SpotModel {
         this.currentSample = currentSample;
         this.currentTemperature = currentTemperature;
         this.flowStatus = flowStatus
-        this.forecastLoaded = forecastLoaded;
-        this.forecast = forecast;
         this.historical = historical;
         this.withNotification = withNotification;
         this.dataPending = dataPending;

@@ -29,21 +29,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiLastFewDaysSamples'
-  /api/v1/forecasts:
+  /api/v1/forecast:
     get:
-      summary: Get All Forecasts for user
-      security:
-        - bearerAuth: [ ]
-      operationId: getForecasts
+      summary: Get current forecast for a station + measurement type.
+      operationId: getForecast
+      parameters:
+        - name: stationId
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApiStationId'
+        - name: measurementType
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApiMeasurementType'
       tags:
         - forecast
       responses:
         '200':
-          description: Returns forecasts for all spots of user
+          description: Returns the current forecast.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiForecastsList'
+                $ref: '#/components/schemas/ApiForecast'
+        '404':
+          description: No forecast available for the station.
   /api/v1/historicalYears:
     get:
       summary: Get historical data for all spots of user.
@@ -336,18 +347,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ApiLineEntry'
-    ApiForecastsList:
-      type: array
-      items:
-        $ref: '#/components/schemas/StationToApiForecasts'
-    StationToApiForecasts:
-      type: object
-      required: [ station, forecast ]
-      properties:
-        station:
-          $ref: '#/components/schemas/ApiStationId'
-        forecast:
-          $ref: '#/components/schemas/ApiForecast'
     ApiHistoricalYearsList:
       type: array
       items:
