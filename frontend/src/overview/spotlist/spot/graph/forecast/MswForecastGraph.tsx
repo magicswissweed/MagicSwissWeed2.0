@@ -1,6 +1,6 @@
 import '../base-graph/MswGraph.scss'
 import Plot from 'react-plotly.js';
-import {ApiForecast, ApiLineEntry} from '../../../../../gen/msw-api-ts';
+import {ApiLineEntry} from '../../../../../gen/msw-api-ts';
 import {
     commonPlotlyConfig,
     createAreaTrace,
@@ -15,18 +15,13 @@ import {MswLoader} from "../../../../../loader/MswLoader";
 import {useMemo} from "react";
 import {useTheme} from "../../../../../theme/MswThemeContext";
 
-interface MswForecastGraphProps extends MswGraphProps {
-    forecast: ApiForecast | undefined;
-    loaded: boolean;
-}
-
-export const MswForecastGraph = (props: MswForecastGraphProps) => {
+export const MswForecastGraph = (props: MswGraphProps) => {
     const {theme} = useTheme();
 
     // Get data for plotting
     const {currentSample} = props.spot ?? {};
     const {minValue, maxValue} = props.spot ?? {};
-    const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.forecast ?? {};
+    const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.spot.forecast ?? {};
 
     // Get timestamps for x-axis grid and labels
     const allTimestamps = getTimestamps([...measuredData ?? [], ...median ?? []]);
@@ -103,10 +98,10 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
         theme
     ]);
 
-    if (!props.loaded) {
+    if (!props.spot.forecastLoaded) {
         return <MswLoader/>;
     }
-    if (!props.forecast) {
+    if (!props.spot.forecast) {
         return <div>Detailed Forecast not possible at the moment...</div>;
     }
 

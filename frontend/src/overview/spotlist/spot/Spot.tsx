@@ -1,6 +1,6 @@
 import './Spot.scss'
 import React, {useEffect, useState} from 'react';
-import {ApiForecast, ApiSample, CountryEnum, ForecastApi, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
+import {ApiSample, CountryEnum, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import {ReactComponent as ArrowDownIcon} from '../../../assets/arrow_down.svg';
@@ -33,40 +33,13 @@ export const Spot = (props: SpotProps) => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [isSpotOpen, setIsSpotOpen] = useState(false);
 
-    const [forecast, setForecast] = useState<ApiForecast | undefined>(undefined);
-    const [forecastLoaded, setForecastLoaded] = useState(false);
-
     const [lastFewDays, setLastFewDays] = useState<Array<ApiSample> | undefined>(undefined);
     const [lastFewDaysLoaded, setLastFewDaysLoaded] = useState(false);
 
-    const shouldLoadForecast = props.showGraphOfType === GraphTypeEnum.Forecast;
-    const showLastMeasurementsGraph = shouldLoadForecast && forecastLoaded && !forecast;
-
-    useEffect(() => {
-        if (!shouldLoadForecast) return;
-        let cancelled = false;
-        setForecastLoaded(false);
-        setForecast(undefined);
-        (async () => {
-            const config = await authConfiguration(token);
-            try {
-                const res = await new ForecastApi(config).getForecast(props.spot.id);
-                if (cancelled) return;
-                setForecast(DateTimeConverter.utcForecastToLocalTime(res.data));
-            } catch (e: any) {
-                if (cancelled) return;
-                if (e?.response?.status !== 404) {
-                    // no forecast for spot
-                    setForecast(undefined);
-                }
-            } finally {
-                if (!cancelled) setForecastLoaded(true);
-            }
-        })();
-        return () => {
-            cancelled = true;
-        };
-    }, [shouldLoadForecast, props.spot.id, token]);
+    const showLastMeasurementsGraph =
+        props.showGraphOfType === GraphTypeEnum.Forecast
+        && props.spot.forecastLoaded
+        && !props.spot.forecast;
 
     useEffect(() => {
         if (!showLastMeasurementsGraph) return;
@@ -103,9 +76,9 @@ export const Spot = (props: SpotProps) => {
                         {props.spot.currentSample?.timestamp &&
                             <div className="forecast-timestamp">Sample
                                 from: {formatTimestamp(props.spot.currentSample?.timestamp)}</div>}
-                        {forecast?.timestamp &&
+                        {props.spot.forecast?.timestamp &&
                             <div className="sample-timestamp">Forecast
-                                from: {formatTimestamp(forecast?.timestamp)}</div>}
+                                from: {formatTimestamp(props.spot.forecast?.timestamp)}</div>}
                     </div>
                     {getGraph(props.spot, false)}
                 </div>
@@ -222,7 +195,7 @@ export const Spot = (props: SpotProps) => {
 
     function getGraph(spot: SpotModel, isMini: boolean) {
         let forecastContent = <>
-            <MswForecastGraph spot={spot} isMini={isMini} forecast={forecast} loaded={forecastLoaded}/>
+            <MswForecastGraph spot={spot} isMini={isMini}/>
         </>;
 
         let lastMeasurementsContent = <>
@@ -234,8 +207,8 @@ export const Spot = (props: SpotProps) => {
         </>;
 
         if (props.showGraphOfType === GraphTypeEnum.Forecast) {
-            if (forecastLoaded) {
-                return forecast ? forecastContent : lastMeasurementsContent
+            if (spot.forecastLoaded) {
+                return spot.forecast ? forecastContent : lastMeasurementsContent
             } else {
                 return <><MswLoader/></>;
             }
