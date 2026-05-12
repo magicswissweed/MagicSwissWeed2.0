@@ -7,6 +7,7 @@ import {darkMapStyle, lightMapStyle} from "../../map-styles";
 import {useTheme} from "../../../../theme/MswThemeContext";
 import {useGoogleMaps} from "../../../../map-provider/GoogleMapsProvider";
 import {formatValue} from "../../../../utils/formatValue";
+import {measurementUnit} from "../../../../helper/ApiMeasurementTypeHelper";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
 
@@ -126,7 +127,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                     >
                         <p style={{textTransform: "none"}}>
                             {selectedSpot.name}: {selectedSpot.currentSample
-                            ? `${formatValue(selectedSpot.currentSample.value)} {selectedSpot.measurementType === ApiMeasurementType.Height ? "cm" : "m³/s"}`
+                            ? `${formatValue(selectedSpot.currentSample.value)} ${measurementUnit(selectedSpot.measurementType)}`
                             : 'Data is being fetched...'}
                         </p>
                     </InfoWindow>

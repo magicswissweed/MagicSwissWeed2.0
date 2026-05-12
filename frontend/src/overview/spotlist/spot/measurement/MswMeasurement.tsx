@@ -2,7 +2,7 @@ import './MswMeasurement.scss'
 import {Component} from 'react';
 import {SpotModel} from "../../../../model/SpotModel";
 import {formatValue} from "../../../../utils/formatValue";
-import {ApiMeasurementType} from "../../../../gen/msw-api-ts";
+import {measurementUnit} from "../../../../helper/ApiMeasurementTypeHelper";
 
 interface MeasurementsProps {
     spot: SpotModel
@@ -44,16 +44,13 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
     private getMeasurement(value: number) {
-        let flowUnit = <>m<sup>3</sup>/s</>;
-        let heightUnit = "cm";
         return <>
             <div className={this.spot.flowStatus}>{formatValue(value)}</div>
             <div className="unit">
-                {this.spot.measurementType === ApiMeasurementType.Height ? heightUnit : flowUnit}
+                {measurementUnit(this.spot.measurementType)}
             </div>
         </>;
     }
-
 
     private getTemp(temp: number) {
         return <>

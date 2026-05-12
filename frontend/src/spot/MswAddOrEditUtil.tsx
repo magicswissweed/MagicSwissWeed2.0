@@ -5,8 +5,7 @@ import {Typeahead} from "react-bootstrap-typeahead";
 import Modal from "react-bootstrap/Modal";
 import {MswStationMap} from "../overview/map/station-map/MswStationMap";
 import './MswAddOrEditUtil.scss';
-
-const measurementLabel = (m: ApiMeasurementType) => m === ApiMeasurementType.Height ? "Water Height" : "Flow";
+import {measurementLabel} from "../helper/ApiMeasurementTypeHelper";
 
 export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCancelModal: (() => void) | undefined, formRef: React.MutableRefObject<HTMLFormElement | null>, handleSaveAndCloseModal: (e: {
     preventDefault: any
@@ -25,7 +24,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
     // If the selected measurement type isn't supported by the chosen station, snap to a supported one.
     useEffect(() => {
         if (!supportedMeasurements.includes(measurementType)) {
-            setMeasurementType(supportedMeasurements[0]);
+            setMeasurementType(measurementType ?? supportedMeasurements[0]);
         }
     }, [supportedMeasurements, measurementType, setMeasurementType]);
 

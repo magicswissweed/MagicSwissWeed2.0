@@ -1,12 +1,14 @@
 package com.aa.msw.api.current;
 
-import com.aa.msw.api.graph.lastFewDays.LastFewDaysApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
+import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SampleDao;
+import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiSample;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Sample;
+import com.aa.msw.model.Spot;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +16,14 @@ import java.util.List;
 @Service
 public class SampleApiService {
 
-    private final SampleDao sampleDao;
-    private final LastFewDaysApiService lastFewDaysApiService;
+    private static final int LAST_FEW_DAYS_WINDOW = 8;
 
-    SampleApiService(final SampleDao sampleDao, LastFewDaysApiService lastFewDaysApiService) {
+    private final SampleDao sampleDao;
+    private final SpotDao spotDao;
+
+    SampleApiService(final SampleDao sampleDao, final SpotDao spotDao) {
         this.sampleDao = sampleDao;
-        this.lastFewDaysApiService = lastFewDaysApiService;
+        this.spotDao = spotDao;
     }
 
     private static ApiSample mapSample(Sample sample) {
@@ -33,16 +37,11 @@ public class SampleApiService {
         return mapSample(sampleDao.getCurrentSample(apiStationId, measurementType));
     }
 
-    public List<ApiSample> getLastFewDaysSamples(ApiStationId stationId) throws NoDataAvailableException {
-        return lastFewDaysApiService
-                .getLastFewDays(stationId)
-                .lastFewDaysSamples()
-                .entrySet()
+    public List<ApiSample> getLastFewDaysSamples(SpotId spotId) {
+        Spot spot = spotDao.get(spotId);
+        return sampleDao.getSamplesOfLastNDays(spot.stationId(), spot.measurementType(), LAST_FEW_DAYS_WINDOW)
                 .stream()
-                .map(sample -> new ApiSample()
-                        .timestamp(sample.getKey())
-                        .value(sample.getValue())
-                        .measurementType(ApiMeasurementType.FLOW))
+                .map(SampleApiService::mapSample)
                 .toList();
     }
 }

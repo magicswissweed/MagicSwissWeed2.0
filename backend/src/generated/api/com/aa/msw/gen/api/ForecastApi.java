@@ -5,7 +5,8 @@
  */
 package com.aa.msw.gen.api;
 
-import com.aa.msw.gen.api.StationToApiForecasts;
+import com.aa.msw.gen.api.ApiForecast;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:57:59.542031+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-11T17:03:05.902213+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "forecast", description = "the forecast API")
 public interface ForecastApi {
@@ -42,33 +43,36 @@ public interface ForecastApi {
     }
 
     /**
-     * GET /api/v1/forecasts : Get All Forecasts for user
+     * GET /api/v1/forecast/{spotId} : Get current forecast for a single spot.
      *
-     * @return Returns forecasts for all spots of user (status code 200)
+     * @param spotId The id of the spot to get the forecast for. (required)
+     * @return Returns the current forecast for the spot. (status code 200)
+     *         or No forecast available for the spot. (status code 404)
      */
     @Operation(
-        operationId = "getForecasts",
-        summary = "Get All Forecasts for user",
+        operationId = "getForecast",
+        summary = "Get current forecast for a single spot.",
         tags = { "forecast" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Returns forecasts for all spots of user", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StationToApiForecasts.class)))
-            })
+            @ApiResponse(responseCode = "200", description = "Returns the current forecast for the spot.", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiForecast.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "No forecast available for the spot.")
         }
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = "/api/v1/forecasts",
+        value = "/api/v1/forecast/{spotId}",
         produces = { "application/json" }
     )
     
-    default ResponseEntity<List<StationToApiForecasts>> getForecasts(
-        
+    default ResponseEntity<ApiForecast> getForecast(
+        @Parameter(name = "spotId", description = "The id of the spot to get the forecast for.", required = true, in = ParameterIn.PATH) @PathVariable("spotId") UUID spotId
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"station\" : { \"externalId\" : \"externalId\" }, \"forecast\" : { \"seventyFivePercentile\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"twentyFivePercentile\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"min\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"median\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"max\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"measuredData\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } }, { \"station\" : { \"externalId\" : \"externalId\" }, \"forecast\" : { \"seventyFivePercentile\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"twentyFivePercentile\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"min\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"median\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"max\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"measuredData\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } } ]";
+                    String exampleString = "{ \"seventyFivePercentile\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"twentyFivePercentile\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"min\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"median\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"max\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"measuredData\" : [ { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

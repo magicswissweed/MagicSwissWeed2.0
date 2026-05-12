@@ -1,11 +1,13 @@
 package com.aa.msw.source.french.vigicrues.historical.lastThirty;
 
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.helper.TestResourceLoader;
-import com.aa.msw.model.LastFewDays;
+import com.aa.msw.model.Sample;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,18 +23,16 @@ class FrenchLast30DaysFetchIntegrationTest {
     };
 
     @Test
-    void shouldFetchAndParseLast30Days() {
-        Set<ApiStationId> stationIds = Set.of(
-                new ApiStationId(CountryEnum.FR, "V271201001")
-        );
+    void shouldFetchAndParseLatestSample() {
+        ApiStationId stationId = new ApiStationId(CountryEnum.FR, "V271201001");
 
-        Set<LastFewDays> result = service.fetchLast30DaysSamples(stationIds);
+        List<Sample> result = service.fetchLatestSamples(Set.of(stationId));
 
         assertEquals(1, result.size());
 
-        LastFewDays lastFewDays = result.iterator().next();
-        assertEquals(new ApiStationId(CountryEnum.FR, "V271201001"), lastFewDays.stationId());
-        assertEquals(5, lastFewDays.lastFewDaysSamples().size());
-        assertTrue(lastFewDays.lastFewDaysSamples().values().stream().allMatch(v -> v > 0));
+        Sample sample = result.get(0);
+        assertEquals(stationId, sample.getStationId());
+        assertEquals(ApiMeasurementType.FLOW, sample.getMeasurementType());
+        assertTrue(sample.value() > 0);
     }
 }

@@ -1,12 +1,8 @@
 import {
     ApiSpotInformation,
-    ForecastApi,
     HistoricalApi,
-    SampleApi,
     SpotsApi,
-    StationToApiForecasts,
-    StationToApiHistoricalYears,
-    StationToLastFewDays
+    StationToApiHistoricalYears
 } from "../gen/msw-api-ts";
 import {AxiosResponse} from "axios";
 import {authConfiguration} from "../api/config/AuthConfiguration";
@@ -27,21 +23,6 @@ class SpotsService {
         // -> then load additional infos (less important) -> shown to user as soon as it's loaded.
         new SpotsApi(config).getSpots()
             .then(this.writeSpotsToState)
-            .then(() =>
-                new ForecastApi(config).getForecasts()
-                    .then(this.addForecastsToState.bind(this))
-            )
-            .then(() => {
-                let stationsWithoutForecast = this.spots
-                    .filter(s => !s.forecast)
-                    .map(s => s.stationId)
-                if (stationsWithoutForecast.length > 0) {
-                    if (config) {
-                        new SampleApi(config).getLastFewDaysSamples(stationsWithoutForecast)
-                            .then(this.addLastFewDaysToState.bind(this))
-                    }
-                }
-            })
             .then(() =>
                 new HistoricalApi(config).getHistoricalData()
                     .then(this.addHistoricalDataToState.bind(this))
@@ -81,10 +62,6 @@ class SpotsService {
                     currentSample,
                     currentTemperature,
                     getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
-                    false,
-                    undefined,
-                    false,
-                    undefined,
                     undefined,
                     s.withNotification,
                     s.dataPending);
@@ -92,42 +69,6 @@ class SpotsService {
             this.setSpots(spots);
         }
     };
-
-    private addLastFewDaysToState(res: AxiosResponse<StationToLastFewDays[], any>) {
-        if (res && res.data) {
-            const updatedSpots = this.spots.map(s => {
-                const filteredListByStationId = res.data.filter(i =>
-                    i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
-                const newLastFewDays = DateTimeConverter.utcLastFewDaysToLocalTime(filteredListByStationId[0]?.lastFewDays)
-                // create new SpotModel so that react can see that something changed (updating a field is not enough)
-                return {
-                    ...s,
-                    lastFewDaysLoaded: true,
-                    lastFewDays: newLastFewDays,
-                }
-            });
-
-            this.setSpots(updatedSpots);
-        }
-    }
-
-    private addForecastsToState(res: AxiosResponse<StationToApiForecasts[], any>) {
-        if (res && res.data) {
-            const updatedSpots = this.spots.map(s => {
-                const filteredListByStationId = res.data.filter(i =>
-                    i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
-                const newForecast = DateTimeConverter.utcForecastToLocalTime(filteredListByStationId[0]?.forecast);
-                // create new SpotModel so that react can see that something changed (updating a field is not enough)
-                return {
-                    ...s,
-                    forecastLoaded: true,
-                    forecast: newForecast,
-                }
-            });
-
-            this.setSpots(updatedSpots);
-        }
-    }
 
     private addHistoricalDataToState(res: AxiosResponse<StationToApiHistoricalYears[], any>) {
         if (res && res.data) {

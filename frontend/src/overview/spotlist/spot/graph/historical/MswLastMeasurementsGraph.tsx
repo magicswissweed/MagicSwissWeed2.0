@@ -13,13 +13,20 @@ import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
 import {useTheme} from "../../../../../theme/MswThemeContext";
 import {useMemo} from "react";
+import {ApiSample} from "../../../../../gen/msw-api-ts";
 
-export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
+interface MswLastMeasurementsGraphProps extends MswGraphProps {
+    lastFewDays: Array<ApiSample> | undefined;
+    loaded: boolean;
+}
+
+export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) => {
     const {theme} = useTheme();
+    const {lastFewDays, loaded} = props;
 
-    let lineData = props.spot.lastFewDaysLoaded && props.spot.lastFewDays ?
+    let lineData = loaded && lastFewDays ?
         [
-            ...props.spot.lastFewDays,
+            ...lastFewDays,
             ...(props.spot.currentSample
                 ? [{timestamp: props.spot.currentSample.timestamp, value: props.spot.currentSample.value}]
                 : [])
@@ -88,7 +95,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         theme
     ]);
 
-    if (props.spot.lastFewDaysLoaded) {
+    if (loaded) {
         if (!lineData || lineData.length === 0) {
             return <div>Detailed Graph not possible at the moment...</div>
         }
@@ -99,7 +106,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     return (
         <Plot
             data={[
-                createTrace(lineData, !props.isMini, props.isMini, plotColors.measured, 'Measured')
+                createTrace(lineData, !props.isMini, props.isMini, plotColors.measured, 'Measured', props.spot.measurementType)
             ]}
             layout={layout}
             style={{width: '100%', height: '100%'}}

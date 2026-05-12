@@ -1,11 +1,13 @@
 package com.aa.msw.source;
 
-import com.aa.msw.database.repository.dao.*;
+import com.aa.msw.database.repository.dao.ForecastDao;
+import com.aa.msw.database.repository.dao.SampleDao;
+import com.aa.msw.database.repository.dao.SpotDao;
+import com.aa.msw.database.repository.dao.StationDao;
 import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Forecast;
-import com.aa.msw.model.LastFewDays;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
 import com.aa.msw.notifications.NotificationService;
@@ -14,7 +16,6 @@ import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30Days
 import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.forecast.SwissForecastFetchService;
-import com.aa.msw.source.swiss.hydrodaten.historical.lastfourty.SwissLast40DaysSampleFetchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -22,7 +23,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -34,13 +34,11 @@ public class InputDataFetcherService {
 
     private final SwissSampleFetchService swissSampleFetchService;
     private final SwissForecastFetchService swissForecastFetchService;
-    private final SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService;
     private final StationDao stationDao;
     private final SpotDao spotDao;
     private final SampleDao sampleDao;
     private final ForecastDao forecastDao;
     private final SpotDbService spotDbService;
-    private final LastFewDaysDao lastFewDaysDao;
     private final NotificationService notificationService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
     private final BwSampleFetchService bwSampleFetchService;
@@ -51,7 +49,7 @@ public class InputDataFetcherService {
     private final AtomicBoolean isFetchingFrenchData = new AtomicBoolean(false);
     private final AtomicBoolean isFetchingBwData = new AtomicBoolean(false);
 
-    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, SwissLast40DaysSampleFetchService swissLast40DaysSampleFetchService, LastFewDaysDao lastFewDaysDao, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
+    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
         this.swissSampleFetchService = swissSampleFetchService;
         this.swissForecastFetchService = swissForecastFetchService;
         this.stationDao = stationDao;
@@ -59,8 +57,6 @@ public class InputDataFetcherService {
         this.sampleDao = sampleDao;
         this.forecastDao = forecastDao;
         this.spotDbService = spotDbService;
-        this.swissLast40DaysSampleFetchService = swissLast40DaysSampleFetchService;
-        this.lastFewDaysDao = lastFewDaysDao;
         this.notificationService = notificationService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
         this.bwSampleFetchService = bwSampleFetchService;
@@ -79,7 +75,7 @@ public class InputDataFetcherService {
     void fetchFrenchDataAndWriteToDb() {
         // only fetch stations actually used by a spot, to avoid hammering the rate-limited Vigicrues API.
         Set<ApiStationId> frenchStationIds = spotDao.getReferencedStationIds(CountryEnum.FR);
-        fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLast30DaysAndSample);
+        fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLatestSample);
     }
 
     // 05, 15, 25, ...
@@ -120,7 +116,7 @@ public class InputDataFetcherService {
         LOG.info("Triggering immediate French fetch for station {}", stationId.getExternalId());
         try {
             Set<ApiStationId> ids = Set.of(stationId);
-            fetchAndWriteFrenchLast30DaysAndSample(ids);
+            fetchAndWriteFrenchLatestSample(ids);
             updateCurrentInfoForAllSpotsOfStationsAndSendNotifications(ids);
         } catch (Exception e) {
             LOG.error("Error while triggering immediate French fetch for station {}", stationId.getExternalId(), e);
@@ -141,24 +137,16 @@ public class InputDataFetcherService {
     private void fetchAndWriteSwissData(Set<ApiStationId> swissStationIds) {
         fetchAndWriteSwissSamples(swissStationIds);
         fetchAndWriteSwissForecasts(swissStationIds);
-        fetchAndWriteSwissLast40Days(swissStationIds);
     }
 
     public boolean hasFetchedDataSinceRestart() {
         return fetchedDataSinceRestart;
     }
 
-    private void fetchAndWriteFrenchLast30DaysAndSample(Set<ApiStationId> stationIds) {
-//        France does not have a call for the latest sample, so we fetch the last 30 days and use the newest as our current sample
-        Set<LastFewDays> lastFewDaysSet = frenchLast30DaysSampleFetchService.fetchLast30DaysSamples(stationIds);
-        if (!lastFewDaysSet.isEmpty()) {
-            lastFewDaysDao.persistLastFewDaysSamples(lastFewDaysSet);
-
-            List<Sample> currentSamples = lastFewDaysSet.stream()
-                    .map(LastFewDays::getLatestMeasurementAsSample)
-                    .filter(Objects::nonNull)
-                    .toList();
-
+    private void fetchAndWriteFrenchLatestSample(Set<ApiStationId> stationIds) {
+        // France does not have a call for the latest sample, so we fetch the last 30 days and use the newest as our current sample.
+        List<Sample> currentSamples = frenchLast30DaysSampleFetchService.fetchLatestSamples(stationIds);
+        if (!currentSamples.isEmpty()) {
             sampleDao.persistSamplesIfNotExist(currentSamples);
         }
     }
@@ -176,13 +164,6 @@ public class InputDataFetcherService {
     private void fetchAndWriteSwissForecasts(Set<ApiStationId> stationIds) {
         List<Forecast> forecasts = swissForecastFetchService.fetchForecasts(stationIds);
         forecastDao.persistForecastsIfNotExist(forecasts);
-    }
-
-    public void fetchAndWriteSwissLast40Days(Set<ApiStationId> stationIds) {
-        Set<LastFewDays> fetchedLastFewDaysSamples = swissLast40DaysSampleFetchService.fetchLast40DaysSamples(stationIds);
-        if (!fetchedLastFewDaysSamples.isEmpty()) {
-            lastFewDaysDao.persistLastFewDaysSamples(fetchedLastFewDaysSamples);
-        }
     }
 
     private Set<ApiStationId> getAllStationIds() {
