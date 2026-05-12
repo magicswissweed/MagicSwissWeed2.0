@@ -1,24 +1,28 @@
 package com.aa.msw.api.graph.forecast;
 
 import com.aa.msw.api.graph.AbstractGraphLineApiService;
+import com.aa.msw.api.spots.SpotsApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
-import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.ForecastDao;
-import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.gen.api.ApiForecast;
+import com.aa.msw.gen.api.ApiMeasurementType;
+import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.api.StationToApiForecasts;
 import com.aa.msw.model.Forecast;
-import com.aa.msw.model.Spot;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ForecastApiServiceImpl extends AbstractGraphLineApiService implements ForecastApiService {
 
     private final ForecastDao forecastDao;
-    private final SpotDao spotDao;
+    private final SpotsApiService spotsApiService;
 
-    public ForecastApiServiceImpl(ForecastDao forecastDao, SpotDao spotDao) {
+    public ForecastApiServiceImpl(ForecastDao forecastDao, SpotsApiService spotsApiService) {
         this.forecastDao = forecastDao;
-        this.spotDao = spotDao;
+        this.spotsApiService = spotsApiService;
     }
 
     private static ApiForecast mapForecast(Forecast forecast) {
@@ -33,9 +37,21 @@ public class ForecastApiServiceImpl extends AbstractGraphLineApiService implemen
         return apiForecast;
     }
 
+    public ApiForecast getCurrentForecast(ApiStationId stationId) throws NoDataAvailableException {
+        return mapForecast(forecastDao.getCurrentForecast(stationId, ApiMeasurementType.FLOW));
+    }
+
     @Override
-    public ApiForecast getCurrentForecast(SpotId spotId) throws NoDataAvailableException {
-        Spot spot = spotDao.get(spotId);
-        return mapForecast(forecastDao.getCurrentForecast(spot.stationId(), spot.measurementType()));
+    public List<StationToApiForecasts> getAllForecasts() {
+        List<StationToApiForecasts> apiForecastsList = new ArrayList<>();
+        for (ApiStationId station : spotsApiService.getStations()) {
+
+            try {
+                apiForecastsList.add(new StationToApiForecasts(station, getCurrentForecast(station)));
+            } catch (NoDataAvailableException e) {
+                // No forecast available -> don't add it to list
+            }
+        }
+        return apiForecastsList;
     }
 }

@@ -1,7 +1,9 @@
 import {
     ApiSpotInformation,
+    ForecastApi,
     HistoricalApi,
     SpotsApi,
+    StationToApiForecasts,
     StationToApiHistoricalYears
 } from "../gen/msw-api-ts";
 import {AxiosResponse} from "axios";
@@ -23,6 +25,10 @@ class SpotsService {
         // -> then load additional infos (less important) -> shown to user as soon as it's loaded.
         new SpotsApi(config).getSpots()
             .then(this.writeSpotsToState)
+            .then(() =>
+                new ForecastApi(config).getForecasts()
+                    .then(this.addForecastsToState.bind(this))
+            )
             .then(() =>
                 new HistoricalApi(config).getHistoricalData()
                     .then(this.addHistoricalDataToState.bind(this))
@@ -62,6 +68,8 @@ class SpotsService {
                     currentSample,
                     currentTemperature,
                     getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
+                    false,
+                    undefined,
                     undefined,
                     s.withNotification,
                     s.dataPending);
@@ -69,6 +77,24 @@ class SpotsService {
             this.setSpots(spots);
         }
     };
+
+    private addForecastsToState(res: AxiosResponse<StationToApiForecasts[], any>) {
+        if (res && res.data) {
+            const updatedSpots = this.spots.map(s => {
+                const filteredListByStationId = res.data.filter(i =>
+                    i.station.country == s.stationId.country && i.station.externalId === s.stationId.externalId);
+                const newForecast = DateTimeConverter.utcForecastToLocalTime(filteredListByStationId[0]?.forecast);
+                // create new SpotModel so that react can see that something changed (updating a field is not enough)
+                return {
+                    ...s,
+                    forecastLoaded: true,
+                    forecast: newForecast,
+                }
+            });
+
+            this.setSpots(updatedSpots);
+        }
+    }
 
     private addHistoricalDataToState(res: AxiosResponse<StationToApiHistoricalYears[], any>) {
         if (res && res.data) {
