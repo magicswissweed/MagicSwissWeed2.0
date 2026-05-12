@@ -6,7 +6,8 @@
 package com.aa.msw.gen.api;
 
 import com.aa.msw.gen.api.ApiForecast;
-import java.util.UUID;
+import com.aa.msw.gen.api.ApiMeasurementType;
+import com.aa.msw.gen.api.ApiStationId;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-11T17:03:05.902213+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-12T14:49:17.702360+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "forecast", description = "the forecast API")
 public interface ForecastApi {
@@ -43,31 +44,33 @@ public interface ForecastApi {
     }
 
     /**
-     * GET /api/v1/forecast/{spotId} : Get current forecast for a single spot.
+     * GET /api/v1/forecast : Get current forecast for a station + measurement type.
      *
-     * @param spotId The id of the spot to get the forecast for. (required)
-     * @return Returns the current forecast for the spot. (status code 200)
-     *         or No forecast available for the spot. (status code 404)
+     * @param stationId  (required)
+     * @param measurementType  (required)
+     * @return Returns the current forecast. (status code 200)
+     *         or No forecast available for the station. (status code 404)
      */
     @Operation(
         operationId = "getForecast",
-        summary = "Get current forecast for a single spot.",
+        summary = "Get current forecast for a station + measurement type.",
         tags = { "forecast" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Returns the current forecast for the spot.", content = {
+            @ApiResponse(responseCode = "200", description = "Returns the current forecast.", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiForecast.class))
             }),
-            @ApiResponse(responseCode = "404", description = "No forecast available for the spot.")
+            @ApiResponse(responseCode = "404", description = "No forecast available for the station.")
         }
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = "/api/v1/forecast/{spotId}",
+        value = "/api/v1/forecast",
         produces = { "application/json" }
     )
     
     default ResponseEntity<ApiForecast> getForecast(
-        @Parameter(name = "spotId", description = "The id of the spot to get the forecast for.", required = true, in = ParameterIn.PATH) @PathVariable("spotId") UUID spotId
+        @NotNull @Parameter(name = "stationId", description = "", required = true, in = ParameterIn.QUERY) @Valid ApiStationId stationId,
+        @NotNull @Parameter(name = "measurementType", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "measurementType", required = true) ApiMeasurementType measurementType
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {

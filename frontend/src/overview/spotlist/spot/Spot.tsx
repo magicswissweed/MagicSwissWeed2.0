@@ -50,7 +50,7 @@ export const Spot = (props: SpotProps) => {
         (async () => {
             const config = await authConfiguration(token);
             try {
-                const res = await new ForecastApi(config).getForecast(props.spot.id);
+                const res = await new ForecastApi(config).getForecast(props.spot.stationId, props.spot.measurementType);
                 if (cancelled) return;
                 setForecast(DateTimeConverter.utcForecastToLocalTime(res.data));
             } catch (e: any) {
@@ -66,7 +66,7 @@ export const Spot = (props: SpotProps) => {
         return () => {
             cancelled = true;
         };
-    }, [shouldLoadForecast, props.spot.id, token]);
+    }, [shouldLoadForecast, props.spot.stationId, props.spot.measurementType, token]);
 
     useEffect(() => {
         if (!showLastMeasurementsGraph) return;

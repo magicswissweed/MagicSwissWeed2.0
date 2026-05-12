@@ -2,23 +2,20 @@ package com.aa.msw.api.graph.forecast;
 
 import com.aa.msw.api.graph.AbstractGraphLineApiService;
 import com.aa.msw.database.exceptions.NoDataAvailableException;
-import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.ForecastDao;
-import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.gen.api.ApiForecast;
+import com.aa.msw.gen.api.ApiMeasurementType;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.model.Forecast;
-import com.aa.msw.model.Spot;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ForecastApiServiceImpl extends AbstractGraphLineApiService implements ForecastApiService {
 
     private final ForecastDao forecastDao;
-    private final SpotDao spotDao;
 
-    public ForecastApiServiceImpl(ForecastDao forecastDao, SpotDao spotDao) {
+    public ForecastApiServiceImpl(ForecastDao forecastDao) {
         this.forecastDao = forecastDao;
-        this.spotDao = spotDao;
     }
 
     private static ApiForecast mapForecast(Forecast forecast) {
@@ -34,8 +31,7 @@ public class ForecastApiServiceImpl extends AbstractGraphLineApiService implemen
     }
 
     @Override
-    public ApiForecast getCurrentForecast(SpotId spotId) throws NoDataAvailableException {
-        Spot spot = spotDao.get(spotId);
-        return mapForecast(forecastDao.getCurrentForecast(spot.stationId(), spot.measurementType()));
+    public ApiForecast getCurrentForecast(ApiStationId stationId, ApiMeasurementType measurementType) throws NoDataAvailableException {
+        return mapForecast(forecastDao.getCurrentForecast(stationId, measurementType));
     }
 }

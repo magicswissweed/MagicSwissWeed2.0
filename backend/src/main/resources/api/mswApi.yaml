@@ -29,31 +29,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiLastFewDaysSamples'
-  /api/v1/forecast/{spotId}:
+  /api/v1/forecast:
     get:
-      summary: Get current forecast for a single spot.
-      security:
-        - bearerAuth: [ ]
+      summary: Get current forecast for a station + measurement type.
       operationId: getForecast
       parameters:
-        - name: spotId
-          description: The id of the spot to get the forecast for.
-          in: path
-          schema:
-            type: string
-            format: uuid
+        - name: stationId
+          in: query
           required: true
+          schema:
+            $ref: '#/components/schemas/ApiStationId'
+        - name: measurementType
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApiMeasurementType'
       tags:
         - forecast
       responses:
         '200':
-          description: Returns the current forecast for the spot.
+          description: Returns the current forecast.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiForecast'
         '404':
-          description: No forecast available for the spot.
+          description: No forecast available for the station.
   /api/v1/historicalYears:
     get:
       summary: Get historical data for all spots of user.

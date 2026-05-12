@@ -511,16 +511,18 @@ export const ForecastApiAxiosParamCreator = function (configuration?: Configurat
     return {
         /**
          * 
-         * @summary Get current forecast for a single spot.
-         * @param {string} spotId The id of the spot to get the forecast for.
+         * @summary Get current forecast for a station + measurement type.
+         * @param {ApiStationId} stationId 
+         * @param {ApiMeasurementType} measurementType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getForecast: async (spotId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'spotId' is not null or undefined
-            assertParamExists('getForecast', 'spotId', spotId)
-            const localVarPath = `/api/v1/forecast/{spotId}`
-                .replace(`{${"spotId"}}`, encodeURIComponent(String(spotId)));
+        getForecast: async (stationId: ApiStationId, measurementType: ApiMeasurementType, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'stationId' is not null or undefined
+            assertParamExists('getForecast', 'stationId', stationId)
+            // verify required parameter 'measurementType' is not null or undefined
+            assertParamExists('getForecast', 'measurementType', measurementType)
+            const localVarPath = `/api/v1/forecast`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -531,6 +533,16 @@ export const ForecastApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (stationId !== undefined) {
+                for (const [key, value] of Object.entries(stationId)) {
+                    localVarQueryParameter[key] = value;
+                }
+            }
+
+            if (measurementType !== undefined) {
+                localVarQueryParameter['measurementType'] = measurementType;
+            }
 
 
     
@@ -555,13 +567,14 @@ export const ForecastApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get current forecast for a single spot.
-         * @param {string} spotId The id of the spot to get the forecast for.
+         * @summary Get current forecast for a station + measurement type.
+         * @param {ApiStationId} stationId 
+         * @param {ApiMeasurementType} measurementType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getForecast(spotId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiForecast>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getForecast(spotId, options);
+        async getForecast(stationId: ApiStationId, measurementType: ApiMeasurementType, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiForecast>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getForecast(stationId, measurementType, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ForecastApi.getForecast']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -578,13 +591,14 @@ export const ForecastApiFactory = function (configuration?: Configuration, baseP
     return {
         /**
          * 
-         * @summary Get current forecast for a single spot.
-         * @param {string} spotId The id of the spot to get the forecast for.
+         * @summary Get current forecast for a station + measurement type.
+         * @param {ApiStationId} stationId 
+         * @param {ApiMeasurementType} measurementType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getForecast(spotId: string, options?: any): AxiosPromise<ApiForecast> {
-            return localVarFp.getForecast(spotId, options).then((request) => request(axios, basePath));
+        getForecast(stationId: ApiStationId, measurementType: ApiMeasurementType, options?: any): AxiosPromise<ApiForecast> {
+            return localVarFp.getForecast(stationId, measurementType, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -598,14 +612,15 @@ export const ForecastApiFactory = function (configuration?: Configuration, baseP
 export class ForecastApi extends BaseAPI {
     /**
      * 
-     * @summary Get current forecast for a single spot.
-     * @param {string} spotId The id of the spot to get the forecast for.
+     * @summary Get current forecast for a station + measurement type.
+     * @param {ApiStationId} stationId 
+     * @param {ApiMeasurementType} measurementType 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ForecastApi
      */
-    public getForecast(spotId: string, options?: RawAxiosRequestConfig) {
-        return ForecastApiFp(this.configuration).getForecast(spotId, options).then((request) => request(this.axios, this.basePath));
+    public getForecast(stationId: ApiStationId, measurementType: ApiMeasurementType, options?: RawAxiosRequestConfig) {
+        return ForecastApiFp(this.configuration).getForecast(stationId, measurementType, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
