@@ -20,4 +20,6 @@ public interface SampleDao extends TimestampedDao, Dao<SampleId, Sample> {
     void persistSamplesIfNotExist(List<Sample> samples);
 
     Map<ApiStationId, Set<ApiMeasurementType>> getSupportedMeasurementsByStation();
+
+    Map<ApiStationId, Map<ApiMeasurementType, Sample>> getLatestSamplePerStationAndType(Set<ApiStationId> stationIds);
 }
