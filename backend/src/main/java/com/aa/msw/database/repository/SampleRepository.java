@@ -5,12 +5,14 @@ import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.jooq.enums.MeasurementType;
+import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.daos.SampleTableDao;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 import com.aa.msw.model.Sample;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.aa.msw.database.helpers.EnumConverterHelper.apiMeasurementType;
-import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
-import static com.aa.msw.database.helpers.EnumConverterHelper.country;
-import static com.aa.msw.database.helpers.EnumConverterHelper.measurementType;
+import static com.aa.msw.database.helpers.EnumConverterHelper.*;
 
 
 @Component
@@ -104,6 +103,40 @@ public class SampleRepository extends AbstractTimestampedRepository
                         r -> apiStationId(r.value1(), r.value2()),
                         Collectors.mapping(r -> apiMeasurementType(r.value3()), Collectors.toSet())
                 ));
+    }
+
+    @Override
+    public Map<ApiStationId, Map<ApiMeasurementType, Sample>> getLatestSamplePerStationAndType(Set<ApiStationId> stationIds) {
+        if (stationIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return dsl.select(TABLE.fields())
+                .distinctOn(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
+                .from(TABLE)
+                .where(buildStationFilter(stationIds))
+                .orderBy(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE, TABLE.TIMESTAMP.desc())
+                .fetch()
+                .into(TABLE)
+                .stream()
+                .map(this::mapRecord)
+                .collect(Collectors.groupingBy(
+                        Sample::getStationId,
+                        Collectors.toMap(Sample::getMeasurementType, sample -> sample)));
+    }
+
+    private static Condition buildStationFilter(Set<ApiStationId> stationIds) {
+        // Group external IDs by country so we can emit `(country = X AND stationid IN (...)) OR ...`,
+        // which is index-friendly and avoids vendor-specific row-value-IN syntax.
+        Map<Country, Set<String>> externalIdsByCountry = stationIds.stream()
+                .collect(Collectors.groupingBy(
+                        id -> country(id.getCountry()),
+                        Collectors.mapping(ApiStationId::getExternalId, Collectors.toSet())));
+
+        return externalIdsByCountry.entrySet().stream()
+                .map(entry -> TABLE.COUNTRY.eq(entry.getKey()).and(TABLE.STATIONID.in(entry.getValue())))
+                .reduce(Condition::or)
+                .orElse(DSL.falseCondition());
     }
 
     @Override

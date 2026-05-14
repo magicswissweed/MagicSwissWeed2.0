@@ -1,6 +1,5 @@
 package com.aa.msw.api.current;
 
-import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.database.repository.dao.SpotDao;
@@ -11,7 +10,10 @@ import com.aa.msw.model.Sample;
 import com.aa.msw.model.Spot;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class SampleApiService {
@@ -33,8 +35,15 @@ public class SampleApiService {
                 .measurementType(sample.getMeasurementType());
     }
 
-    public ApiSample getCurrentSample(ApiStationId apiStationId, ApiMeasurementType measurementType) throws NoDataAvailableException {
-        return mapSample(sampleDao.getCurrentSample(apiStationId, measurementType));
+    public Map<ApiStationId, Map<ApiMeasurementType, ApiSample>> getLatestSamplePerStationAndType(Set<ApiStationId> stationIds) {
+        Map<ApiStationId, Map<ApiMeasurementType, Sample>> raw = sampleDao.getLatestSamplePerStationAndType(stationIds);
+        Map<ApiStationId, Map<ApiMeasurementType, ApiSample>> mapped = new HashMap<>(raw.size());
+        raw.forEach((stationId, byType) -> {
+            Map<ApiMeasurementType, ApiSample> inner = new HashMap<>(byType.size());
+            byType.forEach((type, sample) -> inner.put(type, mapSample(sample)));
+            mapped.put(stationId, inner);
+        });
+        return mapped;
     }
 
     public List<ApiSample> getLastFewDaysSamples(SpotId spotId) {

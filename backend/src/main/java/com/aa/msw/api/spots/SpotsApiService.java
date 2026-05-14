@@ -22,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.aa.msw.gen.api.ApiMeasurementType.TEMPERATURE;
@@ -142,66 +139,70 @@ public class SpotsApiService {
     }
 
     private List<ApiSpotInformation> getApiSpotInformationList(List<Spot> spots) {
-        List<ApiSpotInformation> spotInformationList = new ArrayList<>();
-        var supportedByStation = sampleDao.getSupportedMeasurementsByStation();
-        for (Spot spot : spots) {
-            try {
-                Station station = stationApiService.getStation(spot.stationId());
-                ApiStation apiStation = new ApiStation(
-                        station.stationId(),
-                        station.label(),
-                        station.latitude(),
-                        station.longitude(),
-                        new ArrayList<>(supportedByStation.getOrDefault(spot.stationId(), java.util.Set.of())));
-
-                boolean withNotification = !spot.isPublic() && userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
-
-                ApiSpotInformation info = new ApiSpotInformation()
-                        .id(spot.spotId().getId())
-                        .name(spot.name())
-                        .isPublic(spot.isPublic())
-                        .measurementType(spot.measurementType())
-                        .minValue(spot.minValue())
-                        .maxValue(spot.maxValue())
-                        .stationId(spot.stationId())
-                        .spotType(com.aa.msw.gen.api.ApiSpotInformation.SpotTypeEnum.valueOf(spot.type().name()))
-                        .currentTemperature(getCurrentTemperatureOrNull(spot.stationId()))
-                        .station(apiStation)
-                        .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
-                        .withNotification(withNotification)
-                        .dataPending(false);
-
-                try {
-                    info.currentSample(sampleApiService.getCurrentSample(spot.stationId(), spot.measurementType()));
-                } catch (NoDataAvailableException e) {
-                    // No sample yet (e.g. a freshly added spot whose station has not been fetched).
-                    // Return the spot anyway so the frontend can show a "fetching data" placeholder.
-                    info.dataPending(true);
-                }
-
-                spotInformationList.add(info);
-            } catch (NoSuchElementException e) {
-                LOG.error("Station with ID {} does not exist. Skipping this spot from the list of spots.", spot.stationId());
-            }
-        }
-        return spotInformationList;
+        Set<ApiStationId> stationIds = spots.stream()
+                .map(Spot::stationId)
+                .collect(Collectors.toSet());
+        Map<ApiStationId, Map<ApiMeasurementType, ApiSample>> latestSamplesByStation =
+                sampleApiService.getLatestSamplePerStationAndType(stationIds);
+        return spots.stream()
+                .map(spot -> toApiSpotInformation(spot, latestSamplesByStation.getOrDefault(spot.stationId(), Map.of())))
+                .flatMap(Optional::stream)
+                .toList();
     }
 
-    private ApiSample getCurrentTemperatureOrNull(ApiStationId stationId) {
+    private Optional<ApiSpotInformation> toApiSpotInformation(Spot spot,
+                                                              Map<ApiMeasurementType, ApiSample> latestSamplesForStation) {
+        Station station;
         try {
-            return sampleApiService.getCurrentSample(stationId, TEMPERATURE);
-        } catch (NoDataAvailableException e) {
-            return null;
+            station = stationApiService.getStation(spot.stationId());
+        } catch (NoSuchElementException e) {
+            LOG.error("Station with ID {} does not exist. Skipping this spot from the list of spots.", spot.stationId());
+            return Optional.empty();
         }
+
+        ApiSample currentSample = latestSamplesForStation.get(spot.measurementType());
+        return Optional.of(new ApiSpotInformation()
+                .id(spot.spotId().getId())
+                .name(spot.name())
+                .isPublic(spot.isPublic())
+                .spotType(toApiSpotType(spot.type()))
+                .stationId(spot.stationId())
+                .measurementType(spot.measurementType())
+                .minValue(spot.minValue())
+                .maxValue(spot.maxValue())
+                .station(toApiStation(station, latestSamplesForStation.keySet()))
+                .currentSample(currentSample)
+                .currentTemperature(latestSamplesForStation.get(TEMPERATURE))
+                .dataPending(currentSample == null)
+                .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
+                .withNotification(isWithNotification(spot)));
+    }
+
+    private static ApiStation toApiStation(Station station, Set<ApiMeasurementType> supportedMeasurementTypes) {
+        return new ApiStation(
+                station.stationId(),
+                station.label(),
+                station.latitude(),
+                station.longitude(),
+                new ArrayList<>(supportedMeasurementTypes));
+    }
+
+    private static ApiSpotInformation.SpotTypeEnum toApiSpotType(com.aa.msw.model.SpotTypeEnum type) {
+        return ApiSpotInformation.SpotTypeEnum.valueOf(type.name());
+    }
+
+    private boolean isWithNotification(Spot spot) {
+        if (spot.isPublic()) {
+            return false;
+        }
+        return userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
     }
 
     private ApiFlowStatusEnum getFlowStatusEnum(SpotId spotId) {
         SpotCurrentInfo currentFlowStatus = spotCurrentInfoDao.get(spotId);
-        if (currentFlowStatus == null) {
-            return ApiFlowStatusEnum.BAD;
-        } else {
-            return ApiFlowStatusEnum.valueOf(currentFlowStatus.currentFlowStatusEnum().name());
-        }
+        return currentFlowStatus == null
+                ? ApiFlowStatusEnum.BAD
+                : ApiFlowStatusEnum.valueOf(currentFlowStatus.currentFlowStatusEnum().name());
     }
 
     private void deleteMapping(UserToSpot oldUserToPublicSpotMapping) {
