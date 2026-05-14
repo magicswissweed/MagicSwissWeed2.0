@@ -12,8 +12,6 @@ import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 import com.aa.msw.model.Sample;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,24 +110,12 @@ public class SampleRepository extends AbstractTimestampedRepository
         if (stationIds.isEmpty()) {
             return Map.of();
         }
-        Condition stationFilter = buildStationFilter(stationIds);
-
-        Field<OffsetDateTime> maxTs = DSL.max(TABLE.TIMESTAMP).as("max_ts");
-        Table<?> latestPerGroup = dsl
-                .select(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE, maxTs)
-                .from(TABLE)
-                .where(stationFilter)
-                .groupBy(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
-                .asTable("latest");
 
         return dsl.select(TABLE.fields())
+                .distinctOn(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
                 .from(TABLE)
-                .join(latestPerGroup)
-                .on(TABLE.COUNTRY.eq(latestPerGroup.field(TABLE.COUNTRY)))
-                .and(TABLE.STATIONID.eq(latestPerGroup.field(TABLE.STATIONID)))
-                .and(TABLE.MEASUREMENT_TYPE.eq(latestPerGroup.field(TABLE.MEASUREMENT_TYPE)))
-                .and(TABLE.TIMESTAMP.eq(latestPerGroup.field("max_ts", OffsetDateTime.class)))
-                .where(stationFilter)
+                .where(buildStationFilter(stationIds))
+                .orderBy(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE, TABLE.TIMESTAMP.desc())
                 .fetch()
                 .into(TABLE)
                 .stream()

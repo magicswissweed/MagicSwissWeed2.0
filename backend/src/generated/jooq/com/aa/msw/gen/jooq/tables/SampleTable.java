@@ -4,6 +4,7 @@
 package com.aa.msw.gen.jooq.tables;
 
 
+import com.aa.msw.gen.jooq.Indexes;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Country;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
@@ -117,6 +119,11 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
+    }
+
+    @Override
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.SAMPLE_TABLE_LOOKUP_IDX);
     }
 
     @Override
