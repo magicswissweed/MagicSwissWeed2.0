@@ -1,12 +1,13 @@
 import '../base-graph/MswGraph.scss'
 import {
-    commonPlotlyConfig,
     createAreaTrace,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTimestamps,
     MswGraphProps,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import Plot from 'react-plotly.js';
 import {useMemo} from "react";
@@ -20,6 +21,12 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         return calculateMaxY(props.spot);
     }, [props.spot, props.spot.historical]);
 
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const medianTimestamps = getTimestamps(props.spot.historical?.median || []);
+    const clampHandlers = useTimeAxisClamp(
+        medianTimestamps.length ? Date.parse(medianTimestamps[0]) : undefined,
+        medianTimestamps.length ? Date.parse(medianTimestamps[medianTimestamps.length - 1]) : undefined,
+        !props.isMini);
     const layout = useMemo(() => {
         const invertedRgb = getComputedStyle(document.documentElement)
             .getPropertyValue('--bg-inverted-rgb')
@@ -31,7 +38,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
             props.spot.minValue,
             props.spot.maxValue,
             true,
-            theme);
+            theme,
+            uirevision);
         return {
             ...baseLayout,
             xaxis: {
@@ -82,7 +90,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         props.spot.minValue,
         props.spot.maxValue,
         theme,
-        maxY
+        maxY,
+        uirevision
     ]);
 
     if (!props.spot.historical) {
@@ -133,7 +142,9 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                 height: '100%'
             }}
             useResizeHandler={true}
-            config={{...commonPlotlyConfig, staticPlot: props.isMini}}
+            config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

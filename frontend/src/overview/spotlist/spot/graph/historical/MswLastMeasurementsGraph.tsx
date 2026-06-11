@@ -1,13 +1,14 @@
 import '../base-graph/MswGraph.scss'
 import {
-    commonPlotlyConfig,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTicksAt,
     getTimestamps,
     MswGraphProps,
     ONE_WEEK,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
@@ -24,7 +25,7 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
     const {theme} = useTheme();
     const {lastFewDays, loaded} = props;
 
-    let lineData = loaded && lastFewDays ?
+    const lineData = loaded && lastFewDays ?
         [
             ...lastFewDays,
             ...(props.spot.currentSample
@@ -33,28 +34,37 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
         ] :
         [];
 
-    // keep only the last 7 days
-    const now = new Date();
-    const oneWeekAgo = new Date(now.getTime() - ONE_WEEK);
-    lineData = lineData.filter(sample => {
-        return Date.parse(sample.timestamp) >= oneWeekAgo.getTime();
-    });
+    // All available data (~8 days) is kept so the user can pan back, but the
+    // default view shows the most recent 7 days.
+    const sortedTimestamps = getTimestamps(lineData);
+    const lastMs = sortedTimestamps.length
+        ? Date.parse(sortedTimestamps[sortedTimestamps.length - 1])
+        : undefined;
+    const defaultXRange = lastMs !== undefined ? [lastMs - ONE_WEEK, lastMs] : undefined;
 
-    let midDayTicks = getTicksAt(12, getTimestamps(lineData));
-    let startOfDayTicks = getTicksAt(0, getTimestamps(lineData));
+    let midDayTicks = getTicksAt(12, sortedTimestamps);
+    let startOfDayTicks = getTicksAt(0, sortedTimestamps);
 
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const clampHandlers = useTimeAxisClamp(
+        sortedTimestamps.length ? Date.parse(sortedTimestamps[0]) : undefined,
+        lastMs,
+        !props.isMini);
     const layout = useMemo(() => {
         const baseLayout = getCommonPlotlyLayout(
             props.isMini,
-            getTimestamps(lineData),
+            sortedTimestamps,
             props.spot.minValue,
             props.spot.maxValue,
             false,
-            theme);
+            theme,
+            uirevision);
         return {
             ...baseLayout,
             xaxis: {
                 ...baseLayout.xaxis,
+                // Default view: most recent 7 days (older data reachable by panning).
+                range: defaultXRange ?? baseLayout.xaxis?.range,
                 // Only show labels at noon
                 tickvals: midDayTicks,
                 // Format labels as weekday names
@@ -68,7 +78,7 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
             shapes: [
                 ...(baseLayout.shapes || []),
                 // Vertical lines at midnight (darker than noon grid)
-                ...(getTimestamps(lineData).length > 0 ?
+                ...(sortedTimestamps.length > 0 ?
                         startOfDayTicks
                             .map(timestamp => ({
                                 type: 'line' as const,
@@ -92,7 +102,8 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
         props.spot.minValue,
         props.spot.maxValue,
         lineData,
-        theme
+        theme,
+        uirevision
     ]);
 
     if (loaded) {
@@ -111,7 +122,9 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
             layout={layout}
             style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
-            config={{...commonPlotlyConfig, staticPlot: props.isMini}}
+            config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

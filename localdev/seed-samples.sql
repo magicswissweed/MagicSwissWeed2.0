@@ -13,7 +13,7 @@
 --     uncomment this to delete samples of last 10 days
 DELETE
 FROM sample_table
-WHERE timestamp >= now() - INTERVAL '10 days';
+WHERE timestamp >= now() - INTERVAL '40 days';
 
 INSERT INTO sample_table (id, stationid, country, timestamp, value, measurement_type)
 SELECT gen_random_uuid(),
@@ -29,7 +29,7 @@ SELECT gen_random_uuid(),
        'FLOW'::measurement_type
 FROM station_table s
          CROSS JOIN generate_series(
-        now() - INTERVAL '10 days',
+        now() - INTERVAL '40 days',
         now(),
         INTERVAL '30 minutes'
                     ) AS ts
@@ -38,6 +38,6 @@ ON CONFLICT (timestamp, stationid, measurement_type) DO NOTHING;
 SELECT country,
        count(*) AS samples_in_last_10_days
 FROM sample_table
-WHERE timestamp >= now() - INTERVAL '10 days'
+WHERE timestamp >= now() - INTERVAL '40 days'
 GROUP BY country
 ORDER BY country;
