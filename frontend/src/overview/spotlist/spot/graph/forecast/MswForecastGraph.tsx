@@ -70,7 +70,11 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
     const firstMs = allTimestamps.length ? Date.parse(allTimestamps[0]) : undefined;
     const lastMs = allTimestamps.length ? Date.parse(allTimestamps[allTimestamps.length - 1]) : undefined;
     const currentMs = currentTime ? Date.parse(currentTime) : undefined;
-    const defaultXRange = (!props.isMini && currentMs !== undefined && lastMs !== undefined)
+    // With history available, default to one day before the current moment, then
+    // the forecast; older history stays reachable by panning. Without history
+    // (mini preview, or logged-out users who can't fetch it) keep the original
+    // full-extent default range.
+    const defaultXRange = (useHistory && currentMs !== undefined && lastMs !== undefined)
         ? [currentMs - ONE_DAY, lastMs]
         : undefined;
     const clampHandlers = useTimeAxisClamp(firstMs, lastMs, !props.isMini);

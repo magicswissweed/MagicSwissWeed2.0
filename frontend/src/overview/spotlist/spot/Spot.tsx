@@ -70,8 +70,15 @@ export const Spot = (props: SpotProps) => {
     useEffect(() => {
         if (!shouldLoadForecast) return;
         let cancelled = false;
-        setLastFewDaysLoaded(false);
         setLastFewDays(undefined);
+        // Logged-out users can't fetch a spot's recent measurements; mark it as
+        // "loaded" with no data so the forecast graph just shows the forecast (as
+        // before), without panning back into history.
+        if (!user) {
+            setLastFewDaysLoaded(true);
+            return;
+        }
+        setLastFewDaysLoaded(false);
         (async () => {
             const config = await authConfiguration(token);
             try {
@@ -85,7 +92,7 @@ export const Spot = (props: SpotProps) => {
         return () => {
             cancelled = true;
         };
-    }, [shouldLoadForecast, props.spot.id, props.spot.currentSample, token]);
+    }, [shouldLoadForecast, props.spot.id, props.spot.currentSample, token, user]);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
