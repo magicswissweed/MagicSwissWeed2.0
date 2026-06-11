@@ -40,7 +40,6 @@ export const Spot = (props: SpotProps) => {
     const [lastFewDaysLoaded, setLastFewDaysLoaded] = useState(false);
 
     const shouldLoadForecast = props.showGraphOfType === GraphTypeEnum.Forecast;
-    const showLastMeasurementsGraph = shouldLoadForecast && forecastLoaded && !forecast;
 
     useEffect(() => {
         if (!shouldLoadForecast) return;
@@ -69,7 +68,7 @@ export const Spot = (props: SpotProps) => {
     }, [shouldLoadForecast, props.spot.stationId, props.spot.measurementType, token]);
 
     useEffect(() => {
-        if (!showLastMeasurementsGraph) return;
+        if (!shouldLoadForecast) return;
         let cancelled = false;
         setLastFewDaysLoaded(false);
         setLastFewDays(undefined);
@@ -86,7 +85,7 @@ export const Spot = (props: SpotProps) => {
         return () => {
             cancelled = true;
         };
-    }, [showLastMeasurementsGraph, props.spot.id, props.spot.currentSample, token]);
+    }, [shouldLoadForecast, props.spot.id, props.spot.currentSample, token]);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
@@ -222,7 +221,8 @@ export const Spot = (props: SpotProps) => {
 
     function getGraph(spot: SpotModel, isMini: boolean) {
         let forecastContent = <>
-            <MswForecastGraph spot={spot} isMini={isMini} forecast={forecast} loaded={forecastLoaded}/>
+            <MswForecastGraph spot={spot} isMini={isMini} forecast={forecast} loaded={forecastLoaded}
+                              lastFewDays={lastFewDays} lastFewDaysLoaded={lastFewDaysLoaded}/>
         </>;
 
         let lastMeasurementsContent = <>

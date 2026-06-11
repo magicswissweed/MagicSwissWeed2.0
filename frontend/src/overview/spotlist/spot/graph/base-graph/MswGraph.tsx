@@ -25,7 +25,7 @@ export class MswGraphProps {
 
 // Common time constants
 const ONE_HOUR = 60 * 60 * 1000;
-const ONE_DAY = 24 * ONE_HOUR;
+export const ONE_DAY = 24 * ONE_HOUR;
 export const ONE_WEEK = 7 * ONE_DAY;
 
 // Color configuration for the plots
