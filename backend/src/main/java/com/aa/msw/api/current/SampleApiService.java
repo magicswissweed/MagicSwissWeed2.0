@@ -18,7 +18,7 @@ import java.util.Set;
 @Service
 public class SampleApiService {
 
-    private static final int LAST_FEW_DAYS_WINDOW = 8;
+    private static final int LAST_FEW_DAYS_WINDOW = 30;
 
     private final SampleDao sampleDao;
     private final SpotDao spotDao;
