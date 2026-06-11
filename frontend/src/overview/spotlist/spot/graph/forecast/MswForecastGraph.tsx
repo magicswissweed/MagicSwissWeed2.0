@@ -9,7 +9,8 @@ import {
     getTicksAt,
     getTimestamps,
     MswGraphProps,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
 import {useMemo} from "react";
@@ -57,6 +58,9 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
     let midDayTicks = getTicksAt(12, allTimestamps);
     let startOfDayTicks = getTicksAt(0, allTimestamps)
     const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const clampHandlers = useTimeAxisClamp(
+        allTimestamps.length ? Date.parse(allTimestamps[0]) : undefined,
+        allTimestamps.length ? Date.parse(allTimestamps[allTimestamps.length - 1]) : undefined);
     const layout = useMemo(() => {
         let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minValue, maxValue, true, theme, uirevision);
 
@@ -153,6 +157,8 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
             style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
             config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

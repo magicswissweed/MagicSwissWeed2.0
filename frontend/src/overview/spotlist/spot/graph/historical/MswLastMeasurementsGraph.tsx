@@ -7,7 +7,8 @@ import {
     getTimestamps,
     MswGraphProps,
     ONE_WEEK,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
@@ -45,6 +46,9 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
     let startOfDayTicks = getTicksAt(0, sortedTimestamps);
 
     const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const clampHandlers = useTimeAxisClamp(
+        sortedTimestamps.length ? Date.parse(sortedTimestamps[0]) : undefined,
+        lastMs);
     const layout = useMemo(() => {
         const baseLayout = getCommonPlotlyLayout(
             props.isMini,
@@ -118,6 +122,8 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
             style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
             config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

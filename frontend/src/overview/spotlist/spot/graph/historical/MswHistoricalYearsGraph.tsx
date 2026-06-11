@@ -6,7 +6,8 @@ import {
     getPlotlyConfig,
     getTimestamps,
     MswGraphProps,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import Plot from 'react-plotly.js';
 import {useMemo} from "react";
@@ -21,6 +22,10 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
     }, [props.spot, props.spot.historical]);
 
     const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const medianTimestamps = getTimestamps(props.spot.historical?.median || []);
+    const clampHandlers = useTimeAxisClamp(
+        medianTimestamps.length ? Date.parse(medianTimestamps[0]) : undefined,
+        medianTimestamps.length ? Date.parse(medianTimestamps[medianTimestamps.length - 1]) : undefined);
     const layout = useMemo(() => {
         const invertedRgb = getComputedStyle(document.documentElement)
             .getPropertyValue('--bg-inverted-rgb')
@@ -137,6 +142,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
             }}
             useResizeHandler={true}
             config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

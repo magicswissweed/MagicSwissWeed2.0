@@ -1,6 +1,11 @@
 import {SpotModel} from "../../../../../model/SpotModel";
 import {ApiMeasurementType} from "../../../../../gen/msw-api-ts";
 import {Config, Layout} from 'plotly.js';
+// react-plotly.js already bundles this exact module; reuse it so we don't pull a
+// second copy of plotly into the bundle.
+// @ts-ignore - the dist entry ships without type declarations
+import Plotly from 'plotly.js/dist/plotly';
+import {useCallback, useRef} from "react";
 import {MswTheme} from "../../../../../theme/MswThemeContext";
 import {getThemeDependingColors, ThemeDependingColors} from "../../../../../theme/MswThemeHelper";
 import {measurementLabel} from "../../../../../helper/ApiMeasurementTypeHelper";
@@ -142,6 +147,9 @@ export function getCommonPlotlyLayout(
             showticklabels: !isMini,
             range: allTimestamps.length ? [allTimestamps[0], allTimestamps[allTimestamps.length - 1]] : undefined,
             // Opened graphs zoom/pan along time only; mini graphs stay fixed.
+            // Panning is kept inside the data bounds by useTimeAxisClamp (an
+            // onRelayout handler) rather than minallowed/maxallowed, which clamp
+            // a single edge and visibly squish/zoom the window.
             fixedrange: isMini,
             spikemode: 'toaxis+across',
             spikethickness: -2,
@@ -209,4 +217,51 @@ export function getCommonPlotlyLayout(
             color: `rgba(${themeDependingColors.invertedRgb}, 1)`
         },
     };
+}
+
+// Keeps horizontal pan/zoom within [minMs, maxMs]. When the user drags past an
+// edge, the whole window is slid back inside the bounds with its width preserved
+// (instead of pinning one edge, which would shrink/zoom the view). Returns Plot
+// event handlers to spread onto the <Plot> element.
+export function useTimeAxisClamp(minMs: number | undefined, maxMs: number | undefined) {
+    const graphDivRef = useRef<any>(null);
+
+    const onInitialized = useCallback((_figure: any, graphDiv: any) => {
+        graphDivRef.current = graphDiv;
+    }, []);
+
+    const onRelayout = useCallback((eventData: any) => {
+        const gd = graphDivRef.current;
+        if (!gd || minMs === undefined || maxMs === undefined) return;
+
+        const raw0 = eventData['xaxis.range[0]'];
+        const raw1 = eventData['xaxis.range[1]'];
+        // Ignore events without an explicit x-range (e.g. autorange / reset).
+        if (raw0 === undefined || raw1 === undefined) return;
+
+        const r0 = new Date(raw0).getTime();
+        const r1 = new Date(raw1).getTime();
+        const width = r1 - r0;
+
+        let n0 = r0;
+        let n1 = r1;
+        if (width >= maxMs - minMs) {
+            // Zoomed out beyond the data: pin to the full extent.
+            n0 = minMs;
+            n1 = maxMs;
+        } else if (r0 < minMs) {
+            n0 = minMs;
+            n1 = minMs + width;
+        } else if (r1 > maxMs) {
+            n1 = maxMs;
+            n0 = maxMs - width;
+        }
+
+        const TOLERANCE = 1000; // ms; prevents a relayout feedback loop on rounding
+        if (Math.abs(n0 - r0) > TOLERANCE || Math.abs(n1 - r1) > TOLERANCE) {
+            Plotly.relayout(gd, {'xaxis.range[0]': n0, 'xaxis.range[1]': n1});
+        }
+    }, [minMs, maxMs]);
+
+    return {onInitialized, onRelayout};
 }
