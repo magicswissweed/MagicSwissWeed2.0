@@ -2,10 +2,10 @@ import '../base-graph/MswGraph.scss'
 import Plot from 'react-plotly.js';
 import {ApiForecast, ApiLineEntry} from '../../../../../gen/msw-api-ts';
 import {
-    commonPlotlyConfig,
     createAreaTrace,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTicksAt,
     getTimestamps,
     MswGraphProps,
@@ -56,8 +56,9 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
     // Get common layout and extend it with forecast-specific settings
     let midDayTicks = getTicksAt(12, allTimestamps);
     let startOfDayTicks = getTicksAt(0, allTimestamps)
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
     const layout = useMemo(() => {
-        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minValue, maxValue, true, theme);
+        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minValue, maxValue, true, theme, uirevision);
 
         return {
             ...baseLayout,
@@ -100,7 +101,8 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
         allTimestamps,
         minValue,
         maxValue,
-        theme
+        theme,
+        uirevision
     ]);
 
     if (!props.loaded) {
@@ -150,10 +152,7 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
             layout={layout}
             style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
-            config={{
-                ...commonPlotlyConfig,
-                staticPlot: props.isMini
-            }}
+            config={getPlotlyConfig(props.isMini)}
         />
     );
 };

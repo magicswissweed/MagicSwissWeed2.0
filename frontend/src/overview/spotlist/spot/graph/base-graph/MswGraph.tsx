@@ -107,14 +107,18 @@ export function createAreaTrace(
     ];
 }
 
-// Common Plotly config
-export const commonPlotlyConfig: Partial<Config> = {
-    responsive: true,
-    displayModeBar: false,
-    scrollZoom: false,
-    doubleClick: false as const,
-    modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']
-};
+// Plotly config: mini graphs stay fully static, opened graphs allow horizontal
+// zoom/pan (scroll/pinch to zoom, drag to pan, double-click to reset to default).
+export function getPlotlyConfig(isMini: boolean): Partial<Config> {
+    return {
+        responsive: true,
+        displayModeBar: false,
+        staticPlot: isMini,
+        scrollZoom: !isMini,
+        doubleClick: isMini ? (false as const) : ('reset' as const),
+        modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d']
+    };
+}
 
 export function getCommonPlotlyLayout(
     isMini: boolean,
@@ -122,17 +126,23 @@ export function getCommonPlotlyLayout(
     minValue: number,
     maxValue: number,
     showCurrentTimeLine: boolean,
-    theme: MswTheme
+    theme: MswTheme,
+    uirevision: string
 ): Partial<Layout> {
     const themeDependingColors: ThemeDependingColors = getThemeDependingColors(theme);
     return {
         autosize: true,
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
+        // Preserve the user's zoom/pan across re-renders (data refreshes, theme
+        // changes, etc.); resets only when the underlying spot/series changes.
+        uirevision: uirevision,
         xaxis: {
             showgrid: false,
             showticklabels: !isMini,
             range: allTimestamps.length ? [allTimestamps[0], allTimestamps[allTimestamps.length - 1]] : undefined,
+            // Opened graphs zoom/pan along time only; mini graphs stay fixed.
+            fixedrange: isMini,
             spikemode: 'toaxis+across',
             spikethickness: -2,
             spikecolor: `rgba(${themeDependingColors.invertedRgb}, 1)`,
@@ -140,6 +150,9 @@ export function getCommonPlotlyLayout(
         },
         yaxis: {
             showticklabels: !isMini,
+            // Keep the value scale (and acceptable-range band) stable while the
+            // user navigates time horizontally.
+            fixedrange: true,
             gridcolor: isMini ? 'transparent' : `rgba(${themeDependingColors.invertedRgb}, 0.3)`,
             ticklabelposition: 'inside' as const,
             tickfont: { // simply using color on yaxis does not work because of ticklabelposition: 'inside'
@@ -191,7 +204,7 @@ export function getCommonPlotlyLayout(
         ],
         hoverlabel: isMini ? undefined : {bgcolor: 'white', bordercolor: 'gray', font: {size: 13}},
         hovermode: isMini ? false : 'closest' as const,
-        dragmode: false as const,
+        dragmode: isMini ? (false as const) : ('pan' as const),
         font: {
             color: `rgba(${themeDependingColors.invertedRgb}, 1)`
         },

@@ -1,9 +1,9 @@
 import '../base-graph/MswGraph.scss'
 import {
-    commonPlotlyConfig,
     createAreaTrace,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTimestamps,
     MswGraphProps,
     plotColors
@@ -20,6 +20,7 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         return calculateMaxY(props.spot);
     }, [props.spot, props.spot.historical]);
 
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
     const layout = useMemo(() => {
         const invertedRgb = getComputedStyle(document.documentElement)
             .getPropertyValue('--bg-inverted-rgb')
@@ -31,7 +32,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
             props.spot.minValue,
             props.spot.maxValue,
             true,
-            theme);
+            theme,
+            uirevision);
         return {
             ...baseLayout,
             xaxis: {
@@ -82,7 +84,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         props.spot.minValue,
         props.spot.maxValue,
         theme,
-        maxY
+        maxY,
+        uirevision
     ]);
 
     if (!props.spot.historical) {
@@ -133,7 +136,7 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                 height: '100%'
             }}
             useResizeHandler={true}
-            config={{...commonPlotlyConfig, staticPlot: props.isMini}}
+            config={getPlotlyConfig(props.isMini)}
         />
     );
 };
