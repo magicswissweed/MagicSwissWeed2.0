@@ -25,7 +25,8 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
     const medianTimestamps = getTimestamps(props.spot.historical?.median || []);
     const clampHandlers = useTimeAxisClamp(
         medianTimestamps.length ? Date.parse(medianTimestamps[0]) : undefined,
-        medianTimestamps.length ? Date.parse(medianTimestamps[medianTimestamps.length - 1]) : undefined);
+        medianTimestamps.length ? Date.parse(medianTimestamps[medianTimestamps.length - 1]) : undefined,
+        !props.isMini);
     const layout = useMemo(() => {
         const invertedRgb = getComputedStyle(document.documentElement)
             .getPropertyValue('--bg-inverted-rgb')

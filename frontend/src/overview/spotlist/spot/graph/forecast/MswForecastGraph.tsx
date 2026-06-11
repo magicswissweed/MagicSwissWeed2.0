@@ -60,7 +60,8 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
     const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
     const clampHandlers = useTimeAxisClamp(
         allTimestamps.length ? Date.parse(allTimestamps[0]) : undefined,
-        allTimestamps.length ? Date.parse(allTimestamps[allTimestamps.length - 1]) : undefined);
+        allTimestamps.length ? Date.parse(allTimestamps[allTimestamps.length - 1]) : undefined,
+        !props.isMini);
     const layout = useMemo(() => {
         let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minValue, maxValue, true, theme, uirevision);
 

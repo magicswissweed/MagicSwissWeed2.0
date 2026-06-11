@@ -48,7 +48,8 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
     const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
     const clampHandlers = useTimeAxisClamp(
         sortedTimestamps.length ? Date.parse(sortedTimestamps[0]) : undefined,
-        lastMs);
+        lastMs,
+        !props.isMini);
     const layout = useMemo(() => {
         const baseLayout = getCommonPlotlyLayout(
             props.isMini,
