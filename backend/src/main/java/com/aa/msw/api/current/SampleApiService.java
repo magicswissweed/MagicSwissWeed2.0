@@ -48,7 +48,9 @@ public class SampleApiService {
 
     public List<ApiSample> getLastFewDaysSamples(SpotId spotId) {
         Spot spot = spotDao.get(spotId);
-        return sampleDao.getSamplesOfLastNDays(spot.stationId(), spot.measurementType(), LAST_FEW_DAYS_WINDOW)
+        // Returns samples for every measurement type the station provides (e.g. FLOW + TEMPERATURE),
+        // each carrying its measurementType so the frontend can group and switch between them.
+        return sampleDao.getSamplesOfLastNDays(spot.stationId(), LAST_FEW_DAYS_WINDOW)
                 .stream()
                 .map(SampleApiService::mapSample)
                 .toList();

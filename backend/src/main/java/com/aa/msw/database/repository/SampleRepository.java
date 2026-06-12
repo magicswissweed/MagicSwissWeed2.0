@@ -83,11 +83,10 @@ public class SampleRepository extends AbstractTimestampedRepository
     }
 
     @Override
-    public List<Sample> getSamplesOfLastNDays(ApiStationId stationId, ApiMeasurementType type, int days) {
+    public List<Sample> getSamplesOfLastNDays(ApiStationId stationId, int days) {
         return dsl.selectFrom(TABLE)
                 .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
                         .and(TABLE.STATIONID.eq(stationId.getExternalId()))
-                        .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type)))
                         .and(TABLE.TIMESTAMP.greaterOrEqual(OffsetDateTime.now().minusDays(days))))
                 .orderBy(TABLE.TIMESTAMP.asc())
                 .fetch(this::mapRecord);

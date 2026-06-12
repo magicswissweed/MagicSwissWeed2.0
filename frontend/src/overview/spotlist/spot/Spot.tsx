@@ -1,6 +1,14 @@
 import './Spot.scss'
 import React, {useEffect, useState} from 'react';
-import {ApiForecast, ApiSample, CountryEnum, ForecastApi, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
+import {
+    ApiForecast,
+    ApiMeasurementType,
+    ApiSample,
+    CountryEnum,
+    ForecastApi,
+    SampleApi,
+    SpotsApi
+} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import {ReactComponent as ArrowDownIcon} from '../../../assets/arrow_down.svg';
@@ -19,6 +27,7 @@ import {GraphTypeEnum} from "../../MswOverviewPage";
 import {SpotModel} from "../../../model/SpotModel";
 import {MswLoader} from "../../../loader/MswLoader";
 import {DateTimeConverter} from "../../../service/DateTimeConverter";
+import {measurementLabel} from "../../../helper/ApiMeasurementTypeHelper";
 
 interface SpotProps {
     spot: SpotModel,
@@ -39,7 +48,20 @@ export const Spot = (props: SpotProps) => {
     const [lastFewDays, setLastFewDays] = useState<Array<ApiSample> | undefined>(undefined);
     const [lastFewDaysLoaded, setLastFewDaysLoaded] = useState(false);
 
+    // Which measurement type the open graph shows. Defaults to the spot's primary
+    // type (FLOW/HEIGHT); the user can switch to other types the station provides.
+    const [selectedMeasurementType, setSelectedMeasurementType] = useState<ApiMeasurementType>(props.spot.measurementType);
+
+    const availableMeasurementTypes = [
+        props.spot.measurementType,
+        ...props.spot.station.supportedMeasurements.filter(t => t !== props.spot.measurementType)
+    ];
+
     const shouldLoadForecast = props.showGraphOfType === GraphTypeEnum.Forecast;
+
+    useEffect(() => {
+        setSelectedMeasurementType(props.spot.measurementType);
+    }, [props.spot.id, props.spot.measurementType]);
 
     useEffect(() => {
         if (!shouldLoadForecast) return;
@@ -68,7 +90,7 @@ export const Spot = (props: SpotProps) => {
     }, [shouldLoadForecast, props.spot.stationId, props.spot.measurementType, token]);
 
     useEffect(() => {
-        if (!shouldLoadForecast) return;
+        if (!shouldLoadForecast && !isSpotOpen) return;
         let cancelled = false;
         setLastFewDays(undefined);
         // Logged-out users can't fetch a spot's recent measurements; mark it as
@@ -92,7 +114,7 @@ export const Spot = (props: SpotProps) => {
         return () => {
             cancelled = true;
         };
-    }, [shouldLoadForecast, props.spot.id, props.spot.currentSample, token, user]);
+    }, [shouldLoadForecast, isSpotOpen, props.spot.id, props.spot.currentSample, token, user]);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
@@ -109,10 +131,25 @@ export const Spot = (props: SpotProps) => {
                         {props.spot.currentSample?.timestamp &&
                             <div className="forecast-timestamp">Sample
                                 from: {formatTimestamp(props.spot.currentSample?.timestamp)}</div>}
-                        {forecast?.timestamp &&
+                        {selectedMeasurementType === props.spot.measurementType && forecast?.timestamp &&
                             <div className="sample-timestamp">Forecast
                                 from: {formatTimestamp(forecast?.timestamp)}</div>}
                     </div>
+                    {user && availableMeasurementTypes.length > 1 &&
+                        <div className="measurement-type-switcher">
+                            {availableMeasurementTypes.map(type =>
+                                <Button
+                                    key={type}
+                                    variant="link"
+                                    className={"measurement-type-tab" + (type === selectedMeasurementType ? " active" : "")}
+                                    onClick={() => setSelectedMeasurementType(type)}
+                                    aria-label={"Show " + measurementLabel(type) + " graph"}
+                                >
+                                    {measurementLabel(type)}
+                                </Button>
+                            )}
+                        </div>
+                    }
                     {getGraph(props.spot, false)}
                 </div>
             }
@@ -227,13 +264,24 @@ export const Spot = (props: SpotProps) => {
     }
 
     function getGraph(spot: SpotModel, isMini: boolean) {
-        let forecastContent = <>
-            <MswForecastGraph spot={spot} isMini={isMini} forecast={forecast} loaded={forecastLoaded}
-                              lastFewDays={lastFewDays} lastFewDaysLoaded={lastFewDaysLoaded}/>
-        </>;
+        const measurementType = isMini ? spot.measurementType : selectedMeasurementType;
+        const isPrimary = measurementType === spot.measurementType;
+        const samplesForType = lastFewDays?.filter(s => s.measurementType === measurementType);
 
         let lastMeasurementsContent = <>
-            <MswLastMeasurementsGraph spot={spot} isMini={isMini} lastFewDays={lastFewDays} loaded={lastFewDaysLoaded}/>
+            <MswLastMeasurementsGraph spot={spot} isMini={isMini} measurementType={measurementType}
+                                      lastFewDays={samplesForType} loaded={lastFewDaysLoaded}/>
+        </>;
+
+        // Forecast and historical data only exist for the spot's primary measurement
+        // type; secondary types (e.g. temperature) just show the recent measurements.
+        if (!isPrimary) {
+            return lastFewDaysLoaded ? lastMeasurementsContent : <><MswLoader/></>;
+        }
+
+        let forecastContent = <>
+            <MswForecastGraph spot={spot} isMini={isMini} forecast={forecast} loaded={forecastLoaded}
+                              lastFewDays={samplesForType} lastFewDaysLoaded={lastFewDaysLoaded}/>
         </>;
 
         let historicalYearsContent = <>

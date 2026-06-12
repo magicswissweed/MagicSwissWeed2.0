@@ -1,11 +1,23 @@
 import {ApiMeasurementType} from "../gen/msw-api-ts";
 
 export function measurementLabel(measurementType?: ApiMeasurementType): string {
-    return measurementType === ApiMeasurementType.Height ? 'Height' : 'Flow';
+    switch (measurementType) {
+        case ApiMeasurementType.Height:
+            return 'Height';
+        case ApiMeasurementType.Temperature:
+            return 'Temperature';
+        default:
+            return 'Flow';
+    }
 }
 
 export function measurementUnit(measurementType: ApiMeasurementType) {
-    let flowUnit = "m³/s";
-    let heightUnit = "cm";
-    return measurementType === ApiMeasurementType.Height ? heightUnit : flowUnit;
+    switch (measurementType) {
+        case ApiMeasurementType.Height:
+            return "cm";
+        case ApiMeasurementType.Temperature:
+            return "°C";
+        default:
+            return "m³/s";
+    }
 }
