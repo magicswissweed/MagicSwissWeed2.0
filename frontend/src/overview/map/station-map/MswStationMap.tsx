@@ -3,6 +3,7 @@ import {GoogleMap, InfoWindow, Marker, MarkerClusterer} from '@react-google-maps
 import {ApiStation} from "../../../gen/msw-api-ts";
 import {mapCenter} from "../spot-map/per-category/MswSpotMapPerCategory";
 import {useGoogleMaps} from "../../../map-provider/GoogleMapsProvider";
+import {lightMapStyle} from "../map-styles";
 
 export const MswStationMap = (props: { stations: ApiStation[] }) => {
     const {isLoaded} = useGoogleMaps();
@@ -25,6 +26,7 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
             zoom={8}
             center={mapCenter}
             onClick={() => setSelectedStation(null)}
+            options={{styles: lightMapStyle}}
         >
             <MarkerClusterer>
                 {(clusterer) => (
