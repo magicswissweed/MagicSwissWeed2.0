@@ -93,3 +93,46 @@ input[type="radio"]:checked {
     border-radius: 6px;
   }
 }
+
+// Dark mode for Bootstrap modals. They render at the document body level (so
+// outside any app container) but still inside <html data-theme='dark'>, which
+// is why these overrides are scoped here rather than on a wrapping element.
+[data-theme='dark'] {
+  .modal-content {
+    background-color: var(--bg);
+    color: var(--bg-inverted);
+    border: 1px solid rgba(var(--bg-inverted-rgb), 0.4);
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: rgba(var(--bg-inverted-rgb), 0.2);
+  }
+
+  // Bootstrap's close button is a dark "X" background image; invert it so it
+  // stays visible on the dark modal.
+  .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+
+  .modal-content .form-control {
+    background-color: var(--bg);
+    color: var(--bg-inverted);
+
+    &::placeholder {
+      color: rgba(var(--bg-inverted-rgb), 0.5);
+    }
+  }
+
+  // "Cancel"/secondary buttons use the outline-dark variant, which is dark text
+  // on a dark background here — flip it to light.
+  .modal-content .btn-outline-dark {
+    color: var(--bg-inverted);
+    border-color: var(--bg-inverted);
+
+    &:hover {
+      color: var(--bg);
+      background-color: var(--bg-inverted);
+    }
+  }
+}
