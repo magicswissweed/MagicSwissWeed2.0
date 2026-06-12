@@ -23,6 +23,7 @@ interface MswSpotMapPropsPerCategory {
 export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
     const {isLoaded, loadError} = useGoogleMaps();
     const [selectedSpot, setSelectedSpot] = useState<SpotModel | null>(null);
+    const [selectedPosition, setSelectedPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const clustererRef = useRef<MarkerClusterer | null>(null);
@@ -79,7 +80,10 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 },
             });
 
-            marker.addListener("click", () => setSelectedSpot(spot));
+            marker.addListener("click", () => {
+                setSelectedSpot(spot);
+                setSelectedPosition(position);
+            });
 
             (marker as any).customColor = spot.flowStatus.toString();
             return marker;
@@ -121,9 +125,9 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 onClick={() => setSelectedSpot(null)}
                 options={{styles: theme === 'dark' ? darkMapStyle : lightMapStyle}}
             >
-                {selectedSpot && (
+                {selectedSpot && selectedPosition && (
                     <InfoWindow
-                        position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
+                        position={selectedPosition}
                         onCloseClick={() => setSelectedSpot(null)}
                         options={{headerDisabled: true}}
                     >
