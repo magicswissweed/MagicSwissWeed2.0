@@ -63,6 +63,12 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
         return [...stations].sort((a, b) => a.label.localeCompare(b.label));
     }, [stations]);
 
+    function setActiveStation(stationId: ApiStationId | undefined, stationSelectionError: string, isSubmitButtonDisabled: boolean) {
+        setStationId(stationId);
+        setStationSelectionError(stationSelectionError);
+        setIsSubmitButtonDisabled(isSubmitButtonDisabled);
+    }
+
     return <>
         <Modal dialogClassName="add-or-edit-modal" show={showModal} onHide={handleCancelModal} scrollable={true}>
             <Modal.Header closeButton>
@@ -122,14 +128,10 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                         // distinguish between a valid selection and no selection
                                         if (selected && selected.length > 0) {
                                             const station = selected[0] as ApiStation; // Safely access the first selected item
-                                            setStationId(station.id); // Update the stationId state
-                                            setStationSelectionError(''); // Clear any selection error
-                                            setIsSubmitButtonDisabled(false);
+                                            setActiveStation(station.id, '', false);
 
                                         } else {
-                                            setStationId(undefined); // Clear the stationId if no selection
-                                            setStationSelectionError('Please select a valid option.'); // set an error
-                                            setIsSubmitButtonDisabled(true);
+                                            setActiveStation(undefined, 'Please select a valid option.', true);
                                         }
                                     }}
                                     onBlur={() => {
@@ -138,9 +140,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                             matchingStation = stations.find(s => s.id.country === stationId.country && s.id.externalId === stationId.externalId);
                                         }
                                         if (!matchingStation) {
-                                            setStationId(undefined);
-                                            setStationSelectionError("Please select a valid option.");
-                                            setIsSubmitButtonDisabled(true);
+                                            setActiveStation(undefined, 'Please select a valid option.', true);
                                         }
                                     }}
                                     renderMenuItemChildren={(option: unknown) => {
@@ -242,7 +242,12 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                         </Form>
                     </div>
                     <div className="container-right">
-                        <MswStationMap stations={stations}></MswStationMap>
+                        <MswStationMap
+                            stations={stations}
+                            onStationSelect={(station) => {
+                                setActiveStation(station.id, '', false);
+                            }}
+                        ></MswStationMap>
                     </div>
                 </div>
             </Modal.Body>
