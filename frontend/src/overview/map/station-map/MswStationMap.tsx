@@ -5,13 +5,17 @@ import {mapCenter} from "../spot-map/per-category/MswSpotMapPerCategory";
 import {useGoogleMaps} from "../../../map-provider/GoogleMapsProvider";
 
 export const MswStationMap = (props: { stations: ApiStation[] }) => {
-    const {isLoaded, loadError} = useGoogleMaps();
+    const {isLoaded} = useGoogleMaps();
     const [selectedStation, setSelectedStation] = useState<ApiStation | null>(null);
 
     if (!isLoaded) {
         return <p>Loading maps...</p>;
     }
 
+    // sometimes the externalId is already in the label (e.g. switzerland does that)
+    let label = selectedStation?.label.includes(selectedStation?.id.externalId) ?
+        selectedStation.label :
+        selectedStation?.id.externalId + " - " + selectedStation?.label;
     return (
         <GoogleMap
             mapContainerStyle={{
@@ -19,8 +23,9 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                 height: "100%",
             }}
             zoom={8}
-            center={mapCenter}>
-
+            center={mapCenter}
+            onClick={() => setSelectedStation(null)}
+        >
             <MarkerClusterer>
                 {(clusterer) => (
                     <>
@@ -40,9 +45,10 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                 <InfoWindow
                     position={{lat: selectedStation.latitude, lng: selectedStation.longitude}}
                     onCloseClick={() => setSelectedStation(null)}
+                    options={{headerDisabled: true}}
                 >
                     <div>
-                        <p>{selectedStation.id.externalId} - {selectedStation.label}</p>
+                        <p>{label}</p>
                     </div>
                 </InfoWindow>
             )}
