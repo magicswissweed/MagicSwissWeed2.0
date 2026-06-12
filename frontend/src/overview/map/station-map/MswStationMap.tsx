@@ -6,7 +6,10 @@ import {useGoogleMaps} from "../../../map-provider/GoogleMapsProvider";
 import {darkMapStyle, lightMapStyle} from "../map-styles";
 import {useTheme} from "../../../theme/MswThemeContext";
 
-export const MswStationMap = (props: { stations: ApiStation[] }) => {
+export const MswStationMap = (props: {
+    stations: ApiStation[],
+    onStationSelect?: (station: ApiStation) => void
+}) => {
     const {isLoaded} = useGoogleMaps();
     const [selectedStation, setSelectedStation] = useState<ApiStation | null>(null);
 
@@ -39,7 +42,10 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                                 key={index}
                                 position={{lat: station.latitude, lng: station.longitude}}
                                 clusterer={clusterer}
-                                onClick={() => setSelectedStation(station)}
+                                onClick={() => {
+                                    setSelectedStation(station);
+                                    props.onStationSelect?.(station);
+                                }}
                             />
                         ))}
                     </>
