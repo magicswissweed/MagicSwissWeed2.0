@@ -3,11 +3,14 @@ import {GoogleMap, InfoWindow, Marker, MarkerClusterer} from '@react-google-maps
 import {ApiStation} from "../../../gen/msw-api-ts";
 import {mapCenter} from "../spot-map/per-category/MswSpotMapPerCategory";
 import {useGoogleMaps} from "../../../map-provider/GoogleMapsProvider";
-import {lightMapStyle} from "../map-styles";
+import {darkMapStyle, lightMapStyle} from "../map-styles";
+import {useTheme} from "../../../theme/MswThemeContext";
 
 export const MswStationMap = (props: { stations: ApiStation[] }) => {
     const {isLoaded} = useGoogleMaps();
     const [selectedStation, setSelectedStation] = useState<ApiStation | null>(null);
+
+    const {theme} = useTheme();
 
     if (!isLoaded) {
         return <p>Loading maps...</p>;
@@ -26,7 +29,7 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
             zoom={8}
             center={mapCenter}
             onClick={() => setSelectedStation(null)}
-            options={{styles: lightMapStyle}}
+            options={{styles: theme === 'dark' ? darkMapStyle : lightMapStyle}}
         >
             <MarkerClusterer>
                 {(clusterer) => (
@@ -49,9 +52,7 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                     onCloseClick={() => setSelectedStation(null)}
                     options={{headerDisabled: true}}
                 >
-                    <div>
-                        <p>{label}</p>
-                    </div>
+                    <p className="info-window-content">{label}</p>
                 </InfoWindow>
             )}
         </GoogleMap>
