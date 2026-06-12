@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CronJobDeleteOldEntries {
-    public static final int DEFAULT_RETENTION_TIME_IN_DAYS = 30;
+    public static final int DEFAULT_RETENTION_TIME_IN_DAYS = 300;
     private static final Logger LOG = LoggerFactory.getLogger(CronJobDeleteOldEntries.class);
     private final SampleDao sampleDao;
     private final ForecastDao forecastDao;
