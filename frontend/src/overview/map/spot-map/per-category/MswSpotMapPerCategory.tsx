@@ -125,7 +125,7 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                         position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
                         onCloseClick={() => setSelectedSpot(null)}
                     >
-                        <p style={{textTransform: "none"}}>
+                        <p style={{textTransform: "none"}} className="info-window-content">
                             {selectedSpot.name}: {selectedSpot.currentSample
                             ? `${formatValue(selectedSpot.currentSample.value)} ${measurementUnit(selectedSpot.measurementType)}`
                             : 'Data is being fetched...'}
