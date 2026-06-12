@@ -118,12 +118,14 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 zoom={8}
                 center={mapCenter}
                 onLoad={handleMapLoad}
+                onClick={() => setSelectedSpot(null)}
                 options={{styles: theme === 'dark' ? darkMapStyle : lightMapStyle}}
             >
                 {selectedSpot && (
                     <InfoWindow
                         position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
                         onCloseClick={() => setSelectedSpot(null)}
+                        options={{headerDisabled: true}}
                     >
                         <p style={{textTransform: "none"}} className="info-window-content">
                             {selectedSpot.name}: {selectedSpot.currentSample
