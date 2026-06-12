@@ -16,10 +16,14 @@ export type TimeSeriesPoint = { timestamp: string; value: number };
 export class MswGraphProps {
     spot: SpotModel;
     isMini: boolean;
+    // The measurement type to display. Defaults to the spot's primary type.
+    // Secondary types (e.g. TEMPERATURE) render without the surfable-range band.
+    measurementType?: ApiMeasurementType;
 
-    constructor(spot: SpotModel, isMini = false) {
+    constructor(spot: SpotModel, isMini = false, measurementType?: ApiMeasurementType) {
         this.spot = spot;
         this.isMini = isMini;
+        this.measurementType = measurementType;
     }
 }
 
@@ -128,8 +132,8 @@ export function getPlotlyConfig(isMini: boolean): Partial<Config> {
 export function getCommonPlotlyLayout(
     isMini: boolean,
     allTimestamps: string[],
-    minValue: number,
-    maxValue: number,
+    minValue: number | undefined,
+    maxValue: number | undefined,
     showCurrentTimeLine: boolean,
     theme: MswTheme,
     uirevision: string

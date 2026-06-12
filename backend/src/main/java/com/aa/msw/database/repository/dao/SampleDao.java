@@ -14,7 +14,7 @@ import java.util.Set;
 public interface SampleDao extends TimestampedDao, Dao<SampleId, Sample> {
     Sample getCurrentSample(ApiStationId apiStationId, ApiMeasurementType measurementType) throws NoDataAvailableException;
 
-    List<Sample> getSamplesOfLastNDays(ApiStationId apiStationId, ApiMeasurementType measurementType, int days);
+    List<Sample> getSamplesOfLastNDays(ApiStationId apiStationId, int days);
 
     @Transactional
     void persistSamplesIfNotExist(List<Sample> samples);

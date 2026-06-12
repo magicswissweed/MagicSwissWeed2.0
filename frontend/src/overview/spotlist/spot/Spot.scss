@@ -102,6 +102,35 @@ $icons-container-width: 40px;
     height: 200px;
   }
 
+  .measurement-type-switcher {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    column-gap: 8px;
+    flex-wrap: wrap;
+
+    .measurement-type-tab {
+      padding: 2px 10px;
+      font-size: 80%;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--bg-inverted);
+      opacity: 0.6;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+
+      &.active {
+        opacity: 1;
+        font-weight: bold;
+        border-bottom-color: var(--bg-inverted);
+      }
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
   .timestamps {
     display: flex;
     flex-direction: row;
