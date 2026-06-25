@@ -2,14 +2,46 @@
 
 ## Initial Setup
 
-1. Copy [application.properties-TEMPLATE](backend%2Fsrc%2Fmain%2Fresources%2Fapplication.properties-TEMPLATE) and rename
-   to `application.properties`
-    - replace the firebase keys
-2. Copy [.env.local-TEMPLATE](frontend%2F.env.local-TEMPLATE) and rename it to `.env.local`
-    - replace the secret values
-3. Copy [http-client.private.env.json-TEMPLATE](http-client%2Fhttp-client.private.env.json-TEMPLATE) and rename to '
-   http-client.private.env.json'
-    - replace the secret values
+The repository only contains `*-TEMPLATE` files with placeholder values. Real secrets are **not** committed — copy
+each template to its real filename (the real names are git-ignored) and fill in the values as described below.
+
+### 1. Backend config — `application.properties`
+
+Copy [application.properties-TEMPLATE](backend%2Fsrc%2Fmain%2Fresources%2Fapplication.properties-TEMPLATE) to
+`backend/src/main/resources/application.properties`.
+
+This is the backend's Spring configuration: local database connection plus the **Firebase service account** the backend
+uses to verify users' auth tokens and send push notifications.
+
+- Fill in the `firebase.*` values from a Firebase **service account** key:
+  [Firebase Console](https://console.firebase.google.com/) → project `magicswissweed-293e2` → ⚙ **Project settings** →
+  **Service accounts** → **Generate new private key**. The downloaded JSON contains `project_id`, `private_key_id`,
+  `private_key`, `client_email`, `client_id` and `token_uri`.
+- The database values already match the local Docker setup below and don't need changing.
+
+### 2. Frontend env — `.env.local`
+
+Copy [.env.local-TEMPLATE](frontend%2F.env.local-TEMPLATE) to `frontend/.env.local`.
+
+These are build-time variables baked into the React app (Create React App only exposes vars prefixed with `REACT_APP_`).
+
+- `REACT_APP_APIKEY`, `REACT_APP_AUTHDOMAIN`, `REACT_APP_PROJECTID`, `REACT_APP_STORAGEBUCKET`,
+  `REACT_APP_MESSAGINGSENDERID`, `REACT_APP_APPID` — the Firebase **web app** config (used for client-side login).
+  Get them from [Firebase Console](https://console.firebase.google.com/) → **Project settings** → **General** → **Your
+  apps** → the web app → **SDK setup and configuration**.
+- `REACT_APP_GOOGLE_MAPS_API_KEY` — the key for the Google Maps window (station/spot maps). Get it from the maintainers. This is a public client-side key (it ships in the browser bundle), so it should be restricted by
+  HTTP referrer in the Cloud Console rather than kept secret.
+
+### 3. HTTP client secrets — `http-client.private.env.json`
+
+Copy [http-client.private.env.json-TEMPLATE](http-client%2Fhttp-client.private.env.json-TEMPLATE) to
+`http-client/http-client.private.env.json`.
+
+Credentials for the `.http` files in [http-client/](http-client/) used to manually call the API from the IDE
+(IntelliJ / VS Code REST Client).
+
+- `firebaseApiKey` — same Firebase web API key as `REACT_APP_APIKEY` above.
+- `email` / `password` — a test user that exists in **Firebase Console → Authentication**; used to obtain a login token.
 
 ## Run the backend
 

@@ -7,6 +7,8 @@ import com.aa.msw.source.swiss.hydrodaten.AbstractSwissHydroLineFetchService;
 import com.aa.msw.source.swiss.hydrodaten.model.line.HydroResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,6 +20,8 @@ import java.util.Set;
 public class SwissHistoricalYearsDataFetchServiceImpl
         extends AbstractSwissHydroLineFetchService
         implements SwissHistoricalYearsDataFetchService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SwissHistoricalYearsDataFetchServiceImpl.class);
 
     SwissHistoricalYearsDataFetchServiceImpl() {
         super("https://www.hydrodaten.admin.ch/web/hydro/de/q_annual/", "/2023/plot.json");
@@ -45,8 +49,12 @@ public class SwissHistoricalYearsDataFetchServiceImpl
         for (ApiStationId stationId : stationIds) {
             try {
                 historicalYearsData.add(fetchHistoricalYearsData(stationId));
-            } catch (IOException e) {
-                // ignore: could be that this station just does not have historical data
+            } catch (Exception e) {
+                // Skip stations whose historical data is missing or malformed (e.g. an unexpected or
+                // empty plot.json yielding null series). A single bad station must not fail the whole
+                // fetch — otherwise it crashes the ApplicationReadyEvent listener (and thus app
+                // startup) on a fresh database. Same resilience approach as InputDataFetcherService.
+                LOG.warn("Skipping historical years data for station {}: {}", stationId.getExternalId(), e.toString());
             }
         }
         return historicalYearsData;

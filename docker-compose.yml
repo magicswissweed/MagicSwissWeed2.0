@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   msw-postgres:
     container_name: msw-postgres
