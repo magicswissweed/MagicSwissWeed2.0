@@ -36,8 +36,8 @@ public class AdminController {
 
     @PostMapping("/refresh/historical")
     public ResponseEntity<String> refreshHistorical(
-            @RequestHeader(value = "Authorization", required = false) String authorization) {
-        if (!isAuthorized(authorization)) {
+            @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!isAuthorized(token)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
         LOG.info("Admin: triggering historical data refresh");
@@ -47,8 +47,8 @@ public class AdminController {
 
     @PostMapping("/refresh/stations")
     public ResponseEntity<String> refreshStations(
-            @RequestHeader(value = "Authorization", required = false) String authorization) {
-        if (!isAuthorized(authorization)) {
+            @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!isAuthorized(token)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
         LOG.info("Admin: triggering station refresh");
@@ -58,8 +58,8 @@ public class AdminController {
 
     @PostMapping("/refresh/samples")
     public ResponseEntity<String> refreshSamples(
-            @RequestHeader(value = "Authorization", required = false) String authorization) {
-        if (!isAuthorized(authorization)) {
+            @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!isAuthorized(token)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
         LOG.info("Admin: triggering sample refresh");
@@ -67,11 +67,11 @@ public class AdminController {
         return ResponseEntity.ok("Sample refresh complete");
     }
 
-    private boolean isAuthorized(String authorization) {
+    private boolean isAuthorized(String token) {
         if (adminToken == null || adminToken.isBlank()) {
             LOG.warn("Admin endpoint called but ADMIN_TOKEN is not configured — rejecting");
             return false;
         }
-        return ("Bearer " + adminToken).equals(authorization);
+        return adminToken.equals(token);
     }
 }
