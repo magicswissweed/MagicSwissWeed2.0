@@ -1,6 +1,7 @@
 import './Spot.scss'
 import React, {useEffect, useState} from 'react';
 import {ApiForecast, ApiSample, CountryEnum, ForecastApi, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
+import {useAutoFontSize} from './useAutoFontSize';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import {ReactComponent as ArrowDownIcon} from '../../../assets/arrow_down.svg';
@@ -32,6 +33,7 @@ export const Spot = (props: SpotProps) => {
 
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [isSpotOpen, setIsSpotOpen] = useState(false);
+    const spotTitleRef = useAutoFontSize<HTMLDivElement>();
 
     const [forecast, setForecast] = useState<ApiForecast | undefined>(undefined);
     const [forecastLoaded, setForecastLoaded] = useState(false);
@@ -165,7 +167,7 @@ export const Spot = (props: SpotProps) => {
                 }
             </div>
             <div className="spotContainer" onClick={() => setIsSpotOpen(!isSpotOpen)}>
-                <div className="spot-title">
+                <div className="spot-title" ref={spotTitleRef}>
                     {spot.name}
                 </div>
                 <MswMeasurement spot={spot}/>

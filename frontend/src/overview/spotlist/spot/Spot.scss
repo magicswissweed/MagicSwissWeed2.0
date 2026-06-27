@@ -134,7 +134,7 @@ $icons-container-width: 40px;
 
 .spot-title {
   flex: 1;
-  word-break: break-word;
+  min-width: 0;
 }
 
 .spot-summary a:hover {
