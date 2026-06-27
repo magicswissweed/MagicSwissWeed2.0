@@ -158,7 +158,10 @@ public class StationApiServiceImpl implements StationApiService {
     private boolean canFetchDataForCh(ApiStationId stationId) {
         try {
             List<Sample> samples = swissSampleFetchService.fetchSamples(Set.of(stationId));
-            return samples.size() == 1;
+            // A CH station is fetchable if existenz returns at least one measurement. Stations that
+            // expose BOTH flow and temperature return 2 samples, so "== 1" wrongly dropped them
+            // (e.g. 2243 Zürich, 2473 St. Gallen). Match the DE_BW check: keep if any data exists.
+            return !samples.isEmpty();
         } catch (Exception e) {
             return false;
         }
