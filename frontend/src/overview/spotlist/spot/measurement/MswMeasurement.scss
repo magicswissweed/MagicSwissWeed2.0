@@ -11,6 +11,16 @@
   @include small {
     flex-direction: row;
   }
+
+  &.pending {
+    .pending-message {
+      color: gray;
+      font-size: 90%;
+      font-style: italic;
+      padding: 0 20px;
+      text-align: center;
+    }
+  }
 }
 
 @include small {

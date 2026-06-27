@@ -1,30 +1,47 @@
 import '../base-graph/MswGraph.scss'
 import Plot from 'react-plotly.js';
-import {ApiLineEntry} from '../../../../../gen/msw-api-ts';
+import {ApiForecast, ApiLineEntry, ApiSample} from '../../../../../gen/msw-api-ts';
 import {
-    commonPlotlyConfig,
     createAreaTrace,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTicksAt,
     getTimestamps,
     MswGraphProps,
-    plotColors
+    ONE_DAY,
+    plotColors,
+    TimeSeriesPoint,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
 import {useMemo} from "react";
 import {useTheme} from "../../../../../theme/MswThemeContext";
 
-export const MswForecastGraph = (props: MswGraphProps) => {
+interface MswForecastGraphProps extends MswGraphProps {
+    forecast: ApiForecast | undefined;
+    loaded: boolean;
+    lastFewDays?: Array<ApiSample>;
+    lastFewDaysLoaded?: boolean;
+}
+
+export const MswForecastGraph = (props: MswForecastGraphProps) => {
     const {theme} = useTheme();
 
     // Get data for plotting
     const {currentSample} = props.spot ?? {};
-    const {minFlow, maxFlow} = props.spot ?? {};
-    const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.spot.forecast ?? {};
+    const {minValue, maxValue} = props.spot ?? {};
+    const {measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min} = props.forecast ?? {};
+
+    const currentTime = currentSample?.timestamp;
+
+    const useHistory = !props.isMini && (props.lastFewDays?.length ?? 0) > 0;
+    const pastMeasured: TimeSeriesPoint[] = useHistory
+        ? props.lastFewDays!.filter(s => !currentTime || s.timestamp <= currentTime)
+        : (measuredData ?? []);
 
     // Get timestamps for x-axis grid and labels
-    const allTimestamps = getTimestamps([...measuredData ?? [], ...median ?? []]);
+    const allTimestamps = getTimestamps([...pastMeasured, ...median ?? []]);
 
     // Update all series with current measurement if available
     const removeSamplesBeforeCurrentTime = (series: ApiLineEntry[]) => {
@@ -38,9 +55,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
 
     // Process all data series
     const processedData = {
-        measured: currentSample
-            ? [...measuredData ?? [], {timestamp: currentSample.timestamp, flow: currentSample.flow}]
-            : measuredData,
+        measured: pastMeasured,
         median: removeSamplesBeforeCurrentTime(median ?? []),
         min: removeSamplesBeforeCurrentTime(min ?? []),
         max: removeSamplesBeforeCurrentTime(max ?? []),
@@ -51,13 +66,27 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     // Get common layout and extend it with forecast-specific settings
     let midDayTicks = getTicksAt(12, allTimestamps);
     let startOfDayTicks = getTicksAt(0, allTimestamps)
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const firstMs = allTimestamps.length ? Date.parse(allTimestamps[0]) : undefined;
+    const lastMs = allTimestamps.length ? Date.parse(allTimestamps[allTimestamps.length - 1]) : undefined;
+    const currentMs = currentTime ? Date.parse(currentTime) : undefined;
+    // With history available, default to one day before the current moment, then
+    // the forecast; older history stays reachable by panning. Without history
+    // (mini preview, or logged-out users who can't fetch it) keep the original
+    // full-extent default range.
+    const defaultXRange = (useHistory && currentMs !== undefined && lastMs !== undefined)
+        ? [currentMs - ONE_DAY, lastMs]
+        : undefined;
+    const clampHandlers = useTimeAxisClamp(firstMs, lastMs, !props.isMini);
     const layout = useMemo(() => {
-        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minFlow, maxFlow, true, theme);
+        let baseLayout = getCommonPlotlyLayout(props.isMini, allTimestamps, minValue, maxValue, true, theme, uirevision);
 
         return {
             ...baseLayout,
             xaxis: {
                 ...baseLayout.xaxis,
+                // Default view: one day before current → end of forecast.
+                range: defaultXRange ?? baseLayout.xaxis?.range,
                 // Only show labels at noon
                 tickvals: midDayTicks,
                 // Format labels as weekday names
@@ -93,15 +122,18 @@ export const MswForecastGraph = (props: MswGraphProps) => {
     }, [
         props.isMini,
         allTimestamps,
-        minFlow,
-        maxFlow,
-        theme
+        minValue,
+        maxValue,
+        theme,
+        uirevision,
+        currentMs,
+        lastMs
     ]);
 
-    if (!props.spot.forecastLoaded) {
+    if (!props.loaded || (!props.isMini && !props.lastFewDaysLoaded)) {
         return <MswLoader/>;
     }
-    if (!props.spot.forecast) {
+    if (!props.forecast) {
         return <div>Detailed Forecast not possible at the moment...</div>;
     }
 
@@ -131,6 +163,7 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                     props.isMini,
                     plotColors.median,
                     'Median',
+                    props.spot.measurementType,
                 ),
                 createTrace(
                     processedData.measured!,
@@ -138,15 +171,15 @@ export const MswForecastGraph = (props: MswGraphProps) => {
                     props.isMini,
                     plotColors.measured,
                     'Measured',
+                    props.spot.measurementType,
                 )
             ]}
             layout={layout}
             style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
-            config={{
-                ...commonPlotlyConfig,
-                staticPlot: props.isMini
-            }}
+            config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

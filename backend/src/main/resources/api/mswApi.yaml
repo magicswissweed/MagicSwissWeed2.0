@@ -6,45 +6,55 @@ info:
 servers:
   - url: 'http://localhost:8080/'
 paths:
-  /api/v1/sample/lastFewDays:
-    post:
-      summary: Get Samples from last Few Days for this station.
+  /api/v1/sample/lastFewDays/{spotId}:
+    get:
+      summary: Get Samples from last Few Days for a single spot.
       security:
         - bearerAuth: [ ]
       operationId: getLastFewDaysSamples
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              description: The ids of the stations to get the sample from.
-              type: array
-              items:
-                $ref: '#/components/schemas/ApiStationId'
+      parameters:
+        - name: spotId
+          description: The id of the spot to get the samples for.
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
       tags:
         - sample
       responses:
         '200':
-          description: Returns the Samples from the last Few Days for the station.
+          description: Returns the Samples from the last Few Days for the spot.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiLastFewDaysList'
-  /api/v1/forecasts:
+                $ref: '#/components/schemas/ApiLastFewDaysSamples'
+  /api/v1/forecast:
     get:
-      summary: Get All Forecasts for user
-      security:
-        - bearerAuth: [ ]
-      operationId: getForecasts
+      summary: Get current forecast for a station + measurement type.
+      operationId: getForecast
+      parameters:
+        - name: stationId
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApiStationId'
+        - name: measurementType
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApiMeasurementType'
       tags:
         - forecast
       responses:
         '200':
-          description: Returns forecasts for all spots of user
+          description: Returns the current forecast.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiForecastsList'
+                $ref: '#/components/schemas/ApiForecast'
+        '404':
+          description: No forecast available for the station.
   /api/v1/historicalYears:
     get:
       summary: Get historical data for all spots of user.
@@ -212,7 +222,7 @@ components:
         $ref: '#/components/schemas/ApiSpotInformation'
     ApiSpot:
       type: object
-      required: [ id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification ]
+      required: [ id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification ]
       properties:
         id:
           type: string
@@ -228,24 +238,40 @@ components:
             - BUNGEE_SURF
         isPublic:
           type: boolean
-        minFlow:
-          type: integer
-        maxFlow:
-          type: integer
+        measurementType:
+          $ref: '#/components/schemas/ApiMeasurementType'
+        minValue:
+          type: number
+          format: double
+        maxValue:
+          type: number
+          format: double
         station:
           $ref: '#/components/schemas/ApiStation'
         withNotification:
           type: boolean
+    ApiMeasurementType:
+      type: string
+      nullable: false
+      enum:
+        - FLOW
+        - HEIGHT
+        - TEMPERATURE
     ApiSpotInformation:
       allOf:
         - $ref: '#/components/schemas/ApiSpot'
         - type: object
-          required: [ currentSample, flowStatusEnum ]
+          required: [ flowStatusEnum, dataPending ]
           properties:
             currentSample:
               $ref: '#/components/schemas/ApiSample'
+            currentTemperature:
+              $ref: '#/components/schemas/ApiSample'
             flowStatusEnum:
               $ref: '#/components/schemas/ApiFlowStatusEnum'
+            dataPending:
+              type: boolean
+              description: True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a "fetching data" placeholder.
     ApiFlowStatusEnum:
       type: string
       nullable: false
@@ -259,6 +285,7 @@ components:
       enum:
         - CH
         - FR
+        - DE_BW
     ApiStationId:
       type: object
       required: [ country, externalId ]
@@ -275,30 +302,20 @@ components:
         format: uuid
     ApiSample:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value, measurementType ]
       properties:
         timestamp:
           type: string
           format: date-time
-        temperature:
+        value:
           type: number
           format: double
-        flow:
-          type: integer
-    ApiFlowSample:
-      type: object
-      required: [ timestamp, flow ]
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        flow:
-          type: number
-          format: double
+        measurementType:
+          $ref: '#/components/schemas/ApiMeasurementType'
     ApiLastFewDaysSamples:
       type: array
       items:
-        $ref: '#/components/schemas/ApiFlowSample'
+        $ref: '#/components/schemas/ApiSample'
     ApiForecast:
       type: object
       required: [ timestamp, measuredData, median, twentyFivePercentile, seventyFivePercentile, max, min ]
@@ -330,30 +347,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ApiLineEntry'
-    ApiForecastsList:
-      type: array
-      items:
-        $ref: '#/components/schemas/StationToApiForecasts'
-    StationToApiForecasts:
-      type: object
-      required: [ station, forecast ]
-      properties:
-        station:
-          $ref: '#/components/schemas/ApiStationId'
-        forecast:
-          $ref: '#/components/schemas/ApiForecast'
-    ApiLastFewDaysList:
-      type: array
-      items:
-        $ref: '#/components/schemas/StationToLastFewDays'
-    StationToLastFewDays:
-      type: object
-      required: [ station, lastFewDays ]
-      properties:
-        station:
-          $ref: '#/components/schemas/ApiStationId'
-        lastFewDays:
-          $ref: '#/components/schemas/ApiLastFewDaysSamples'
     ApiHistoricalYearsList:
       type: array
       items:
@@ -396,12 +389,12 @@ components:
             $ref: '#/components/schemas/ApiLineEntry'
     ApiLineEntry:
       type: object
-      required: [ timestamp, flow ]
+      required: [ timestamp, value ]
       properties:
         timestamp:
           type: string
           format: date-time
-        flow:
+        value:
           type: number
           format: double
     ApiStationList:
@@ -410,7 +403,7 @@ components:
         $ref: '#/components/schemas/ApiStation'
     ApiStation:
       type: object
-      required: [ id, label, latitude, longitude ]
+      required: [ id, label, latitude, longitude, supportedMeasurements ]
       properties:
         id:
           $ref: '#/components/schemas/ApiStationId'
@@ -422,6 +415,10 @@ components:
         longitude:
           type: number
           format: double
+        supportedMeasurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiMeasurementType'
     PushNotificationSubscription:
       type: object
       required: [ token ]

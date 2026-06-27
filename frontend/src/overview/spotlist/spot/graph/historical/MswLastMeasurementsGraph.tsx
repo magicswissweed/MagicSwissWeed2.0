@@ -1,51 +1,70 @@
 import '../base-graph/MswGraph.scss'
 import {
-    commonPlotlyConfig,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTicksAt,
     getTimestamps,
     MswGraphProps,
     ONE_WEEK,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import {MswLoader} from "../../../../../loader/MswLoader";
 import Plot from 'react-plotly.js';
 import {useTheme} from "../../../../../theme/MswThemeContext";
 import {useMemo} from "react";
+import {ApiSample} from "../../../../../gen/msw-api-ts";
 
-export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
+interface MswLastMeasurementsGraphProps extends MswGraphProps {
+    lastFewDays: Array<ApiSample> | undefined;
+    loaded: boolean;
+}
+
+export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) => {
     const {theme} = useTheme();
+    const {lastFewDays, loaded} = props;
 
-    let lineData = props.spot.lastFewDaysLoaded && props.spot.lastFewDays ?
+    const lineData = loaded && lastFewDays ?
         [
-            ...props.spot.lastFewDays,
-            {timestamp: props.spot.currentSample.timestamp, flow: props.spot.currentSample.flow}
+            ...lastFewDays,
+            ...(props.spot.currentSample
+                ? [{timestamp: props.spot.currentSample.timestamp, value: props.spot.currentSample.value}]
+                : [])
         ] :
         [];
 
-    // keep only the last 7 days
-    const now = new Date();
-    const oneWeekAgo = new Date(now.getTime() - ONE_WEEK);
-    lineData = lineData.filter(sample => {
-        return Date.parse(sample.timestamp) >= oneWeekAgo.getTime();
-    });
+    // All available data (~8 days) is kept so the user can pan back, but the
+    // default view shows the most recent 7 days.
+    const sortedTimestamps = getTimestamps(lineData);
+    const lastMs = sortedTimestamps.length
+        ? Date.parse(sortedTimestamps[sortedTimestamps.length - 1])
+        : undefined;
+    const defaultXRange = lastMs !== undefined ? [lastMs - ONE_WEEK, lastMs] : undefined;
 
-    let midDayTicks = getTicksAt(12, getTimestamps(lineData));
-    let startOfDayTicks = getTicksAt(0, getTimestamps(lineData));
+    let midDayTicks = getTicksAt(12, sortedTimestamps);
+    let startOfDayTicks = getTicksAt(0, sortedTimestamps);
 
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const clampHandlers = useTimeAxisClamp(
+        sortedTimestamps.length ? Date.parse(sortedTimestamps[0]) : undefined,
+        lastMs,
+        !props.isMini);
     const layout = useMemo(() => {
         const baseLayout = getCommonPlotlyLayout(
             props.isMini,
-            getTimestamps(lineData),
-            props.spot.minFlow,
-            props.spot.maxFlow,
+            sortedTimestamps,
+            props.spot.minValue,
+            props.spot.maxValue,
             false,
-            theme);
+            theme,
+            uirevision);
         return {
             ...baseLayout,
             xaxis: {
                 ...baseLayout.xaxis,
+                // Default view: most recent 7 days (older data reachable by panning).
+                range: defaultXRange ?? baseLayout.xaxis?.range,
                 // Only show labels at noon
                 tickvals: midDayTicks,
                 // Format labels as weekday names
@@ -59,7 +78,7 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
             shapes: [
                 ...(baseLayout.shapes || []),
                 // Vertical lines at midnight (darker than noon grid)
-                ...(getTimestamps(lineData).length > 0 ?
+                ...(sortedTimestamps.length > 0 ?
                         startOfDayTicks
                             .map(timestamp => ({
                                 type: 'line' as const,
@@ -80,13 +99,14 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
         };
     }, [
         props.isMini,
-        props.spot.minFlow,
-        props.spot.maxFlow,
+        props.spot.minValue,
+        props.spot.maxValue,
         lineData,
-        theme
+        theme,
+        uirevision
     ]);
 
-    if (props.spot.lastFewDaysLoaded) {
+    if (loaded) {
         if (!lineData || lineData.length === 0) {
             return <div>Detailed Graph not possible at the moment...</div>
         }
@@ -97,12 +117,14 @@ export const MswLastMeasurementsGraph = (props: MswGraphProps) => {
     return (
         <Plot
             data={[
-                createTrace(lineData, !props.isMini, props.isMini, plotColors.measured, 'Measured')
+                createTrace(lineData, !props.isMini, props.isMini, plotColors.measured, 'Measured', props.spot.measurementType)
             ]}
             layout={layout}
             style={{width: '100%', height: '100%'}}
             useResizeHandler={true}
-            config={{...commonPlotlyConfig, staticPlot: props.isMini}}
+            config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };

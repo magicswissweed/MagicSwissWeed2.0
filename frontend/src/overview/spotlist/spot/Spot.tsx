@@ -1,7 +1,7 @@
 import './Spot.scss'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {ApiForecast, ApiSample, CountryEnum, ForecastApi, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
 import {useAutoFontSize} from './useAutoFontSize';
-import {CountryEnum, SpotsApi} from '../../../gen/msw-api-ts';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
 import {ReactComponent as ArrowDownIcon} from '../../../assets/arrow_down.svg';
@@ -19,6 +19,7 @@ import {MswLastMeasurementsGraph} from "./graph/historical/MswLastMeasurementsGr
 import {GraphTypeEnum} from "../../MswOverviewPage";
 import {SpotModel} from "../../../model/SpotModel";
 import {MswLoader} from "../../../loader/MswLoader";
+import {DateTimeConverter} from "../../../service/DateTimeConverter";
 
 interface SpotProps {
     spot: SpotModel,
@@ -33,6 +34,67 @@ export const Spot = (props: SpotProps) => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [isSpotOpen, setIsSpotOpen] = useState(false);
     const spotTitleRef = useAutoFontSize<HTMLDivElement>();
+
+    const [forecast, setForecast] = useState<ApiForecast | undefined>(undefined);
+    const [forecastLoaded, setForecastLoaded] = useState(false);
+
+    const [lastFewDays, setLastFewDays] = useState<Array<ApiSample> | undefined>(undefined);
+    const [lastFewDaysLoaded, setLastFewDaysLoaded] = useState(false);
+
+    const shouldLoadForecast = props.showGraphOfType === GraphTypeEnum.Forecast;
+
+    useEffect(() => {
+        if (!shouldLoadForecast) return;
+        let cancelled = false;
+        setForecastLoaded(false);
+        setForecast(undefined);
+        (async () => {
+            const config = await authConfiguration(token);
+            try {
+                const res = await new ForecastApi(config).getForecast(props.spot.stationId, props.spot.measurementType);
+                if (cancelled) return;
+                setForecast(DateTimeConverter.utcForecastToLocalTime(res.data));
+            } catch (e: any) {
+                if (cancelled) return;
+                if (e?.response?.status !== 404) {
+                    // no forecast for spot
+                    setForecast(undefined);
+                }
+            } finally {
+                if (!cancelled) setForecastLoaded(true);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [shouldLoadForecast, props.spot.stationId, props.spot.measurementType, token]);
+
+    useEffect(() => {
+        if (!shouldLoadForecast) return;
+        let cancelled = false;
+        setLastFewDays(undefined);
+        // Logged-out users can't fetch a spot's recent measurements; mark it as
+        // "loaded" with no data so the forecast graph just shows the forecast (as
+        // before), without panning back into history.
+        if (!user) {
+            setLastFewDaysLoaded(true);
+            return;
+        }
+        setLastFewDaysLoaded(false);
+        (async () => {
+            const config = await authConfiguration(token);
+            try {
+                const res = await new SampleApi(config).getLastFewDaysSamples(props.spot.id);
+                if (cancelled) return;
+                setLastFewDays(DateTimeConverter.utcLastFewDaysToLocalTime(res.data));
+            } finally {
+                if (!cancelled) setLastFewDaysLoaded(true);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [shouldLoadForecast, props.spot.id, props.spot.currentSample, token, user]);
 
     const handleDeleteSpotAndCloseModal = (spot: SpotModel) => deleteSpot(spot).then(handleCancelConfirmationModal);
     const handleCancelConfirmationModal = () => setShowConfirmationModal(false);
@@ -49,9 +111,9 @@ export const Spot = (props: SpotProps) => {
                         {props.spot.currentSample?.timestamp &&
                             <div className="forecast-timestamp">Sample
                                 from: {formatTimestamp(props.spot.currentSample?.timestamp)}</div>}
-                        {props.spot.forecast?.timestamp &&
+                        {forecast?.timestamp &&
                             <div className="sample-timestamp">Forecast
-                                from: {formatTimestamp(props.spot.forecast?.timestamp)}</div>}
+                                from: {formatTimestamp(forecast?.timestamp)}</div>}
                     </div>
                     {getGraph(props.spot, false)}
                 </div>
@@ -73,11 +135,19 @@ export const Spot = (props: SpotProps) => {
 
     function getStationLinkBaseUrl(country: CountryEnum) {
         switch (country) {
-            case "CH":
+            case CountryEnum.Ch:
                 return "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/";
-            case "FR":
+            case CountryEnum.Fr:
                 return "https://www.vigicrues.gouv.fr/station/"
+            case CountryEnum.DeBw:
+                return "https://www.hvz.baden-wuerttemberg.de/pegel.html?id="
         }
+        return assertUnreachable(country);
+    }
+
+    // This is a bit of a hack to make the switch exhaustive and remind us to add new enum types here.
+    function assertUnreachable(x: never): never {
+        throw new Error("Forgot to declare a link to a station in the switch statement.");
     }
 
     function getSpotSummaryContent(spot: SpotModel) {
@@ -160,11 +230,12 @@ export const Spot = (props: SpotProps) => {
 
     function getGraph(spot: SpotModel, isMini: boolean) {
         let forecastContent = <>
-            <MswForecastGraph spot={spot} isMini={isMini}/>
+            <MswForecastGraph spot={spot} isMini={isMini} forecast={forecast} loaded={forecastLoaded}
+                              lastFewDays={lastFewDays} lastFewDaysLoaded={lastFewDaysLoaded}/>
         </>;
 
         let lastMeasurementsContent = <>
-            <MswLastMeasurementsGraph spot={spot} isMini={isMini}/>
+            <MswLastMeasurementsGraph spot={spot} isMini={isMini} lastFewDays={lastFewDays} loaded={lastFewDaysLoaded}/>
         </>;
 
         let historicalYearsContent = <>
@@ -172,8 +243,8 @@ export const Spot = (props: SpotProps) => {
         </>;
 
         if (props.showGraphOfType === GraphTypeEnum.Forecast) {
-            if (spot.forecastLoaded) {
-                return spot.forecast ? forecastContent : lastMeasurementsContent
+            if (forecastLoaded) {
+                return forecast ? forecastContent : lastMeasurementsContent
             } else {
                 return <><MswLoader/></>;
             }

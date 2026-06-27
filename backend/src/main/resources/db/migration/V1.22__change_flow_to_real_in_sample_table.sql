@@ -1,0 +1,2 @@
+ALTER TABLE sample_table
+    ALTER COLUMN flow TYPE REAL USING flow::REAL;

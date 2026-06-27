@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.pojos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class HistoricalYearsDataTable implements Serializable {
     private final JSONB min;
     private final JSONB currentYear;
     private final Country country;
+    private final MeasurementType measurementType;
 
     public HistoricalYearsDataTable(HistoricalYearsDataTable value) {
         this.dbId = value.dbId;
@@ -40,6 +42,7 @@ public class HistoricalYearsDataTable implements Serializable {
         this.min = value.min;
         this.currentYear = value.currentYear;
         this.country = value.country;
+        this.measurementType = value.measurementType;
     }
 
     public HistoricalYearsDataTable(
@@ -51,7 +54,8 @@ public class HistoricalYearsDataTable implements Serializable {
         JSONB max,
         JSONB min,
         JSONB currentYear,
-        Country country
+        Country country,
+        MeasurementType measurementType
     ) {
         this.dbId = dbId;
         this.stationId = stationId;
@@ -62,6 +66,7 @@ public class HistoricalYearsDataTable implements Serializable {
         this.min = min;
         this.currentYear = currentYear;
         this.country = country;
+        this.measurementType = measurementType;
     }
 
     /**
@@ -129,6 +134,14 @@ public class HistoricalYearsDataTable implements Serializable {
         return this.country;
     }
 
+    /**
+     * Getter for
+     * <code>public.historical_years_data_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return this.measurementType;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -192,6 +205,12 @@ public class HistoricalYearsDataTable implements Serializable {
         }
         else if (!this.country.equals(other.country))
             return false;
+        if (this.measurementType == null) {
+            if (other.measurementType != null)
+                return false;
+        }
+        else if (!this.measurementType.equals(other.measurementType))
+            return false;
         return true;
     }
 
@@ -208,6 +227,7 @@ public class HistoricalYearsDataTable implements Serializable {
         result = prime * result + ((this.min == null) ? 0 : this.min.hashCode());
         result = prime * result + ((this.currentYear == null) ? 0 : this.currentYear.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
+        result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
         return result;
     }
 
@@ -224,6 +244,7 @@ public class HistoricalYearsDataTable implements Serializable {
         sb.append(", ").append(min);
         sb.append(", ").append(currentYear);
         sb.append(", ").append(country);
+        sb.append(", ").append(measurementType);
 
         sb.append(")");
         return sb.toString();

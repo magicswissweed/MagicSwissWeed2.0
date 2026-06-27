@@ -7,6 +7,7 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable.SpotCurrentInfoTablePath;
 import com.aa.msw.gen.jooq.tables.UserToSpotTable.UserToSpotTablePath;
@@ -79,16 +80,6 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
     public final TableField<SpotTableRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255), this, "");
 
     /**
-     * The column <code>public.spot_table.minflow</code>.
-     */
-    public final TableField<SpotTableRecord, Integer> MINFLOW = createField(DSL.name("minflow"), SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
-     * The column <code>public.spot_table.maxflow</code>.
-     */
-    public final TableField<SpotTableRecord, Integer> MAXFLOW = createField(DSL.name("maxflow"), SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
      * The column <code>public.spot_table.ispublic</code>.
      */
     public final TableField<SpotTableRecord, Boolean> ISPUBLIC = createField(DSL.name("ispublic"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
@@ -97,6 +88,21 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
      * The column <code>public.spot_table.country</code>.
      */
     public final TableField<SpotTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+
+    /**
+     * The column <code>public.spot_table.measurement_type</code>.
+     */
+    public final TableField<SpotTableRecord, MeasurementType> MEASUREMENT_TYPE = createField(DSL.name("measurement_type"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'FLOW'::measurement_type"), SQLDataType.VARCHAR)).asEnumDataType(MeasurementType.class), this, "");
+
+    /**
+     * The column <code>public.spot_table.min_value</code>.
+     */
+    public final TableField<SpotTableRecord, Float> MIN_VALUE = createField(DSL.name("min_value"), SQLDataType.REAL.nullable(false), this, "");
+
+    /**
+     * The column <code>public.spot_table.max_value</code>.
+     */
+    public final TableField<SpotTableRecord, Float> MAX_VALUE = createField(DSL.name("max_value"), SQLDataType.REAL.nullable(false), this, "");
 
     private SpotTable(Name alias, Table<SpotTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

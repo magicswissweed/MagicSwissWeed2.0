@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq;
 
 
 import com.aa.msw.gen.jooq.tables.FlywaySchemaHistory;
+import com.aa.msw.gen.jooq.tables.SampleTable;
 
 import org.jooq.Index;
 import org.jooq.OrderField;
@@ -23,4 +24,5 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex(DSL.name("flyway_schema_history_s_idx"), FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
+    public static final Index SAMPLE_TABLE_LOOKUP_IDX = Internal.createIndex(DSL.name("sample_table_lookup_idx"), SampleTable.SAMPLE_TABLE, new OrderField[] { SampleTable.SAMPLE_TABLE.COUNTRY, SampleTable.SAMPLE_TABLE.STATIONID, SampleTable.SAMPLE_TABLE.MEASUREMENT_TYPE, SampleTable.SAMPLE_TABLE.TIMESTAMP.desc() }, false);
 }

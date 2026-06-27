@@ -1,14 +1,15 @@
 package com.aa.msw.api.graph.forecast;
 
+import com.aa.msw.database.exceptions.NoDataAvailableException;
+import com.aa.msw.gen.api.ApiForecast;
+import com.aa.msw.gen.api.ApiMeasurementType;
+import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.api.ForecastApi;
-import com.aa.msw.gen.api.StationToApiForecasts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class ForecastApiController implements ForecastApi {
@@ -21,11 +22,13 @@ public class ForecastApiController implements ForecastApi {
     }
 
     @Override
-    public ResponseEntity<List<StationToApiForecasts>> getForecasts() {
+    public ResponseEntity<ApiForecast> getForecast(ApiStationId stationId, ApiMeasurementType measurementType) {
         try {
-            return ResponseEntity.ok(forecastApiService.getAllForecasts());
+            return ResponseEntity.ok(forecastApiService.getCurrentForecast(stationId, measurementType));
+        } catch (NoDataAvailableException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            LOG.error("Error getting forecasts", e);
+            LOG.error("Error getting forecast for station {} ({})", stationId, measurementType, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

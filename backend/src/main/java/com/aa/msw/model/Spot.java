@@ -2,6 +2,7 @@ package com.aa.msw.model;
 
 import com.aa.msw.database.helpers.id.HasId;
 import com.aa.msw.database.helpers.id.SpotId;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
 
 public record Spot(
@@ -10,8 +11,9 @@ public record Spot(
         SpotTypeEnum type,
         String name,
         ApiStationId stationId,
-        Integer minFlow,
-        Integer maxFlow
+        ApiMeasurementType measurementType,
+        Double minValue,
+        Double maxValue
 ) implements HasId<SpotId> {
     @Override
     public SpotId getId() {

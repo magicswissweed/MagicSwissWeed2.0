@@ -6,6 +6,8 @@ import {FlowColorEnum, SpotModel} from "../../../../model/SpotModel";
 import {darkMapStyle, lightMapStyle} from "../../map-styles";
 import {useTheme} from "../../../../theme/MswThemeContext";
 import {useGoogleMaps} from "../../../../map-provider/GoogleMapsProvider";
+import {formatValue} from "../../../../utils/formatValue";
+import {measurementUnit} from "../../../../helper/ApiMeasurementTypeHelper";
 
 export const mapCenter = {lat: 47.05, lng: 8.30}; // Luzern / ca. Mitte der Schweiz
 
@@ -21,6 +23,7 @@ interface MswSpotMapPropsPerCategory {
 export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
     const {isLoaded, loadError} = useGoogleMaps();
     const [selectedSpot, setSelectedSpot] = useState<SpotModel | null>(null);
+    const [selectedPosition, setSelectedPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const clustererRef = useRef<MarkerClusterer | null>(null);
@@ -77,7 +80,10 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 },
             });
 
-            marker.addListener("click", () => setSelectedSpot(spot));
+            marker.addListener("click", () => {
+                setSelectedSpot(spot);
+                setSelectedPosition(position);
+            });
 
             (marker as any).customColor = spot.flowStatus.toString();
             return marker;
@@ -116,14 +122,20 @@ export const MswSpotMapPerCategory = ({spots}: MswSpotMapPropsPerCategory) => {
                 zoom={8}
                 center={mapCenter}
                 onLoad={handleMapLoad}
+                onClick={() => setSelectedSpot(null)}
                 options={{styles: theme === 'dark' ? darkMapStyle : lightMapStyle}}
             >
-                {selectedSpot && (
+                {selectedSpot && selectedPosition && (
                     <InfoWindow
-                        position={{lat: selectedSpot.station.latitude, lng: selectedSpot.station.longitude}}
+                        position={selectedPosition}
                         onCloseClick={() => setSelectedSpot(null)}
+                        options={{headerDisabled: true}}
                     >
-                        <p style={{textTransform: "none"}}>{selectedSpot.name}: {selectedSpot.currentSample.flow} m³/s</p>
+                        <p style={{textTransform: "none"}} className="info-window-content">
+                            {selectedSpot.name}: {selectedSpot.currentSample
+                            ? `${formatValue(selectedSpot.currentSample.value)} ${measurementUnit(selectedSpot.measurementType)}`
+                            : 'Data is being fetched...'}
+                        </p>
                     </InfoWindow>
                 )}
             </GoogleMap>

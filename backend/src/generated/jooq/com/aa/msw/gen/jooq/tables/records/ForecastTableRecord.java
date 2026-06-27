@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.records;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 
 import java.time.OffsetDateTime;
@@ -173,6 +174,21 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
         return (Country) get(9);
     }
 
+    /**
+     * Setter for <code>public.forecast_table.measurement_type</code>.
+     */
+    public ForecastTableRecord setMeasurementType(MeasurementType value) {
+        set(10, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.forecast_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return (MeasurementType) get(10);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -196,7 +212,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Create a detached, initialised ForecastTableRecord
      */
-    public ForecastTableRecord(UUID id, String stationid, JSONB measureddata, JSONB median, JSONB max, JSONB min, OffsetDateTime timestamp, JSONB twentyfivepercentile, JSONB seventyfivepercentile, Country country) {
+    public ForecastTableRecord(UUID id, String stationid, JSONB measureddata, JSONB median, JSONB max, JSONB min, OffsetDateTime timestamp, JSONB twentyfivepercentile, JSONB seventyfivepercentile, Country country, MeasurementType measurementType) {
         super(ForecastTable.FORECAST_TABLE);
 
         setId(id);
@@ -209,6 +225,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
         setTwentyfivepercentile(twentyfivepercentile);
         setSeventyfivepercentile(seventyfivepercentile);
         setCountry(country);
+        setMeasurementType(measurementType);
         resetChangedOnNotNull();
     }
 
@@ -229,6 +246,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
             setTwentyfivepercentile(value.getTwentyfivepercentile());
             setSeventyfivepercentile(value.getSeventyfivepercentile());
             setCountry(value.getCountry());
+            setMeasurementType(value.getMeasurementType());
             resetChangedOnNotNull();
         }
     }

@@ -1,12 +1,13 @@
 import '../base-graph/MswGraph.scss'
 import {
-    commonPlotlyConfig,
     createAreaTrace,
     createTrace,
     getCommonPlotlyLayout,
+    getPlotlyConfig,
     getTimestamps,
     MswGraphProps,
-    plotColors
+    plotColors,
+    useTimeAxisClamp
 } from "../base-graph/MswGraph";
 import Plot from 'react-plotly.js';
 import {useMemo} from "react";
@@ -20,6 +21,12 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         return calculateMaxY(props.spot);
     }, [props.spot, props.spot.historical]);
 
+    const uirevision = `${props.spot.stationId.externalId}-${props.spot.measurementType}`;
+    const medianTimestamps = getTimestamps(props.spot.historical?.median || []);
+    const clampHandlers = useTimeAxisClamp(
+        medianTimestamps.length ? Date.parse(medianTimestamps[0]) : undefined,
+        medianTimestamps.length ? Date.parse(medianTimestamps[medianTimestamps.length - 1]) : undefined,
+        !props.isMini);
     const layout = useMemo(() => {
         const invertedRgb = getComputedStyle(document.documentElement)
             .getPropertyValue('--bg-inverted-rgb')
@@ -28,10 +35,11 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
         let baseLayout = getCommonPlotlyLayout(
             props.isMini,
             getTimestamps(props.spot.historical?.median || []),
-            props.spot.minFlow,
-            props.spot.maxFlow,
+            props.spot.minValue,
+            props.spot.maxValue,
             true,
-            theme);
+            theme,
+            uirevision);
         return {
             ...baseLayout,
             xaxis: {
@@ -79,10 +87,11 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
     }, [
         props.isMini,
         getTimestamps(props.spot.historical?.median || []),
-        props.spot.minFlow,
-        props.spot.maxFlow,
+        props.spot.minValue,
+        props.spot.maxValue,
         theme,
-        maxY
+        maxY,
+        uirevision
     ]);
 
     if (!props.spot.historical) {
@@ -117,13 +126,15 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                     props.isMini,
                     plotColors.median,
                     'Median',
+                    props.spot.measurementType,
                 ),
                 createTrace(
                     props.spot.historical?.currentYear!,
                     !props.isMini,
                     props.isMini,
                     plotColors.measured,
-                    'Measured')
+                    'Measured',
+                    props.spot.measurementType)
             ]}
             layout={layout}
             style={{
@@ -131,18 +142,20 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
                 height: '100%'
             }}
             useResizeHandler={true}
-            config={{...commonPlotlyConfig, staticPlot: props.isMini}}
+            config={getPlotlyConfig(props.isMini)}
+            onInitialized={clampHandlers.onInitialized}
+            onRelayout={clampHandlers.onRelayout}
         />
     );
 };
 
 function calculateMaxY(spot: SpotModel): number {
     const paddingPercent = 10;
-    const maxAllowedFlow = spot.maxFlow || 0;
+    const maxAllowedFlow = spot.maxValue || 0;
 
     // FIXME: looks like min and max got confused on fetching the data. We simply 'fix' it in the frontend by using min instead of max here
-    let maxOfHistoricalMax = Math.max(...(spot.historical?.min || []).map(m => m.flow));
-    let maxOfCurrentYearMax = Math.max(...(spot.historical?.currentYear || []).map(m => m.flow));
+    let maxOfHistoricalMax = Math.max(...(spot.historical?.min || []).map(m => m.value));
+    let maxOfCurrentYearMax = Math.max(...(spot.historical?.currentYear || []).map(m => m.value));
     const max = Math.max(
         maxOfCurrentYearMax,
         maxOfHistoricalMax,

@@ -1,6 +1,8 @@
 import './MswMeasurement.scss'
 import {Component} from 'react';
 import {SpotModel} from "../../../../model/SpotModel";
+import {formatValue} from "../../../../utils/formatValue";
+import {measurementUnit} from "../../../../helper/ApiMeasurementTypeHelper";
 
 interface MeasurementsProps {
     spot: SpotModel
@@ -16,36 +18,43 @@ export class MswMeasurement extends Component<MeasurementsProps> {
     }
 
     render() {
+        if (!this.spot.currentSample) {
+            return <>
+                <div className="measurements pending"
+                     tabIndex={0}>
+                    <div className="pending-message">Data is being fetched...</div>
+                </div>
+            </>;
+        }
+
         return <>
             <div className="measurements"
                  tabIndex={0}>
                 <div className="measurement_row meas flow">
-                    {this.getFlow()}
+                    {this.getMeasurement(this.spot.currentSample.value)}
                 </div>
 
-                {this.spot.currentSample!.temperature &&
+                {this.spot.currentTemperature &&
                     <div className="measurement_row meas temp">
-                        {this.getTemp()}
+                        {this.getTemp(this.spot.currentTemperature.value)}
                     </div>
                 }
             </div>
         </>;
     }
 
-    private getFlow() {
+    private getMeasurement(value: number) {
         return <>
-            <div className={this.spot.flowStatus}>{this.spot.currentSample.flow}</div>
+            <div className={this.spot.flowStatus}>{formatValue(value)}</div>
             <div className="unit">
-                m<sup>3</sup>/s
+                {measurementUnit(this.spot.measurementType)}
             </div>
         </>;
     }
 
-
-    private getTemp() {
-        let temp: number = this.spot.currentSample!.temperature ?? 0;
+    private getTemp(temp: number) {
         return <>
-            <div>{temp}</div>
+            <div>{temp.toFixed(1)}</div>
             <div className="unit">°C</div>
         </>;
     }

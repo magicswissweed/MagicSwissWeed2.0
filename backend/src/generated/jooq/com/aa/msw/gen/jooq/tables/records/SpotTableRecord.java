@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.records;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 
@@ -83,40 +84,10 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
     }
 
     /**
-     * Setter for <code>public.spot_table.minflow</code>.
-     */
-    public SpotTableRecord setMinflow(Integer value) {
-        set(4, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>public.spot_table.minflow</code>.
-     */
-    public Integer getMinflow() {
-        return (Integer) get(4);
-    }
-
-    /**
-     * Setter for <code>public.spot_table.maxflow</code>.
-     */
-    public SpotTableRecord setMaxflow(Integer value) {
-        set(5, value);
-        return this;
-    }
-
-    /**
-     * Getter for <code>public.spot_table.maxflow</code>.
-     */
-    public Integer getMaxflow() {
-        return (Integer) get(5);
-    }
-
-    /**
      * Setter for <code>public.spot_table.ispublic</code>.
      */
     public SpotTableRecord setIspublic(Boolean value) {
-        set(6, value);
+        set(4, value);
         return this;
     }
 
@@ -124,14 +95,14 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
      * Getter for <code>public.spot_table.ispublic</code>.
      */
     public Boolean getIspublic() {
-        return (Boolean) get(6);
+        return (Boolean) get(4);
     }
 
     /**
      * Setter for <code>public.spot_table.country</code>.
      */
     public SpotTableRecord setCountry(Country value) {
-        set(7, value);
+        set(5, value);
         return this;
     }
 
@@ -139,7 +110,52 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
      * Getter for <code>public.spot_table.country</code>.
      */
     public Country getCountry() {
-        return (Country) get(7);
+        return (Country) get(5);
+    }
+
+    /**
+     * Setter for <code>public.spot_table.measurement_type</code>.
+     */
+    public SpotTableRecord setMeasurementType(MeasurementType value) {
+        set(6, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return (MeasurementType) get(6);
+    }
+
+    /**
+     * Setter for <code>public.spot_table.min_value</code>.
+     */
+    public SpotTableRecord setMinValue(Float value) {
+        set(7, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.min_value</code>.
+     */
+    public Float getMinValue() {
+        return (Float) get(7);
+    }
+
+    /**
+     * Setter for <code>public.spot_table.max_value</code>.
+     */
+    public SpotTableRecord setMaxValue(Float value) {
+        set(8, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.max_value</code>.
+     */
+    public Float getMaxValue() {
+        return (Float) get(8);
     }
 
     // -------------------------------------------------------------------------
@@ -165,17 +181,18 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
     /**
      * Create a detached, initialised SpotTableRecord
      */
-    public SpotTableRecord(UUID id, Spottype type, String stationid, String name, Integer minflow, Integer maxflow, Boolean ispublic, Country country) {
+    public SpotTableRecord(UUID id, Spottype type, String stationid, String name, Boolean ispublic, Country country, MeasurementType measurementType, Float minValue, Float maxValue) {
         super(SpotTable.SPOT_TABLE);
 
         setId(id);
         setType(type);
         setStationid(stationid);
         setName(name);
-        setMinflow(minflow);
-        setMaxflow(maxflow);
         setIspublic(ispublic);
         setCountry(country);
+        setMeasurementType(measurementType);
+        setMinValue(minValue);
+        setMaxValue(maxValue);
         resetChangedOnNotNull();
     }
 
@@ -190,10 +207,11 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
             setType(value.getType());
             setStationid(value.getStationid());
             setName(value.getName());
-            setMinflow(value.getMinflow());
-            setMaxflow(value.getMaxflow());
             setIspublic(value.getIspublic());
             setCountry(value.getCountry());
+            setMeasurementType(value.getMeasurementType());
+            setMinValue(value.getMinValue());
+            setMaxValue(value.getMaxValue());
             resetChangedOnNotNull();
         }
     }

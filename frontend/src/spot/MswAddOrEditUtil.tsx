@@ -1,20 +1,39 @@
 import React, {useEffect, useMemo} from "react";
-import {ApiSpotSpotTypeEnum, ApiStation, ApiStationId, CountryEnum} from "../gen/msw-api-ts";
+import {ApiMeasurementType, ApiSpotSpotTypeEnum, ApiStation, ApiStationId, CountryEnum} from "../gen/msw-api-ts";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import Modal from "react-bootstrap/Modal";
 import {MswStationMap} from "../overview/map/station-map/MswStationMap";
 import './MswAddOrEditUtil.scss';
+import {measurementLabel} from "../helper/ApiMeasurementTypeHelper";
 
 export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCancelModal: (() => void) | undefined, formRef: React.MutableRefObject<HTMLFormElement | null>, handleSaveAndCloseModal: (e: {
     preventDefault: any
-}) => void, spotName: string, setSpotName: (value: (((prevState: string) => string) | string)) => void, type: ApiSpotSpotTypeEnum, setType: (value: (((prevState: ApiSpotSpotTypeEnum) => ApiSpotSpotTypeEnum) | ApiSpotSpotTypeEnum)) => void, setStationId: (value: (((prevState: (ApiStationId | undefined)) => (ApiStationId | undefined)) | ApiStationId | undefined)) => void, setStationSelectionError: (value: (((prevState: string) => string) | string)) => void, stations: ApiStation[], stationId: ApiStationId | undefined, stationSelectionError: string, minFlow: number | undefined, setMinFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, maxFlow: number | undefined, setMaxFlow: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, withNotification: boolean, setWithNotification: (value: (((prevState: boolean) => boolean) | boolean)) => void, isSubmitButtonDisabled: boolean | undefined, setIsSubmitButtonDisabled: (value: (((prevState: boolean) => boolean) | boolean)) => void, isEditMode: boolean) {
+}) => void, spotName: string, setSpotName: (value: (((prevState: string) => string) | string)) => void, type: ApiSpotSpotTypeEnum, setType: (value: (((prevState: ApiSpotSpotTypeEnum) => ApiSpotSpotTypeEnum) | ApiSpotSpotTypeEnum)) => void, setStationId: (value: (((prevState: (ApiStationId | undefined)) => (ApiStationId | undefined)) | ApiStationId | undefined)) => void, setStationSelectionError: (value: (((prevState: string) => string) | string)) => void, stations: ApiStation[], stationId: ApiStationId | undefined, stationSelectionError: string, measurementType: ApiMeasurementType, setMeasurementType: (value: (((prevState: ApiMeasurementType) => ApiMeasurementType) | ApiMeasurementType)) => void, minValue: number | undefined, setMinValue: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, maxValue: number | undefined, setMaxValue: (value: (((prevState: (number | undefined)) => (number | undefined)) | number | undefined)) => void, withNotification: boolean, setWithNotification: (value: (((prevState: boolean) => boolean) | boolean)) => void, isSubmitButtonDisabled: boolean | undefined, setIsSubmitButtonDisabled: (value: (((prevState: boolean) => boolean) | boolean)) => void, isEditMode: boolean) {
+    const selectedStation = useMemo(
+        () => stations.find(s => stationId && s.id.country === stationId.country && s.id.externalId === stationId.externalId),
+        [stations, stationId]
+    );
+    const supportedMeasurements = useMemo(() => {
+        const types = (selectedStation?.supportedMeasurements ?? []).filter(
+            t => t === ApiMeasurementType.Flow || t === ApiMeasurementType.Height
+        );
+        return types.length > 0 ? types : [ApiMeasurementType.Flow];
+    }, [selectedStation]);
+
+    // If the selected measurement type isn't supported by the chosen station, snap to a supported one.
+    useEffect(() => {
+        if (!supportedMeasurements.includes(measurementType)) {
+            setMeasurementType(measurementType ?? supportedMeasurements[0]);
+        }
+    }, [supportedMeasurements, measurementType, setMeasurementType]);
+
     // Validation effect for enabling/disabling submit button
     useEffect(() => {
         const flowsValid =
-            minFlow !== undefined && minFlow >= 0 &&
-            maxFlow !== undefined && maxFlow >= 0 &&
-            maxFlow > minFlow;
+            minValue !== undefined && minValue >= 0 &&
+            maxValue !== undefined && maxValue >= 0 &&
+            maxValue > minValue;
         const nameValid = spotName.trim() !== "";
         const stationValid = stations.some(station => station.id.country === stationId?.country && station.id.externalId === stationId.externalId);
 
@@ -23,7 +42,9 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
         } else {
             setIsSubmitButtonDisabled(true);
         }
-    }, [minFlow, maxFlow, spotName, stationId, stations]);
+    }, [minValue, maxValue, spotName, stationId, stations]);
+
+    const unitLabel = measurementLabel(measurementType);
 
     const countryEmoji = (country: CountryEnum) => {
         switch (country) {
@@ -31,6 +52,8 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                 return '🇨🇭';
             case CountryEnum.Fr:
                 return '🇫🇷';
+            case CountryEnum.DeBw:
+                return '🇩🇪';
             default:
                 return '🌍';
         }
@@ -39,6 +62,12 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
     const sortedStations = useMemo(() => {
         return [...stations].sort((a, b) => a.label.localeCompare(b.label));
     }, [stations]);
+
+    function setActiveStation(stationId: ApiStationId | undefined, stationSelectionError: string, isSubmitButtonDisabled: boolean) {
+        setStationId(stationId);
+        setStationSelectionError(stationSelectionError);
+        setIsSubmitButtonDisabled(isSubmitButtonDisabled);
+    }
 
     return <>
         <Modal dialogClassName="add-or-edit-modal" show={showModal} onHide={handleCancelModal} scrollable={true}>
@@ -99,14 +128,10 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                         // distinguish between a valid selection and no selection
                                         if (selected && selected.length > 0) {
                                             const station = selected[0] as ApiStation; // Safely access the first selected item
-                                            setStationId(station.id); // Update the stationId state
-                                            setStationSelectionError(''); // Clear any selection error
-                                            setIsSubmitButtonDisabled(false);
+                                            setActiveStation(station.id, '', false);
 
                                         } else {
-                                            setStationId(undefined); // Clear the stationId if no selection
-                                            setStationSelectionError('Please select a valid option.'); // set an error
-                                            setIsSubmitButtonDisabled(true);
+                                            setActiveStation(undefined, 'Please select a valid option.', true);
                                         }
                                     }}
                                     onBlur={() => {
@@ -115,9 +140,7 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                             matchingStation = stations.find(s => s.id.country === stationId.country && s.id.externalId === stationId.externalId);
                                         }
                                         if (!matchingStation) {
-                                            setStationId(undefined);
-                                            setStationSelectionError("Please select a valid option.");
-                                            setIsSubmitButtonDisabled(true);
+                                            setActiveStation(undefined, 'Please select a valid option.', true);
                                         }
                                     }}
                                     renderMenuItemChildren={(option: unknown) => {
@@ -143,40 +166,61 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                                 {stationSelectionError && <div style={{color: 'red'}}>{stationSelectionError}</div>}
                             </Form.Group>
 
-                            <Form.Label htmlFor="formBasicMinFlow">Minimum Flow for Spot to Work</Form.Label>
-                            <Form.Group className="mb-3" controlId="formBasicMinFlow">
+                            {supportedMeasurements.length > 1 && (
+                                <>
+                                    <Form.Label htmlFor="formBasicMeasurementType">Measurement</Form.Label>
+                                    <Form.Group className="mb-3" controlId="formBasicMeasurementType">
+                                        {supportedMeasurements.map(m => (
+                                            <Form.Check
+                                                key={m}
+                                                inline
+                                                type="radio"
+                                                label={measurementLabel(m)}
+                                                name="radioMeasurementGroup"
+                                                id={`measurement-${m}`}
+                                                checked={measurementType === m}
+                                                onChange={() => setMeasurementType(m)}
+                                            />
+                                        ))}
+                                    </Form.Group>
+                                </>
+                            )}
+
+                            <Form.Label htmlFor="formBasicMinValue">Minimum {unitLabel} for Spot to Work</Form.Label>
+                            <Form.Group className="mb-3" controlId="formBasicMinValue">
                                 <Form.Control
                                     required
                                     type="number"
-                                    placeholder="Minimum Flow"
-                                    value={minFlow}
-                                    onChange={(e) => setMinFlow(isNaN(parseFloat(e.target.value)) ? undefined : parseFloat(e.target.value))}
+                                    placeholder={`Minimum ${unitLabel}`}
+                                    value={minValue}
+                                    onChange={(e) => setMinValue(isNaN(parseFloat(e.target.value)) ? undefined : parseFloat(e.target.value))}
                                 />
                             </Form.Group>
-                            {minFlow !== undefined && minFlow < 0 && (
+                            {minValue !== undefined && minValue < 0 && (
                                 <div style={{color: 'red'}}>
-                                    Minimum flow must be a positive number.
+                                    Minimum {unitLabel.toLowerCase()} must be a positive number.
                                 </div>
                             )}
 
-                            <Form.Label htmlFor="formBasicMaxFlow">Maximum Flow for Spot to Work</Form.Label>
-                            <Form.Group className="mb-3" controlId="formBasicMaxFlow">
+                            <Form.Label htmlFor="formBasicMaxValue">Maximum {unitLabel} for Spot to Work</Form.Label>
+                            <Form.Group className="mb-3" controlId="formBasicMaxValue">
                                 <Form.Control
                                     required
                                     type="number"
-                                    placeholder="Maximum Flow"
-                                    value={maxFlow}
-                                    onChange={(e) => setMaxFlow(isNaN(parseFloat(e.target.value)) ? undefined : parseFloat(e.target.value))}
+                                    placeholder={`Maximum ${unitLabel}`}
+                                    value={maxValue}
+                                    onChange={(e) => setMaxValue(isNaN(parseFloat(e.target.value)) ? undefined : parseFloat(e.target.value))}
                                 />
                             </Form.Group>
-                            {maxFlow !== undefined && maxFlow < 0 && (
+                            {maxValue !== undefined && maxValue < 0 && (
                                 <div style={{color: 'red'}}>
-                                    Maximum flow must be a positive number.
+                                    Maximum {unitLabel.toLowerCase()} must be a positive number.
                                 </div>
                             )}
-                            {maxFlow !== undefined && minFlow !== undefined && maxFlow <= minFlow && (
+                            {maxValue !== undefined && minValue !== undefined && maxValue <= minValue && (
                                 <div style={{color: 'red'}}>
-                                    Maximum flow must be greater than minimum flow.
+                                    Maximum {unitLabel.toLowerCase()} must be greater than
+                                    minimum {unitLabel.toLowerCase()}.
                                 </div>
                             )}
                         </Form>
@@ -198,7 +242,12 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
                         </Form>
                     </div>
                     <div className="container-right">
-                        <MswStationMap stations={stations}></MswStationMap>
+                        <MswStationMap
+                            stations={stations}
+                            onStationSelect={(station) => {
+                                setActiveStation(station.id, '', false);
+                            }}
+                        ></MswStationMap>
                     </div>
                 </div>
             </Modal.Body>

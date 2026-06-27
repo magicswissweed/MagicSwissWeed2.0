@@ -3,6 +3,7 @@ package com.aa.msw.gen.api;
 import java.net.URI;
 import java.util.Objects;
 import com.aa.msw.gen.api.ApiFlowStatusEnum;
+import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiSample;
 import com.aa.msw.gen.api.ApiStation;
 import com.aa.msw.gen.api.ApiStationId;
@@ -24,7 +25,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-12T17:43:06.448035+01:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-12T14:49:17.702360+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;
@@ -72,9 +73,11 @@ public class ApiSpotInformation {
 
   private Boolean isPublic;
 
-  private Integer minFlow;
+  private ApiMeasurementType measurementType;
 
-  private Integer maxFlow;
+  private Double minValue;
+
+  private Double maxValue;
 
   private ApiStation station;
 
@@ -82,7 +85,11 @@ public class ApiSpotInformation {
 
   private ApiSample currentSample;
 
+  private ApiSample currentTemperature;
+
   private ApiFlowStatusEnum flowStatusEnum;
+
+  private Boolean dataPending;
 
   public ApiSpotInformation() {
     super();
@@ -91,18 +98,19 @@ public class ApiSpotInformation {
   /**
    * Constructor with only required parameters
    */
-  public ApiSpotInformation(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, Integer minFlow, Integer maxFlow, ApiStation station, Boolean withNotification, ApiSample currentSample, ApiFlowStatusEnum flowStatusEnum) {
+  public ApiSpotInformation(UUID id, String name, ApiStationId stationId, SpotTypeEnum spotType, Boolean isPublic, ApiMeasurementType measurementType, Double minValue, Double maxValue, ApiStation station, Boolean withNotification, ApiFlowStatusEnum flowStatusEnum, Boolean dataPending) {
     this.id = id;
     this.name = name;
     this.stationId = stationId;
     this.spotType = spotType;
     this.isPublic = isPublic;
-    this.minFlow = minFlow;
-    this.maxFlow = maxFlow;
+    this.measurementType = measurementType;
+    this.minValue = minValue;
+    this.maxValue = maxValue;
     this.station = station;
     this.withNotification = withNotification;
-    this.currentSample = currentSample;
     this.flowStatusEnum = flowStatusEnum;
+    this.dataPending = dataPending;
   }
 
   public ApiSpotInformation id(UUID id) {
@@ -205,44 +213,64 @@ public class ApiSpotInformation {
     this.isPublic = isPublic;
   }
 
-  public ApiSpotInformation minFlow(Integer minFlow) {
-    this.minFlow = minFlow;
+  public ApiSpotInformation measurementType(ApiMeasurementType measurementType) {
+    this.measurementType = measurementType;
     return this;
   }
 
   /**
-   * Get minFlow
-   * @return minFlow
+   * Get measurementType
+   * @return measurementType
   */
-  @NotNull 
-  @Schema(name = "minFlow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("minFlow")
-  public Integer getMinFlow() {
-    return minFlow;
+  @NotNull @Valid 
+  @Schema(name = "measurementType", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("measurementType")
+  public ApiMeasurementType getMeasurementType() {
+    return measurementType;
   }
 
-  public void setMinFlow(Integer minFlow) {
-    this.minFlow = minFlow;
+  public void setMeasurementType(ApiMeasurementType measurementType) {
+    this.measurementType = measurementType;
   }
 
-  public ApiSpotInformation maxFlow(Integer maxFlow) {
-    this.maxFlow = maxFlow;
+  public ApiSpotInformation minValue(Double minValue) {
+    this.minValue = minValue;
     return this;
   }
 
   /**
-   * Get maxFlow
-   * @return maxFlow
+   * Get minValue
+   * @return minValue
   */
   @NotNull 
-  @Schema(name = "maxFlow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("maxFlow")
-  public Integer getMaxFlow() {
-    return maxFlow;
+  @Schema(name = "minValue", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("minValue")
+  public Double getMinValue() {
+    return minValue;
   }
 
-  public void setMaxFlow(Integer maxFlow) {
-    this.maxFlow = maxFlow;
+  public void setMinValue(Double minValue) {
+    this.minValue = minValue;
+  }
+
+  public ApiSpotInformation maxValue(Double maxValue) {
+    this.maxValue = maxValue;
+    return this;
+  }
+
+  /**
+   * Get maxValue
+   * @return maxValue
+  */
+  @NotNull 
+  @Schema(name = "maxValue", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("maxValue")
+  public Double getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(Double maxValue) {
+    this.maxValue = maxValue;
   }
 
   public ApiSpotInformation station(ApiStation station) {
@@ -294,8 +322,8 @@ public class ApiSpotInformation {
    * Get currentSample
    * @return currentSample
   */
-  @NotNull @Valid 
-  @Schema(name = "currentSample", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "currentSample", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("currentSample")
   public ApiSample getCurrentSample() {
     return currentSample;
@@ -303,6 +331,26 @@ public class ApiSpotInformation {
 
   public void setCurrentSample(ApiSample currentSample) {
     this.currentSample = currentSample;
+  }
+
+  public ApiSpotInformation currentTemperature(ApiSample currentTemperature) {
+    this.currentTemperature = currentTemperature;
+    return this;
+  }
+
+  /**
+   * Get currentTemperature
+   * @return currentTemperature
+  */
+  @Valid 
+  @Schema(name = "currentTemperature", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("currentTemperature")
+  public ApiSample getCurrentTemperature() {
+    return currentTemperature;
+  }
+
+  public void setCurrentTemperature(ApiSample currentTemperature) {
+    this.currentTemperature = currentTemperature;
   }
 
   public ApiSpotInformation flowStatusEnum(ApiFlowStatusEnum flowStatusEnum) {
@@ -325,6 +373,26 @@ public class ApiSpotInformation {
     this.flowStatusEnum = flowStatusEnum;
   }
 
+  public ApiSpotInformation dataPending(Boolean dataPending) {
+    this.dataPending = dataPending;
+    return this;
+  }
+
+  /**
+   * True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a \"fetching data\" placeholder.
+   * @return dataPending
+  */
+  @NotNull 
+  @Schema(name = "dataPending", description = "True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a \"fetching data\" placeholder.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("dataPending")
+  public Boolean getDataPending() {
+    return dataPending;
+  }
+
+  public void setDataPending(Boolean dataPending) {
+    this.dataPending = dataPending;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -339,17 +407,20 @@ public class ApiSpotInformation {
         Objects.equals(this.stationId, apiSpotInformation.stationId) &&
         Objects.equals(this.spotType, apiSpotInformation.spotType) &&
         Objects.equals(this.isPublic, apiSpotInformation.isPublic) &&
-        Objects.equals(this.minFlow, apiSpotInformation.minFlow) &&
-        Objects.equals(this.maxFlow, apiSpotInformation.maxFlow) &&
+        Objects.equals(this.measurementType, apiSpotInformation.measurementType) &&
+        Objects.equals(this.minValue, apiSpotInformation.minValue) &&
+        Objects.equals(this.maxValue, apiSpotInformation.maxValue) &&
         Objects.equals(this.station, apiSpotInformation.station) &&
         Objects.equals(this.withNotification, apiSpotInformation.withNotification) &&
         Objects.equals(this.currentSample, apiSpotInformation.currentSample) &&
-        Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum);
+        Objects.equals(this.currentTemperature, apiSpotInformation.currentTemperature) &&
+        Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum) &&
+        Objects.equals(this.dataPending, apiSpotInformation.dataPending);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, minFlow, maxFlow, station, withNotification, currentSample, flowStatusEnum);
+    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, currentTemperature, flowStatusEnum, dataPending);
   }
 
   @Override
@@ -361,12 +432,15 @@ public class ApiSpotInformation {
     sb.append("    stationId: ").append(toIndentedString(stationId)).append("\n");
     sb.append("    spotType: ").append(toIndentedString(spotType)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
-    sb.append("    minFlow: ").append(toIndentedString(minFlow)).append("\n");
-    sb.append("    maxFlow: ").append(toIndentedString(maxFlow)).append("\n");
+    sb.append("    measurementType: ").append(toIndentedString(measurementType)).append("\n");
+    sb.append("    minValue: ").append(toIndentedString(minValue)).append("\n");
+    sb.append("    maxValue: ").append(toIndentedString(maxValue)).append("\n");
     sb.append("    station: ").append(toIndentedString(station)).append("\n");
     sb.append("    withNotification: ").append(toIndentedString(withNotification)).append("\n");
     sb.append("    currentSample: ").append(toIndentedString(currentSample)).append("\n");
+    sb.append("    currentTemperature: ").append(toIndentedString(currentTemperature)).append("\n");
     sb.append("    flowStatusEnum: ").append(toIndentedString(flowStatusEnum)).append("\n");
+    sb.append("    dataPending: ").append(toIndentedString(dataPending)).append("\n");
     sb.append("}");
     return sb.toString();
   }

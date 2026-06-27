@@ -5,6 +5,7 @@ package com.aa.msw.gen.jooq.tables.pojos;
 
 
 import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 
 import java.io.Serializable;
@@ -23,20 +24,22 @@ public class SpotTable implements Serializable {
     private final Spottype type;
     private final String stationid;
     private final String name;
-    private final Integer minflow;
-    private final Integer maxflow;
     private final Boolean ispublic;
     private final Country country;
+    private final MeasurementType measurementType;
+    private final Float minValue;
+    private final Float maxValue;
 
     public SpotTable(SpotTable value) {
         this.id = value.id;
         this.type = value.type;
         this.stationid = value.stationid;
         this.name = value.name;
-        this.minflow = value.minflow;
-        this.maxflow = value.maxflow;
         this.ispublic = value.ispublic;
         this.country = value.country;
+        this.measurementType = value.measurementType;
+        this.minValue = value.minValue;
+        this.maxValue = value.maxValue;
     }
 
     public SpotTable(
@@ -44,19 +47,21 @@ public class SpotTable implements Serializable {
         Spottype type,
         String stationid,
         String name,
-        Integer minflow,
-        Integer maxflow,
         Boolean ispublic,
-        Country country
+        Country country,
+        MeasurementType measurementType,
+        Float minValue,
+        Float maxValue
     ) {
         this.id = id;
         this.type = type;
         this.stationid = stationid;
         this.name = name;
-        this.minflow = minflow;
-        this.maxflow = maxflow;
         this.ispublic = ispublic;
         this.country = country;
+        this.measurementType = measurementType;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
     }
 
     /**
@@ -88,20 +93,6 @@ public class SpotTable implements Serializable {
     }
 
     /**
-     * Getter for <code>public.spot_table.minflow</code>.
-     */
-    public Integer getMinflow() {
-        return this.minflow;
-    }
-
-    /**
-     * Getter for <code>public.spot_table.maxflow</code>.
-     */
-    public Integer getMaxflow() {
-        return this.maxflow;
-    }
-
-    /**
      * Getter for <code>public.spot_table.ispublic</code>.
      */
     public Boolean getIspublic() {
@@ -113,6 +104,27 @@ public class SpotTable implements Serializable {
      */
     public Country getCountry() {
         return this.country;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.measurement_type</code>.
+     */
+    public MeasurementType getMeasurementType() {
+        return this.measurementType;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.min_value</code>.
+     */
+    public Float getMinValue() {
+        return this.minValue;
+    }
+
+    /**
+     * Getter for <code>public.spot_table.max_value</code>.
+     */
+    public Float getMaxValue() {
+        return this.maxValue;
     }
 
     @Override
@@ -148,18 +160,6 @@ public class SpotTable implements Serializable {
         }
         else if (!this.name.equals(other.name))
             return false;
-        if (this.minflow == null) {
-            if (other.minflow != null)
-                return false;
-        }
-        else if (!this.minflow.equals(other.minflow))
-            return false;
-        if (this.maxflow == null) {
-            if (other.maxflow != null)
-                return false;
-        }
-        else if (!this.maxflow.equals(other.maxflow))
-            return false;
         if (this.ispublic == null) {
             if (other.ispublic != null)
                 return false;
@@ -172,6 +172,24 @@ public class SpotTable implements Serializable {
         }
         else if (!this.country.equals(other.country))
             return false;
+        if (this.measurementType == null) {
+            if (other.measurementType != null)
+                return false;
+        }
+        else if (!this.measurementType.equals(other.measurementType))
+            return false;
+        if (this.minValue == null) {
+            if (other.minValue != null)
+                return false;
+        }
+        else if (!this.minValue.equals(other.minValue))
+            return false;
+        if (this.maxValue == null) {
+            if (other.maxValue != null)
+                return false;
+        }
+        else if (!this.maxValue.equals(other.maxValue))
+            return false;
         return true;
     }
 
@@ -183,10 +201,11 @@ public class SpotTable implements Serializable {
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
         result = prime * result + ((this.stationid == null) ? 0 : this.stationid.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.minflow == null) ? 0 : this.minflow.hashCode());
-        result = prime * result + ((this.maxflow == null) ? 0 : this.maxflow.hashCode());
         result = prime * result + ((this.ispublic == null) ? 0 : this.ispublic.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
+        result = prime * result + ((this.measurementType == null) ? 0 : this.measurementType.hashCode());
+        result = prime * result + ((this.minValue == null) ? 0 : this.minValue.hashCode());
+        result = prime * result + ((this.maxValue == null) ? 0 : this.maxValue.hashCode());
         return result;
     }
 
@@ -198,10 +217,11 @@ public class SpotTable implements Serializable {
         sb.append(", ").append(type);
         sb.append(", ").append(stationid);
         sb.append(", ").append(name);
-        sb.append(", ").append(minflow);
-        sb.append(", ").append(maxflow);
         sb.append(", ").append(ispublic);
         sb.append(", ").append(country);
+        sb.append(", ").append(measurementType);
+        sb.append(", ").append(minValue);
+        sb.append(", ").append(maxValue);
 
         sb.append(")");
         return sb.toString();

@@ -3,15 +3,26 @@ import {GoogleMap, InfoWindow, Marker, MarkerClusterer} from '@react-google-maps
 import {ApiStation} from "../../../gen/msw-api-ts";
 import {mapCenter} from "../spot-map/per-category/MswSpotMapPerCategory";
 import {useGoogleMaps} from "../../../map-provider/GoogleMapsProvider";
+import {darkMapStyle, lightMapStyle} from "../map-styles";
+import {useTheme} from "../../../theme/MswThemeContext";
 
-export const MswStationMap = (props: { stations: ApiStation[] }) => {
-    const {isLoaded, loadError} = useGoogleMaps();
+export const MswStationMap = (props: {
+    stations: ApiStation[],
+    onStationSelect?: (station: ApiStation) => void
+}) => {
+    const {isLoaded} = useGoogleMaps();
     const [selectedStation, setSelectedStation] = useState<ApiStation | null>(null);
+
+    const {theme} = useTheme();
 
     if (!isLoaded) {
         return <p>Loading maps...</p>;
     }
 
+    // sometimes the externalId is already in the label (e.g. switzerland does that)
+    let label = selectedStation?.label.includes(selectedStation?.id.externalId) ?
+        selectedStation.label :
+        selectedStation?.id.externalId + " - " + selectedStation?.label;
     return (
         <GoogleMap
             mapContainerStyle={{
@@ -19,8 +30,10 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                 height: "100%",
             }}
             zoom={8}
-            center={mapCenter}>
-
+            center={mapCenter}
+            onClick={() => setSelectedStation(null)}
+            options={{styles: theme === 'dark' ? darkMapStyle : lightMapStyle}}
+        >
             <MarkerClusterer>
                 {(clusterer) => (
                     <>
@@ -29,7 +42,10 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                                 key={index}
                                 position={{lat: station.latitude, lng: station.longitude}}
                                 clusterer={clusterer}
-                                onClick={() => setSelectedStation(station)}
+                                onClick={() => {
+                                    setSelectedStation(station);
+                                    props.onStationSelect?.(station);
+                                }}
                             />
                         ))}
                     </>
@@ -40,10 +56,9 @@ export const MswStationMap = (props: { stations: ApiStation[] }) => {
                 <InfoWindow
                     position={{lat: selectedStation.latitude, lng: selectedStation.longitude}}
                     onCloseClick={() => setSelectedStation(null)}
+                    options={{headerDisabled: true}}
                 >
-                    <div>
-                        <p>{selectedStation.id.externalId} - {selectedStation.label}</p>
-                    </div>
+                    <p className="info-window-content">{label}</p>
                 </InfoWindow>
             )}
         </GoogleMap>
