@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/api/v1/historicalYears").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/forecast").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/spots").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/admin/**").permitAll()
                 .anyRequest().authenticated()
         ).httpBasic(withDefaults());
         return http.build();
