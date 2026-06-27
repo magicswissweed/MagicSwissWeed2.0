@@ -1,0 +1,12 @@
+# Ensure shell scripts always use LF, even on Windows checkouts.
+# CRLF in these breaks them inside Linux containers and on macOS/Linux/CI.
+*.sh text eol=lf
+gradlew text eol=lf
+
+# Windows batch files must stay CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Generated jOOQ sources are committed with LF; pin them so Windows checkouts
+# don't show the whole tree as modified from CRLF conversion.
+backend/src/generated/** text eol=lf
