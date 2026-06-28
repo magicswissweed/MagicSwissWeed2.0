@@ -79,6 +79,7 @@ public abstract class AbstractSwissHydroLineFetchService extends AbstractFetchSe
             if (timestamp.isAfter(lastTimeStamp)) {
                 timestamps.add(timestamp);
                 flows.add(inputFlows.get(index));
+                lastTimeStamp = timestamp;
             }
         }
 
