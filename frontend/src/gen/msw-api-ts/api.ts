@@ -375,6 +375,12 @@ export interface ApiSpotInformation {
      * @memberof ApiSpotInformation
      */
     'dataPending': boolean;
+    /**
+     * User-specific notes for this spot. Null when no notes have been set, or when the request is unauthenticated.
+     * @type {string}
+     * @memberof ApiSpotInformation
+     */
+    'notes'?: string | null;
 }
 
 export const ApiSpotInformationSpotTypeEnum = {
@@ -496,6 +502,19 @@ export interface StationToApiHistoricalYears {
      * @memberof StationToApiHistoricalYears
      */
     'historical': ApiHistoricalYears;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateSpotNotesRequest
+ */
+export interface UpdateSpotNotesRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateSpotNotesRequest
+     */
+    'notes'?: string | null;
 }
 
 /**
@@ -1122,6 +1141,46 @@ export const SpotsApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Update the user\'s personal notes for a spot.
+         * @param {string} spotId The id of the spot to update notes for.
+         * @param {UpdateSpotNotesRequest} updateSpotNotesRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSpotNotes: async (spotId: string, updateSpotNotesRequest: UpdateSpotNotesRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'spotId' is not null or undefined
+            assertParamExists('updateSpotNotes', 'spotId', spotId)
+            // verify required parameter 'updateSpotNotesRequest' is not null or undefined
+            assertParamExists('updateSpotNotes', 'updateSpotNotesRequest', updateSpotNotesRequest)
+            const localVarPath = `/api/v1/spot/{spotId}/notes`
+                .replace(`{${"spotId"}}`, encodeURIComponent(String(spotId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateSpotNotesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1197,6 +1256,20 @@ export const SpotsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['SpotsApi.orderSpots']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Update the user\'s personal notes for a spot.
+         * @param {string} spotId The id of the spot to update notes for.
+         * @param {UpdateSpotNotesRequest} updateSpotNotesRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateSpotNotes(spotId: string, updateSpotNotesRequest: UpdateSpotNotesRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateSpotNotes(spotId, updateSpotNotesRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SpotsApi.updateSpotNotes']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -1256,6 +1329,17 @@ export const SpotsApiFactory = function (configuration?: Configuration, basePath
          */
         orderSpots(requestBody: Array<string>, options?: any): AxiosPromise<void> {
             return localVarFp.orderSpots(requestBody, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update the user\'s personal notes for a spot.
+         * @param {string} spotId The id of the spot to update notes for.
+         * @param {UpdateSpotNotesRequest} updateSpotNotesRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSpotNotes(spotId: string, updateSpotNotesRequest: UpdateSpotNotesRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.updateSpotNotes(spotId, updateSpotNotesRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1325,6 +1409,19 @@ export class SpotsApi extends BaseAPI {
      */
     public orderSpots(requestBody: Array<string>, options?: RawAxiosRequestConfig) {
         return SpotsApiFp(this.configuration).orderSpots(requestBody, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update the user\'s personal notes for a spot.
+     * @param {string} spotId The id of the spot to update notes for.
+     * @param {UpdateSpotNotesRequest} updateSpotNotesRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SpotsApi
+     */
+    public updateSpotNotes(spotId: string, updateSpotNotesRequest: UpdateSpotNotesRequest, options?: RawAxiosRequestConfig) {
+        return SpotsApiFp(this.configuration).updateSpotNotes(spotId, updateSpotNotesRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

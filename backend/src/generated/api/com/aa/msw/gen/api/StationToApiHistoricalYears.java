@@ -6,7 +6,6 @@ import com.aa.msw.gen.api.ApiHistoricalYears;
 import com.aa.msw.gen.api.ApiStationId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -20,7 +19,7 @@ import jakarta.annotation.Generated;
  * StationToApiHistoricalYears
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-10T14:59:14.118027+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class StationToApiHistoricalYears {
 
   private ApiStationId station;

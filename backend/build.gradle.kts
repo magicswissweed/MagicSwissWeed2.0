@@ -91,6 +91,7 @@ tasks.register<GenerateTask>("openApiGenerateSpring") {
         "useJakartaEe" to "true",
         "sourceFolder" to "", // With the default main/src/java in generated-src, the package name does not match
         "useTags" to "true",
+        "openApiNullable" to "false", // keep nullable fields as plain types instead of wrapping them in JsonNullable<T>
     )
 
     doLast {
