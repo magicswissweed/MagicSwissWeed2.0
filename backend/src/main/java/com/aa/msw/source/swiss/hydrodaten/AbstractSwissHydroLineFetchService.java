@@ -66,7 +66,10 @@ public abstract class AbstractSwissHydroLineFetchService extends AbstractFetchSe
     protected HydroLine getFirstHalfOfHydroLine(
             List<OffsetDateTime> inputTimestamps,
             List<Double> inputFlows,
-            String name) {
+            String name) throws IOException {
+        if (inputTimestamps == null || inputFlows == null) {
+            throw new IOException("inputTimestamps or inputFlows is null for series: " + name);
+        }
         ArrayList<OffsetDateTime> timestamps = new ArrayList<>();
         ArrayList<Double> flows = new ArrayList<>();
 
@@ -76,6 +79,7 @@ public abstract class AbstractSwissHydroLineFetchService extends AbstractFetchSe
             if (timestamp.isAfter(lastTimeStamp)) {
                 timestamps.add(timestamp);
                 flows.add(inputFlows.get(index));
+                lastTimeStamp = timestamp;
             }
         }
 
@@ -83,7 +87,7 @@ public abstract class AbstractSwissHydroLineFetchService extends AbstractFetchSe
     }
 
 
-    protected TwentyFiveToSeventyFivePercentile getTwentyFiveToSeventyFivePercentile(HydroResponse hydroResponse) {
+    protected TwentyFiveToSeventyFivePercentile getTwentyFiveToSeventyFivePercentile(HydroResponse hydroResponse) throws IOException {
         // Hydrodaten does something very strange here. In this line, there are actually two lines.
         // The second line (25 percentile) is ordered backwards (timestamps descending)
         HydroLine twentyFiveToSeventyFivePercentile = hydroResponse.plot().data().get(2);
