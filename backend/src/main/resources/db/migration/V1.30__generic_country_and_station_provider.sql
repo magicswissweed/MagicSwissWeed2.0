@@ -2,6 +2,10 @@
 --  * "country" becomes a plain ISO 3166-1 alpha-2 code (VARCHAR) instead of the enum CH/FR/DE_BW
 --  * the data provider (which API we fetch from) moves into its own column on station_table
 --  * the link to the data source (authority page) and the state/region are stored per station
+--
+-- Performance: sample_table holds millions of rows. Changing the column type rewrites the table once (sequential),
+-- so the DE_BW -> DE mapping is done inside that rewrite (USING CASE ...) instead of a separate UPDATE, which would
+-- rewrite all DE_BW rows a second time with random index IO (took >20 min on the dev server).
 
 -- 1. provider discriminator + descriptive columns on station_table (backfilled from the old country enum)
 CREATE TYPE provider AS ENUM ('HYDRODATEN', 'VIGICRUES', 'HVZ_BW');
@@ -30,32 +34,26 @@ WHERE country = 'DE_BW';
 ALTER TABLE station_table
     ALTER COLUMN provider SET NOT NULL;
 
--- 2. country enum -> varchar on all tables referencing a station
+-- 2. country enum -> varchar on all tables referencing a station; DE_BW was never a country:
+--    Baden-Württemberg stations live in Germany -> mapped to DE within the same rewrite
 ALTER TABLE station_table
     ALTER COLUMN country DROP DEFAULT,
-    ALTER COLUMN country TYPE VARCHAR USING country::text;
+    ALTER COLUMN country TYPE VARCHAR USING (CASE WHEN country = 'DE_BW' THEN 'DE' ELSE country::text END);
 
 ALTER TABLE sample_table
     ALTER COLUMN country DROP DEFAULT,
-    ALTER COLUMN country TYPE VARCHAR USING country::text;
+    ALTER COLUMN country TYPE VARCHAR USING (CASE WHEN country = 'DE_BW' THEN 'DE' ELSE country::text END);
 
 ALTER TABLE forecast_table
     ALTER COLUMN country DROP DEFAULT,
-    ALTER COLUMN country TYPE VARCHAR USING country::text;
+    ALTER COLUMN country TYPE VARCHAR USING (CASE WHEN country = 'DE_BW' THEN 'DE' ELSE country::text END);
 
 ALTER TABLE spot_table
     ALTER COLUMN country DROP DEFAULT,
-    ALTER COLUMN country TYPE VARCHAR USING country::text;
+    ALTER COLUMN country TYPE VARCHAR USING (CASE WHEN country = 'DE_BW' THEN 'DE' ELSE country::text END);
 
 ALTER TABLE historical_years_data_table
     ALTER COLUMN country DROP DEFAULT,
-    ALTER COLUMN country TYPE VARCHAR USING country::text;
+    ALTER COLUMN country TYPE VARCHAR USING (CASE WHEN country = 'DE_BW' THEN 'DE' ELSE country::text END);
 
 DROP TYPE country;
-
--- 3. DE_BW was never a country: Baden-Württemberg stations live in Germany
-UPDATE station_table SET country = 'DE' WHERE country = 'DE_BW';
-UPDATE sample_table SET country = 'DE' WHERE country = 'DE_BW';
-UPDATE forecast_table SET country = 'DE' WHERE country = 'DE_BW';
-UPDATE spot_table SET country = 'DE' WHERE country = 'DE_BW';
-UPDATE historical_years_data_table SET country = 'DE' WHERE country = 'DE_BW';

@@ -113,6 +113,8 @@ Notes: `sample_table_lookup_idx (country, …)` is rebuilt automatically by the 
 (300‑day retention) → the migration rewrites it once; plan a short deploy window. `CREATE TYPE` + use in same
 transaction is fine (only `ADD VALUE` has that restriction).
 
+**Lesson from the first dev deploy (2026-08-27):** the original V1.30 did the `DE_BW → DE` mapping as a separate `UPDATE sample_table … WHERE country = 'DE_BW'` *after* the type change — millions of BW rows rewritten a second time with random index IO; after 23 minutes it was still running on the dev server (the backend does not open its port until Flyway finishes → Apache 502). Rewritten before it was recorded anywhere: the mapping now happens inside the type conversion (`USING CASE WHEN country = 'DE_BW' THEN 'DE' ELSE country::text END`), one sequential rewrite per table, no `UPDATE`s. Guarded by `GenericCountryMigrationTest` (Testcontainers, migrates to 1.29, inserts old‑style rows, migrates to latest).
+
 ### 2. Regenerate jOOQ
 
 `./gradlew :backend:generateJooq` (needs the root `docker-compose.yml` DB running; task depends on `flywayMigrate`
