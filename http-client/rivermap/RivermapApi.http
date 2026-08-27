@@ -1,0 +1,26 @@
+###
+# @name List Stations
+#
+# Docs: https://api.rivermap.org/
+# Auth: API key via "X-Key" header (alternatively ?key=... query param).
+#
+# Optional query params:
+#   status = all | active (default) | inactive
+#   type   = all (default) | online | manual | synthetic
+#
+GET {{base-path}}/stations
+Accept: application/json
+X-Key: {{rivermapApiKey}}
+
+###
+# @name Get All Readings
+#GET {{base-path}}/stations/readings?from=120&to=120
+GET {{base-path}}/stations/readings
+Accept: application/json
+X-Key: {{rivermapApiKey}}
+
+###
+# @name Get Reading for station
+GET {{base-path}}/stations/3abf948a-35e9-5a29-bec7-06a6addf61f2/readings
+Accept: application/json
+X-Key: {{rivermapApiKey}}

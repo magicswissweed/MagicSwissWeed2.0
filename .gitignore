@@ -4,7 +4,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-/http-client/http-client.private.env.json
+/http-client/*/http-client.private.env.json
 /backend/src/main/resources/firebase-service-account.json
 
 /node_modules

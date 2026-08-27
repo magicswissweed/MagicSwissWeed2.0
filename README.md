@@ -34,14 +34,19 @@ These are build-time variables baked into the React app (Create React App only e
 
 ### 3. HTTP client secrets — `http-client.private.env.json`
 
-Copy [http-client.private.env.json-TEMPLATE](http-client%2Fhttp-client.private.env.json-TEMPLATE) to
-`http-client/http-client.private.env.json`.
+The `.http` files in [http-client/](http-client/) are used to manually call APIs from the IDE
+(IntelliJ / VS Code REST Client). They are grouped per API, each directory with its own environments:
 
-Credentials for the `.http` files in [http-client/](http-client/) used to manually call the API from the IDE
-(IntelliJ / VS Code REST Client).
-
-- `firebaseApiKey` — same Firebase web API key as `REACT_APP_APIKEY` above.
-- `email` / `password` — a test user that exists in **Firebase Console → Authentication**; used to obtain a login token.
+- [http-client/msw/](http-client/msw/) — our own backend (`local` / `dev` / `prd`).
+  Copy [http-client.private.env.json-TEMPLATE](http-client%2Fmsw%2Fhttp-client.private.env.json-TEMPLATE) to
+  `http-client/msw/http-client.private.env.json`.
+    - `firebaseApiKey` — same Firebase web API key as `REACT_APP_APIKEY` above.
+    - `email` / `password` — a test user that exists in **Firebase Console → Authentication**; used to obtain a login
+      token.
+- [http-client/rivermap/](http-client/rivermap/) — the external [Rivermap API](https://api.rivermap.org/) (`prod` only).
+  Copy [http-client.private.env.json-TEMPLATE](http-client%2Frivermap%2Fhttp-client.private.env.json-TEMPLATE) to
+  `http-client/rivermap/http-client.private.env.json`.
+    - `rivermapApiKey` — the Rivermap API key. Get it from the maintainers.
 
 ## Run the backend
 
