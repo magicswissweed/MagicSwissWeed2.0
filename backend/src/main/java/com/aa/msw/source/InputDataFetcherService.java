@@ -14,6 +14,7 @@ import com.aa.msw.notifications.NotificationService;
 import com.aa.msw.notifications.NotificationSpotInfo;
 import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30DaysSampleFetchService;
 import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
+import com.aa.msw.source.rivermap.sample.RivermapSampleFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.forecast.SwissForecastFetchService;
 import org.slf4j.Logger;
@@ -43,14 +44,16 @@ public class InputDataFetcherService {
     private final NotificationService notificationService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
     private final BwSampleFetchService bwSampleFetchService;
+    private final RivermapSampleFetchService rivermapSampleFetchService;
 
     private boolean fetchedDataSinceRestart = false;
 
     private final AtomicBoolean isFetchingSwissData = new AtomicBoolean(false);
     private final AtomicBoolean isFetchingFrenchData = new AtomicBoolean(false);
     private final AtomicBoolean isFetchingBwData = new AtomicBoolean(false);
+    private final AtomicBoolean isFetchingRivermapData = new AtomicBoolean(false);
 
-    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
+    public InputDataFetcherService(SwissSampleFetchService swissSampleFetchService, SwissForecastFetchService swissForecastFetchService, StationDao stationDao, SpotDao spotDao, SampleDao sampleDao, ForecastDao forecastDao, SpotDbService spotDbService, NotificationService notificationService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService, RivermapSampleFetchService rivermapSampleFetchService) {
         this.swissSampleFetchService = swissSampleFetchService;
         this.swissForecastFetchService = swissForecastFetchService;
         this.stationDao = stationDao;
@@ -61,6 +64,7 @@ public class InputDataFetcherService {
         this.notificationService = notificationService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
         this.bwSampleFetchService = bwSampleFetchService;
+        this.rivermapSampleFetchService = rivermapSampleFetchService;
     }
 
     @Scheduled(cron = "0 1/10 * * * *")
@@ -85,6 +89,13 @@ public class InputDataFetcherService {
     void fetchBwDataAndWriteToDb() {
         Set<ApiStationId> HvzBwStationIds = getStationIdsOfProvider(Provider.HVZ_BW);
         fetchAndWriteToDb(HvzBwStationIds, isFetchingBwData, Provider.HVZ_BW, this::fetchAndWriteBwSamples);
+    }
+
+    // 07, 17, 27, ...
+    @Scheduled(cron = "0 7/10 * * * *")
+    void fetchRivermapDataAndWriteToDb() {
+        Set<ApiStationId> rivermapStationIds = getStationIdsOfProvider(Provider.RIVERMAP);
+        fetchAndWriteToDb(rivermapStationIds, isFetchingRivermapData, Provider.RIVERMAP, this::fetchAndWriteRivermapSamples);
     }
 
     private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForProvider, Provider provider, Consumer<Set<ApiStationId>> fetchForProviderFunction) {
@@ -152,6 +163,13 @@ public class InputDataFetcherService {
         if (!currentSamples.isEmpty()) {
             sampleDao.persistSamplesIfNotExist(currentSamples);
         }
+    }
+
+    private void fetchAndWriteRivermapSamples(Set<ApiStationId> stationIds) {
+        // one request delivers the recent readings of all Rivermap stations; unknown stations are dropped by the fetcher,
+        // already known samples by the db (unique constraint on timestamp, station and measurement type).
+        List<Sample> samples = rivermapSampleFetchService.fetchSamples(stationIds, RivermapSampleFetchService.POLL_WINDOW_MINUTES);
+        sampleDao.persistSamplesIfNotExist(samples);
     }
 
     private void fetchAndWriteBwSamples(Set<ApiStationId> stationIds) {

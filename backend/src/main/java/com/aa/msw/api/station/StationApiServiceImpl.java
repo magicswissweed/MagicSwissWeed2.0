@@ -11,9 +11,12 @@ import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30Days
 import com.aa.msw.source.french.vigicrues.stations.FrenchStationFetchService;
 import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
 import com.aa.msw.source.german.bw.stations.DeBwStationFetchService;
+import com.aa.msw.source.rivermap.sample.RivermapSampleFetchService;
 import com.aa.msw.source.rivermap.stations.RivermapStationFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.stations.SwissStationFetchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 @Profile("!test")
 @Service
 public class StationApiServiceImpl implements StationApiService {
+    private static final Logger LOG = LoggerFactory.getLogger(StationApiServiceImpl.class);
     // holds the stations in-memory for faster access - but also in db for fast startup (mostly for dev purposes)
 
     private final StationDao stationDao;
@@ -37,9 +41,10 @@ public class StationApiServiceImpl implements StationApiService {
     private final SwissSampleFetchService swissSampleFetchService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
     private final BwSampleFetchService bwSampleFetchService;
+    private final RivermapSampleFetchService rivermapSampleFetchService;
     private Set<Station> stations = new HashSet<>();
 
-    public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, DeBwStationFetchService deBwStationFetchService, RivermapStationFetchService rivermapStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
+    public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, DeBwStationFetchService deBwStationFetchService, RivermapStationFetchService rivermapStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService, RivermapSampleFetchService rivermapSampleFetchService) {
         this.swissStationFetchService = swissStationFetchService;
         this.stationDao = stationDao;
         this.frenchStationFetchService = frenchStationFetchService;
@@ -49,6 +54,7 @@ public class StationApiServiceImpl implements StationApiService {
         this.swissSampleFetchService = swissSampleFetchService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
         this.bwSampleFetchService = bwSampleFetchService;
+        this.rivermapSampleFetchService = rivermapSampleFetchService;
     }
 
     @Override
@@ -98,12 +104,36 @@ public class StationApiServiceImpl implements StationApiService {
         Set<Station> stations = frenchStationFetchService.fetchStations();
         stations.addAll(swissStationFetchService.fetchStations());
         stations.addAll(deBwStationFetchService.fetchStations());
-        stations.addAll(rivermapStationFetchService.fetchStations());
+        Set<Station> rivermapStations = rivermapStationFetchService.fetchStations();
+        stations.addAll(rivermapStations);
+        Optional<Set<ApiStationId>> rivermapStationsWithReadings = fetchRivermapStationsWithReadings(rivermapStations);
         return stations.stream()
-                .map(this::processFetchedStations)
+                .map(station -> processFetchedStations(station, rivermapStationsWithReadings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Probing the readings of every single Rivermap station would cost one (rate limited) request each, so the readings
+     * of all Rivermap stations are fetched with one request and the validation checks against that set.
+     *
+     * @return the Rivermap stations that delivered a reading recently - empty if the request failed (no readings for
+     * any of the stations means the API did not answer, not that all gauges are dead)
+     */
+    private Optional<Set<ApiStationId>> fetchRivermapStationsWithReadings(Set<Station> rivermapStations) {
+        if (rivermapStations.isEmpty()) {
+            return Optional.of(Set.of());
+        }
+        Set<ApiStationId> stationIds = rivermapStations.stream().map(Station::stationId).collect(Collectors.toSet());
+        Set<ApiStationId> withReadings = rivermapSampleFetchService.fetchSamples(stationIds, RivermapSampleFetchService.MAX_WINDOW_MINUTES).stream()
+                .map(Sample::getStationId)
+                .collect(Collectors.toSet());
+        if (withReadings.isEmpty()) {
+            LOG.warn("Got no Rivermap readings at all for {} stations - keeping all of them.", stationIds.size());
+            return Optional.empty();
+        }
+        return Optional.of(withReadings);
     }
 
     /**
@@ -113,8 +143,8 @@ public class StationApiServiceImpl implements StationApiService {
      * - if valid -> return station
      * - if invalid -> return empty and delete the station from db (if exists)
      */
-    private Optional<Station> processFetchedStations(Station station) {
-        if (isValidStation(station)) {
+    private Optional<Station> processFetchedStations(Station station, Optional<Set<ApiStationId>> rivermapStationsWithReadings) {
+        if (isValidStation(station, rivermapStationsWithReadings)) {
             return Optional.of(station);
         } else {
             stationDao.deleteByStationId(station.stationId());
@@ -130,8 +160,8 @@ public class StationApiServiceImpl implements StationApiService {
                 .findFirst().orElseThrow();
     }
 
-    private boolean isValidStation(Station station) {
-        return isValidSampleInDbForStation(station) || canFetchData(station);
+    private boolean isValidStation(Station station, Optional<Set<ApiStationId>> rivermapStationsWithReadings) {
+        return isValidSampleInDbForStation(station) || canFetchData(station, rivermapStationsWithReadings);
     }
 
     private boolean isValidSampleInDbForStation(Station station) {
@@ -150,15 +180,15 @@ public class StationApiServiceImpl implements StationApiService {
         return false;
     }
 
-    private boolean canFetchData(Station station) {
+    private boolean canFetchData(Station station, Optional<Set<ApiStationId>> rivermapStationsWithReadings) {
         ApiStationId stationId = station.stationId();
         return switch (station.provider()) {
             case HYDRODATEN -> canFetchDataForCh(stationId);
             case VIGICRUES -> canFetchDataForFr(stationId);
             case HVZ_BW -> canFetchDataForBw(stationId);
-            // Rivermap only lists active online stations, and probing the readings of every single station would cost
-            // one (rate limited) request each.
-            case RIVERMAP -> true;
+            case RIVERMAP -> rivermapStationsWithReadings
+                    .map(withReadings -> withReadings.contains(stationId))
+                    .orElse(true);
         };
     }
 

@@ -49,7 +49,8 @@ Branch: `feature/rivermap`. Persistence is jOOQ + Flyway (no JPA); OpenAPI spec
   `RivermapStationFetchService`), wired into `StationApiServiceImpl` (`case RIVERMAP -> true`), template/README,
   `RivermapStationFetchServiceTest` on the 5-station sample. Local `application.properties` got the key. Server: add
   api-key to docker-compose-template before deploying.
-- Next: deploy decision (step 2 alone vs. together with step 3), then step 3 (readings).
+- **2026-08-27 — Step 3 implemented** (uncommitted): `RivermapSampleFetchService` (+`Impl` `!test` / `Mock` `test`), readings models, poll job `0 7/10 * * * *` in `InputDataFetcherService` (`?from=30&to=30`, `m3s→FLOW`, `cm→HEIGHT`, unknown stations dropped, dedup by `persistSamplesIfNotExist`), nightly station validation for RIVERMAP now uses one bulk 6h readings request (`StationApiServiceImpl.fetchRivermapStationsWithReadings`; an empty answer keeps all stations). `RivermapSampleFetchServiceImplTest`.
+- Open: French duplicates via `hydro.eaufrance.fr` (18 of 37 FR stations are Vigicrues gauges) — decide accept / FR rule / code-based dedup. Server: `RIVERMAP_API_KEY`.
 
 ---
 

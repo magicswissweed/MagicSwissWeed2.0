@@ -5,6 +5,7 @@ import com.aa.msw.gen.api.ApiStationId;
 import com.aa.msw.gen.jooq.enums.Provider;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.AbstractFetchService;
+import com.aa.msw.source.rivermap.RivermapApi;
 import com.aa.msw.source.rivermap.RivermapConfigProperties;
 import com.aa.msw.source.rivermap.model.RivermapStation;
 import com.aa.msw.source.rivermap.model.RivermapStationsResponse;
@@ -23,8 +24,7 @@ import java.util.stream.Stream;
 public class RivermapStationFetchService extends AbstractFetchService {
     private static final Logger LOG = LoggerFactory.getLogger(RivermapStationFetchService.class);
 
-    public static final String STATIONS_FETCH_URL = "https://api.rivermap.org/v2/stations?type=online";
-    static final String API_KEY_HEADER = "X-Key";
+    public static final String STATIONS_FETCH_URL = RivermapApi.BASE_URL + "/stations?type=online";
 
     /**
      * Order in which the translations of river names and source links are preferred.
@@ -60,7 +60,7 @@ public class RivermapStationFetchService extends AbstractFetchService {
     }
 
     protected String fetchRivermapStations() throws Exception {
-        return fetchAsString(STATIONS_FETCH_URL, Map.of(API_KEY_HEADER, config.getApiKey()));
+        return fetchAsString(STATIONS_FETCH_URL, Map.of(RivermapApi.API_KEY_HEADER, config.getApiKey()));
     }
 
     private Station toStation(RivermapStation station) {
