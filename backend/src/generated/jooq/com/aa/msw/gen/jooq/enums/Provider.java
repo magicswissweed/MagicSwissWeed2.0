@@ -21,7 +21,9 @@ public enum Provider implements EnumType {
 
     VIGICRUES("VIGICRUES"),
 
-    HVZ_BW("HVZ_BW");
+    HVZ_BW("HVZ_BW"),
+
+    RIVERMAP("RIVERMAP");
 
     private final String literal;
 

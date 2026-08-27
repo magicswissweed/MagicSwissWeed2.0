@@ -67,24 +67,24 @@ public class InputDataFetcherService {
         // 01, 11, 21, ...
     void fetchSwissDataAndWriteToDb() {
         // fetch all known hydrodaten stations.
-        Set<ApiStationId> swissStationIds = getStationIdsOfProvider(Provider.HYDRODATEN);
-        fetchAndWriteToDb(swissStationIds, isFetchingSwissData, Provider.HYDRODATEN, this::fetchAndWriteSwissData);
+        Set<ApiStationId> hydrodatenStationIds = getStationIdsOfProvider(Provider.HYDRODATEN);
+        fetchAndWriteToDb(hydrodatenStationIds, isFetchingSwissData, Provider.HYDRODATEN, this::fetchAndWriteSwissData);
     }
 
     // 03, 08, 13, 18, 23, 28, ... in theory...
     @Scheduled(cron = "0 3/5 * * * *")
     void fetchFrenchDataAndWriteToDb() {
         // only fetch stations actually used by a spot, to avoid hammering the rate-limited Vigicrues API.
-        Set<ApiStationId> frenchStationIds = getStationIdsOfProvider(Provider.VIGICRUES);
-        frenchStationIds.retainAll(spotDao.getReferencedStationIds());
-        fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, Provider.VIGICRUES, this::fetchAndWriteFrenchLatestSample);
+        Set<ApiStationId> vigicruesStationIds = getStationIdsOfProvider(Provider.VIGICRUES);
+        vigicruesStationIds.retainAll(spotDao.getReferencedStationIds());
+        fetchAndWriteToDb(vigicruesStationIds, isFetchingFrenchData, Provider.VIGICRUES, this::fetchAndWriteFrenchLatestSample);
     }
 
     // 05, 15, 25, ...
     @Scheduled(cron = "0 5/10 * * * *")
     void fetchBwDataAndWriteToDb() {
-        Set<ApiStationId> stationIds = getStationIdsOfProvider(Provider.HVZ_BW);
-        fetchAndWriteToDb(stationIds, isFetchingBwData, Provider.HVZ_BW, this::fetchAndWriteBwSamples);
+        Set<ApiStationId> HvzBwStationIds = getStationIdsOfProvider(Provider.HVZ_BW);
+        fetchAndWriteToDb(HvzBwStationIds, isFetchingBwData, Provider.HVZ_BW, this::fetchAndWriteBwSamples);
     }
 
     private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForProvider, Provider provider, Consumer<Set<ApiStationId>> fetchForProviderFunction) {

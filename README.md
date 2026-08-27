@@ -2,8 +2,8 @@
 
 ## Initial Setup
 
-The repository only contains `*-TEMPLATE` files with placeholder values. Real secrets are **not** committed — copy
-each template to its real filename (the real names are git-ignored) and fill in the values as described below.
+The repository only contains `*-TEMPLATE` files with placeholder values. Real secrets are **not** committed — copy each
+template to its real filename (the real names are git-ignored) and fill in the values as described below.
 
 ### 1. Backend config — `application.properties`
 
@@ -18,6 +18,8 @@ uses to verify users' auth tokens and send push notifications.
   **Service accounts** → **Generate new private key**. The downloaded JSON contains `project_id`, `private_key_id`,
   `private_key`, `client_email`, `client_id` and `token_uri`.
 - The database values already match the local Docker setup below and don't need changing.
+- `rivermap.api-key` — the api key of the [Rivermap API](https://api.rivermap.org/) (get it from the maintainers).
+  Without it the backend still runs, it just skips the Rivermap stations.
 
 ### 2. Frontend env — `.env.local`
 
@@ -26,16 +28,17 @@ Copy [.env.local-TEMPLATE](frontend%2F.env.local-TEMPLATE) to `frontend/.env.loc
 These are build-time variables baked into the React app (Create React App only exposes vars prefixed with `REACT_APP_`).
 
 - `REACT_APP_APIKEY`, `REACT_APP_AUTHDOMAIN`, `REACT_APP_PROJECTID`, `REACT_APP_STORAGEBUCKET`,
-  `REACT_APP_MESSAGINGSENDERID`, `REACT_APP_APPID` — the Firebase **web app** config (used for client-side login).
-  Get them from [Firebase Console](https://console.firebase.google.com/) → **Project settings** → **General** → **Your
+  `REACT_APP_MESSAGINGSENDERID`, `REACT_APP_APPID` — the Firebase **web app** config (used for client-side login). Get
+  them from [Firebase Console](https://console.firebase.google.com/) → **Project settings** → **General** → **Your
   apps** → the web app → **SDK setup and configuration**.
-- `REACT_APP_GOOGLE_MAPS_API_KEY` — the key for the Google Maps window (station/spot maps). Get it from the maintainers. This is a public client-side key (it ships in the browser bundle), so it should be restricted by
-  HTTP referrer in the Cloud Console rather than kept secret.
+- `REACT_APP_GOOGLE_MAPS_API_KEY` — the key for the Google Maps window (station/spot maps). Get it from the maintainers.
+  This is a public client-side key (it ships in the browser bundle), so it should be restricted by HTTP referrer in the
+  Cloud Console rather than kept secret.
 
 ### 3. HTTP client secrets — `http-client.private.env.json`
 
-The `.http` files in [http-client/](http-client/) are used to manually call APIs from the IDE
-(IntelliJ / VS Code REST Client). They are grouped per API, each directory with its own environments:
+The `.http` files in [http-client/](http-client/) are used to manually call APIs from the IDE (IntelliJ / VS Code REST
+Client). They are grouped per API, each directory with its own environments:
 
 - [http-client/msw/](http-client/msw/) — our own backend (`local` / `dev` / `prd`).
   Copy [http-client.private.env.json-TEMPLATE](http-client%2Fmsw%2Fhttp-client.private.env.json-TEMPLATE) to
@@ -61,7 +64,7 @@ The `.http` files in [http-client/](http-client/) are used to manually call APIs
     - username: develop
     - password: develop
 
-    Or psql (type `exit` to exit.):
+   Or psql (type `exit` to exit.):
 
     ```bash
     PGPASSWORD=develop psql -d msw -U develop -h localhost

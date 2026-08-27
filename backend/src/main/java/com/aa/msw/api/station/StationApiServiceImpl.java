@@ -11,6 +11,7 @@ import com.aa.msw.source.french.vigicrues.historical.lastThirty.FrenchLast30Days
 import com.aa.msw.source.french.vigicrues.stations.FrenchStationFetchService;
 import com.aa.msw.source.german.bw.sample.BwSampleFetchService;
 import com.aa.msw.source.german.bw.stations.DeBwStationFetchService;
+import com.aa.msw.source.rivermap.stations.RivermapStationFetchService;
 import com.aa.msw.source.swiss.existenz.sample.SwissSampleFetchService;
 import com.aa.msw.source.swiss.hydrodaten.stations.SwissStationFetchService;
 import org.springframework.context.annotation.Profile;
@@ -31,17 +32,19 @@ public class StationApiServiceImpl implements StationApiService {
     private final SwissStationFetchService swissStationFetchService;
     private final FrenchStationFetchService frenchStationFetchService;
     private final DeBwStationFetchService deBwStationFetchService;
+    private final RivermapStationFetchService rivermapStationFetchService;
     private final SampleDao sampleDao;
     private final SwissSampleFetchService swissSampleFetchService;
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
     private final BwSampleFetchService bwSampleFetchService;
     private Set<Station> stations = new HashSet<>();
 
-    public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, DeBwStationFetchService deBwStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
+    public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, DeBwStationFetchService deBwStationFetchService, RivermapStationFetchService rivermapStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService) {
         this.swissStationFetchService = swissStationFetchService;
         this.stationDao = stationDao;
         this.frenchStationFetchService = frenchStationFetchService;
         this.deBwStationFetchService = deBwStationFetchService;
+        this.rivermapStationFetchService = rivermapStationFetchService;
         this.sampleDao = sampleDao;
         this.swissSampleFetchService = swissSampleFetchService;
         this.frenchLast30DaysSampleFetchService = frenchLast30DaysSampleFetchService;
@@ -95,6 +98,7 @@ public class StationApiServiceImpl implements StationApiService {
         Set<Station> stations = frenchStationFetchService.fetchStations();
         stations.addAll(swissStationFetchService.fetchStations());
         stations.addAll(deBwStationFetchService.fetchStations());
+        stations.addAll(rivermapStationFetchService.fetchStations());
         return stations.stream()
                 .map(this::processFetchedStations)
                 .filter(Optional::isPresent)
@@ -152,6 +156,9 @@ public class StationApiServiceImpl implements StationApiService {
             case HYDRODATEN -> canFetchDataForCh(stationId);
             case VIGICRUES -> canFetchDataForFr(stationId);
             case HVZ_BW -> canFetchDataForBw(stationId);
+            // Rivermap only lists active online stations, and probing the readings of every single station would cost
+            // one (rate limited) request each.
+            case RIVERMAP -> true;
         };
     }
 
