@@ -74,7 +74,7 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
     // the forecast; older history stays reachable by panning. Without history
     // (mini preview, or logged-out users who can't fetch it) keep the original
     // full-extent default range.
-    const defaultXRange = (useHistory && currentMs !== undefined && lastMs !== undefined)
+    const defaultXRange: [number, number] | undefined = (useHistory && currentMs !== undefined && lastMs !== undefined)
         ? [currentMs - ONE_DAY, lastMs]
         : undefined;
     const clampHandlers = useTimeAxisClamp(firstMs, lastMs, !props.isMini);

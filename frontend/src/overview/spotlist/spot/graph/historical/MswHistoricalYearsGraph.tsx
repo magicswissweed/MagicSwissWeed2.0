@@ -58,7 +58,7 @@ export const MswHistoricalYearsGraph = (props: MswGraphProps) => {
             },
             yaxis: {
                 ...baseLayout.yaxis,
-                range: [0, maxY],
+                range: [0, maxY] as [number, number],
             },
             shapes: [
                 ...(baseLayout.shapes || []),
