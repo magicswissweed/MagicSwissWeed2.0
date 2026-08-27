@@ -43,7 +43,8 @@ Branch: `feature/rivermap`. Persistence is jOOQ + Flyway (no JPA); OpenAPI spec
   (`DELETE FROM flyway_schema_history WHERE version = '1.30' AND description = 'add DE BY to country enum'`) — the stale
   enum value itself is harmless because `V1.30` drops the type.
 - Gradle 8.7 needs a JDK 21 (`JAVA_HOME=$(/usr/libexec/java_home -v 21)`); the default JDK 25 fails.
-- Next: step 2 (Rivermap stations).
+- Step 1 committed as `567cae4` (user trimmed the added test classes). Deployed: not yet.
+- Next: step 2 (Rivermap stations) — detailed below.
 
 ---
 
@@ -219,31 +220,59 @@ Add:
 
 ---
 
-## Step 2 — Rivermap stations (follow‑up PR, after step 1 is merged)
+## Step 2 — Rivermap stations (own PR; readings follow in step 3)
 
-- `V1.31__add_rivermap_provider.sql`: `ALTER TYPE provider ADD VALUE 'RIVERMAP';` (own file — new enum values can't be
-  used in the same transaction they're added).
-- Config: `rivermap.api-key` in `application.properties` (git‑ignored), `application.properties-TEMPLATE`,
-  `deployment/docker-compose.yml`; bind via `@ConfigurationProperties(prefix="rivermap")` (pattern:
-  `FirebaseInitialize.java:59`).
-- `source/AbstractFetchService.java`: add `fetchAsString(String url, Map<String,String> headers)` overload; existing
-  method delegates. Also set connect/read timeouts.
-- `source/rivermap/stations/RivermapStationFetchService` (`@Profile("!test")`, seam
-  `protected String fetchRivermapStations()`): `GET {base}/v2/stations?type=online` with `X-Key`. Map: `externalId = id`
-  (UUID), `country = countryCode`, `state = state`, `provider = RIVERMAP`, `label = name + "/" + river` (first available
-  translation, prefer `de`,`en`), `lat/lng = latlng / 1_000_000`, `sourceLink` = first non‑null of
-  `sourceLinks[de|en|first].flow|level` — i.e. the **authority's** page (ag.ch, chcantabrico.es, hnd.bayern.de…), never
-  a rivermap.org URL. **Exclusions** (already covered by our own providers): `countryCode == "FR"`;
-  `countryCode == "DE" && state == "Baden-Württemberg"`;
-  `countryCode == "CH" && any sourceLink contains "hydrodaten.admin.ch"`. Keep only stations whose `sensors` contain
-  `level` or `flow`.
-- `StationApiServiceImpl.fetchStations()`: add the Rivermap set; `canFetchData` `case RIVERMAP -> true` for now (list is
-  already active+online; refine in step 3 with a bulk readings check — per‑station readings calls are rate‑limited to ~
-  1/s).
-- Tests: `testdata/rivermap_stations.json` = the 5‑station sample from the user → expect **kept**: Etzgen (CH, ag.ch),
-  Ramales (ES), Peißenberg (DE/Bayern); **dropped**: Ocourt (CH hydrodaten), Albbruck (DE/Baden‑Württemberg). Assert
-  mapped fields incl. `latlng` scaling and link selection. `@Profile("test")` mock returning `Set.of()`.
-- README: document `rivermap.api-key`.
+Goal: the nightly station job also imports Rivermap's **online** stations that none of our own providers cover, with the authority's page as `sourceLink`. No readings yet.
+
+### Decision to take before deploying step 2
+Stations without samples have `supportedMeasurements = []`; the add‑spot dialog then falls back to `FLOW` (`MswAddOrEditUtil.tsx:21`) and a spot on such a station shows the "fetching data" placeholder (`dataPending`) until step 3 delivers readings. Either accept that for the short gap, or **deploy step 2 together with step 3** (recommended). Implementing step 2 on its own is fine either way.
+
+### 2.1 Migration `V1.31__add_rivermap_provider.sql`
+```sql
+ALTER TYPE provider ADD VALUE 'RIVERMAP';
+```
+Own file on purpose: a value added with `ADD VALUE` can't be used inside the same transaction. Then `./gradlew :backend:generateJooq` (JDK 21, docker DB up) → `Provider.RIVERMAP` exists and the `switch(provider)` in `StationApiServiceImpl.canFetchData` stops compiling until handled.
+
+### 2.2 Configuration — `rivermap.api-key`
+- `backend/.../source/rivermap/RivermapConfigProperties.java`: `@Component @ConfigurationProperties(prefix = "rivermap") @Data` with `private String apiKey;` (same pattern as `FirebaseInitialize.FirebaseConfigProperties`, `FirebaseInitialize.java:59`). Relaxed binding accepts `rivermap.api-key` in properties and `RIVERMAP_API_KEY` as env var.
+- Add `rivermap.api-key=<FROM RIVERMAP>` to `application.properties-TEMPLATE` and to your local `application.properties`; document it in `README.md` §1 (backend secrets). On the server: add `RIVERMAP_API_KEY` to the backend service in `/opt/ponte-services/magicswissweed` compose (same place as the firebase vars) **before** deploying.
+- Missing/blank key must not break startup: the fetcher logs a warning and returns an empty set (dev machines without a key keep working).
+
+### 2.3 HTTP with headers — `AbstractFetchService`
+Add `protected String fetchAsString(String url, Map<String, String> headers)`; the existing `fetchAsString(url)` delegates with `Map.of()`. Set `conn.setRequestProperty` for each header. While there: `setConnectTimeout(10_000)` / `setReadTimeout(30_000)` (today there are none). Non‑200 still throws → caller catches → empty set + log.
+
+### 2.4 Package `com.aa.msw.source.rivermap`
+- `model/RivermapStationsResponse(List<RivermapStation> stations)` — parse with `FAIL_ON_UNKNOWN_PROPERTIES=false` (ignores `sources`, `rivers`, `license`, `elapsedMs`).
+- `model/RivermapStation(String id, String type, List<String> sensors, boolean isActive, String name, Map<String,String> river, String countryCode, String state, List<Long> latlng, Map<String, Map<String,String>> sourceLinks)`.
+- `stations/RivermapStationFetchService` (`@Service @Profile("!test")`, extends `AbstractFetchService`):
+  - `GET https://api.rivermap.org/v2/stations?type=online` with header `X-Key: <apiKey>`; seam `protected String fetchRivermapStations()` for tests.
+  - Keep a station only if **all** hold: `type == "online"`, `isActive`, `sensors` contains `level` or `flow`, `latlng` has 2 values, and it is **not already fetched by one of our own providers**. Rivermap's UUIDs can't be matched against our externalIds, so the authority is recognised via the host of its `sourceLinks` (decided 2026-08-27, domain‑only variant):
+    - skip if any `sourceLinks.*.*` URL has host `hydrodaten.admin.ch` (BAFU → our HYDRODATEN), `vigicrues.gouv.fr` (→ VIGICRUES) or `hvz.baden-wuerttemberg.de` (→ HVZ_BW). One constant list in `RivermapStationFilter`; a future direct provider = one more domain.
+    - No country/state rules: they over‑exclude gauges of *other* authorities in the same region (sample: *Albbruck by Swiss Canoe*, DE/Baden‑Württemberg but `datacake.de` — HVZ doesn't have it, so we want it). Cantonal CH stations (Etzgen / ag.ch) stay for the same reason.
+    - Trade‑off accepted: precise dedup, but a station of one of those authorities listed by Rivermap *without* a link to that domain would appear twice (cosmetic). Conservative fallback if that happens: additionally skip `countryCode == "FR"`; exact fallback: skip by the authorities' `dataSourceId`.
+  - Mapping → `Station`: `stationId = (countryCode, id)` (Rivermap UUID as externalId), `label = name + "/" + river` (river: prefer `de`, `en`, then first value; mirrors the BW label), `latitude = latlng[0] / 1_000_000d`, `longitude = latlng[1] / 1_000_000d`, `provider = RIVERMAP`, `state = state` (blank → null), `sourceLink` = first non‑blank of `sourceLinks[lang].flow`, then `.level`, trying `de, en, fr, it, es`, then any remaining language; none → `null` (frontend hides the link icon). Always the authority's URL, never rivermap.org.
+  - Any exception → log + `Collections.emptySet()` (same contract as the other station fetchers).
+
+### 2.5 Wire it in — `StationApiServiceImpl`
+- Inject `RivermapStationFetchService`; `fetchStations()` adds its result after the three existing providers.
+- `canFetchData`: `case RIVERMAP -> true` with a comment: the list is already filtered to active + online, and a per‑station readings probe would cost one API call per station (rate limit ~1/s). Step 3 replaces this with one bulk `/stations/readings` check.
+- Consequence: Rivermap stations are never auto‑deleted by `processFetchedStations` until step 3 — acceptable.
+- Rate limit of `/stations`: bucket 2, refill **1 per hour**. The nightly job calls it once; the lazy bootstrap in `getStations()` calls it only on an empty DB. Restarting a dev backend with an empty DB more than twice an hour yields HTTP 429 → empty Rivermap set until the next run (logged, harmless).
+
+### 2.6 Tests (kept lean)
+- `RivermapStationFetchServiceTest` with fixture `testdata/rivermap_stations.json` = the 5‑station sample response (subclass, override `fetchRivermapStations()`):
+  1. kept = Etzgen (CH/ag.ch), Ramales (ES), Peißenberg (DE/Bayern), Albbruck (DE/BW but `datacake.de`, level only); dropped = Ocourt (CH/hydrodaten link).
+  2. mapping of Ramales: country `ES`, externalId `e5b917e0-…`, provider `RIVERMAP`, state `Asón`, lat `43.263805`, lng `-3.461539`, sourceLink `https://www.chcantabrico.es/…cod_estacion=A141`, label `Ramales/Asón`.
+- No Spring mock needed: the fetcher is `@Profile("!test")` and only `StationApiServiceImpl` (also `!test`) uses it.
+
+### 2.7 Frontend
+Nothing required: flag comes from the ISO code, link from `sourceLink`. Optional nicety: show `state` after the label in the typeahead (`MswAddOrEditUtil.tsx:146-156`) so "Ramales/Asón (Asón)" is distinguishable — skip unless wanted.
+
+### 2.8 Verification
+1. `./gradlew :backend:build` (JDK 21) — compile + tests.
+2. Local backend with a real key: trigger `fetchStationsAndSaveToDb` (restart on a DB whose `station_table` is empty, or call it once from a temporary endpoint/test) → `GET /api/v1/stations` via `http-client/msw/StationsApi.http`: Rivermap stations present, none with a `hydrodaten.admin.ch` / `vigicrues.gouv.fr` / `hvz.baden-wuerttemberg.de` link; spot‑check Etzgen (`CH`, link `ag.ch`), a `ES` station, a `DE`/Bayern station, Albbruck (`DE`/BW, `datacake.de`). Eyeball the list for obvious duplicates of known BAFU/Vigicrues/HVZ gauges (the accepted leak).
+3. Frontend add‑spot: Rivermap stations appear with 🇪🇸 / 🇦🇹 … flags and on the map; spot link icon opens the authority page.
+4. Logs after the scheduled sample jobs: HYDRODATEN / VIGICRUES / HVZ_BW counts unchanged (Rivermap stations must not leak into them).
 
 ## Step 3 — Rivermap readings (follow‑up)
 
