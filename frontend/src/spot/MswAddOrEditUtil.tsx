@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from "react";
-import {ApiMeasurementType, ApiSpotSpotTypeEnum, ApiStation, ApiStationId, CountryEnum} from "../gen/msw-api-ts";
+import {ApiMeasurementType, ApiSpotSpotTypeEnum, ApiStation, ApiStationId} from "../gen/msw-api-ts";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import Modal from "react-bootstrap/Modal";
@@ -46,17 +46,12 @@ export function MswAddOrEditSpotModal(showModal: boolean | undefined, handleCanc
 
     const unitLabel = measurementLabel(measurementType);
 
-    const countryEmoji = (country: CountryEnum) => {
-        switch (country) {
-            case CountryEnum.Ch:
-                return '🇨🇭';
-            case CountryEnum.Fr:
-                return '🇫🇷';
-            case CountryEnum.DeBw:
-                return '🇩🇪';
-            default:
-                return '🌍';
+    // Builds the flag emoji from an ISO 3166-1 alpha-2 code: each letter maps to its "regional indicator symbol".
+    const countryEmoji = (country: string) => {
+        if (!/^[A-Z]{2}$/.test(country)) {
+            return '🌍';
         }
+        return String.fromCodePoint(...[...country].map(c => 0x1F1E6 + c.charCodeAt(0) - 'A'.charCodeAt(0)));
     };
 
     const sortedStations = useMemo(() => {

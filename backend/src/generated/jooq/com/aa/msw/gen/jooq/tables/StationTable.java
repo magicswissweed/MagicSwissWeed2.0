@@ -6,7 +6,7 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.Provider;
 import com.aa.msw.gen.jooq.tables.records.StationTableRecord;
 
 import java.util.Collection;
@@ -79,7 +79,22 @@ public class StationTable extends TableImpl<StationTableRecord> {
     /**
      * The column <code>public.station_table.country</code>.
      */
-    public final TableField<StationTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+    public final TableField<StationTableRecord, String> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.station_table.provider</code>.
+     */
+    public final TableField<StationTableRecord, Provider> PROVIDER = createField(DSL.name("provider"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(Provider.class), this, "");
+
+    /**
+     * The column <code>public.station_table.state</code>.
+     */
+    public final TableField<StationTableRecord, String> STATE = createField(DSL.name("state"), SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.station_table.source_link</code>.
+     */
+    public final TableField<StationTableRecord, String> SOURCE_LINK = createField(DSL.name("source_link"), SQLDataType.VARCHAR, this, "");
 
     private StationTable(Name alias, Table<StationTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

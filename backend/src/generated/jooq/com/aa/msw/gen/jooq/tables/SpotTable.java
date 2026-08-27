@@ -6,7 +6,6 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotCurrentInfoTable.SpotCurrentInfoTablePath;
@@ -87,7 +86,7 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
     /**
      * The column <code>public.spot_table.country</code>.
      */
-    public final TableField<SpotTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+    public final TableField<SpotTableRecord, String> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.spot_table.measurement_type</code>.

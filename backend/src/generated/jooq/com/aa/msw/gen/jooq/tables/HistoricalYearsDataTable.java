@@ -6,7 +6,6 @@ package com.aa.msw.gen.jooq.tables;
 
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.records.HistoricalYearsDataTableRecord;
 
@@ -98,7 +97,7 @@ public class HistoricalYearsDataTable extends TableImpl<HistoricalYearsDataTable
     /**
      * The column <code>public.historical_years_data_table.country</code>.
      */
-    public final TableField<HistoricalYearsDataTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+    public final TableField<HistoricalYearsDataTableRecord, String> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column

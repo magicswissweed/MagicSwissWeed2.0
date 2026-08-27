@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ public class ForecastTable implements Serializable {
     private final OffsetDateTime timestamp;
     private final JSONB twentyfivepercentile;
     private final JSONB seventyfivepercentile;
-    private final Country country;
+    private final String country;
     private final MeasurementType measurementType;
 
     public ForecastTable(ForecastTable value) {
@@ -58,7 +57,7 @@ public class ForecastTable implements Serializable {
         OffsetDateTime timestamp,
         JSONB twentyfivepercentile,
         JSONB seventyfivepercentile,
-        Country country,
+        String country,
         MeasurementType measurementType
     ) {
         this.id = id;
@@ -140,7 +139,7 @@ public class ForecastTable implements Serializable {
     /**
      * Getter for <code>public.forecast_table.country</code>.
      */
-    public Country getCountry() {
+    public String getCountry() {
         return this.country;
     }
 

@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 
@@ -25,7 +24,7 @@ public class SpotTable implements Serializable {
     private final String stationid;
     private final String name;
     private final Boolean ispublic;
-    private final Country country;
+    private final String country;
     private final MeasurementType measurementType;
     private final Float minValue;
     private final Float maxValue;
@@ -48,7 +47,7 @@ public class SpotTable implements Serializable {
         String stationid,
         String name,
         Boolean ispublic,
-        Country country,
+        String country,
         MeasurementType measurementType,
         Float minValue,
         Float maxValue
@@ -102,7 +101,7 @@ public class SpotTable implements Serializable {
     /**
      * Getter for <code>public.spot_table.country</code>.
      */
-    public Country getCountry() {
+    public String getCountry() {
         return this.country;
     }
 

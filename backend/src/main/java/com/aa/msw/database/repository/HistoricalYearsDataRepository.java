@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
-import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
 @Component
 public class HistoricalYearsDataRepository extends AbstractRepository
@@ -96,7 +95,7 @@ public class HistoricalYearsDataRepository extends AbstractRepository
         final HistoricalYearsDataTableRecord record = dsl.newRecord(table);
 
         record.setDbId(historicalYearsData.getDatabaseId().getId());
-        record.setCountry(country(historicalYearsData.getStationId().getCountry()));
+        record.setCountry(historicalYearsData.getStationId().getCountry());
         record.setStationId(historicalYearsData.getStationId().getExternalId());
         record.setMedian(orderedMapToJsonb(historicalYearsData.getMedian()));
         record.setTwentyFivePercentile(orderedMapToJsonb(historicalYearsData.getTwentyFivePercentile()));

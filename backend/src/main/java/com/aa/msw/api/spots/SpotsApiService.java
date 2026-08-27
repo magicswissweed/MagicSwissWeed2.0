@@ -13,6 +13,7 @@ import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.database.repository.dao.UserToSpotDao;
 import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.*;
+import com.aa.msw.gen.jooq.enums.Provider;
 import com.aa.msw.model.Spot;
 import com.aa.msw.model.SpotCurrentInfo;
 import com.aa.msw.model.Station;
@@ -104,7 +105,7 @@ public class SpotsApiService {
      * scheduled tick (~20 minutes).
      */
     private void triggerImmediateFrenchFetchIfNeeded(ApiStationId stationId, ApiMeasurementType measurementType) {
-        if (stationId == null || stationId.getCountry() != CountryEnum.FR) {
+        if (stationId == null || !isVigicruesStation(stationId)) {
             return;
         }
         try {
@@ -178,13 +179,23 @@ public class SpotsApiService {
                 .withNotification(isWithNotification(spot)));
     }
 
+    private boolean isVigicruesStation(ApiStationId stationId) {
+        try {
+            return stationApiService.getStation(stationId).provider() == Provider.VIGICRUES;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
     private static ApiStation toApiStation(Station station, Set<ApiMeasurementType> supportedMeasurementTypes) {
         return new ApiStation(
                 station.stationId(),
                 station.label(),
                 station.latitude(),
                 station.longitude(),
-                new ArrayList<>(supportedMeasurementTypes));
+                new ArrayList<>(supportedMeasurementTypes))
+                .state(station.state())
+                .sourceLink(station.sourceLink());
     }
 
     private static ApiSpotInformation.SpotTypeEnum toApiSpotType(com.aa.msw.model.SpotTypeEnum type) {

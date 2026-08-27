@@ -73,7 +73,6 @@ export const MswEditSpot: React.FC<MswEditSpotProps> = ({spot}) => {
         let config = await authConfiguration(token);
 
         // create new spot object with the updated values
-        // TODO: country
         const apiSpot: ApiSpot = {
             id: spot.id,
             name: spotName,

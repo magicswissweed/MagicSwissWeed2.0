@@ -6,7 +6,7 @@ import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.database.repository.dao.StationDao;
 import com.aa.msw.database.services.SpotDbService;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.gen.jooq.enums.Provider;
 import com.aa.msw.model.Forecast;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Station;
@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,52 +66,53 @@ public class InputDataFetcherService {
     @Scheduled(cron = "0 1/10 * * * *")
         // 01, 11, 21, ...
     void fetchSwissDataAndWriteToDb() {
-        // fetch all known CH stations.
-        Set<ApiStationId> swissStationIds = filterByCountry(getAllStationIds(), CountryEnum.CH);
-        fetchAndWriteToDb(swissStationIds, isFetchingSwissData, CountryEnum.CH, this::fetchAndWriteSwissData);
+        // fetch all known hydrodaten stations.
+        Set<ApiStationId> swissStationIds = getStationIdsOfProvider(Provider.HYDRODATEN);
+        fetchAndWriteToDb(swissStationIds, isFetchingSwissData, Provider.HYDRODATEN, this::fetchAndWriteSwissData);
     }
 
     // 03, 08, 13, 18, 23, 28, ... in theory...
     @Scheduled(cron = "0 3/5 * * * *")
     void fetchFrenchDataAndWriteToDb() {
         // only fetch stations actually used by a spot, to avoid hammering the rate-limited Vigicrues API.
-        Set<ApiStationId> frenchStationIds = spotDao.getReferencedStationIds(CountryEnum.FR);
-        fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, CountryEnum.FR, this::fetchAndWriteFrenchLatestSample);
+        Set<ApiStationId> frenchStationIds = getStationIdsOfProvider(Provider.VIGICRUES);
+        frenchStationIds.retainAll(spotDao.getReferencedStationIds());
+        fetchAndWriteToDb(frenchStationIds, isFetchingFrenchData, Provider.VIGICRUES, this::fetchAndWriteFrenchLatestSample);
     }
 
     // 05, 15, 25, ...
     @Scheduled(cron = "0 5/10 * * * *")
     void fetchBwDataAndWriteToDb() {
-        Set<ApiStationId> stationIds = filterByCountry(getAllStationIds(), CountryEnum.DE_BW);
-        fetchAndWriteToDb(stationIds, isFetchingBwData, CountryEnum.DE_BW, this::fetchAndWriteBwSamples);
+        Set<ApiStationId> stationIds = getStationIdsOfProvider(Provider.HVZ_BW);
+        fetchAndWriteToDb(stationIds, isFetchingBwData, Provider.HVZ_BW, this::fetchAndWriteBwSamples);
     }
 
-    private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForCountry, CountryEnum country, Consumer<Set<ApiStationId>> fetchForCountryFunction) {
-        if (isFetchingForCountry.compareAndSet(false, true)) {
-            LOG.info("Fetching {} data for {} stations...", country.name(), stationIds.size());
+    private void fetchAndWriteToDb(Set<ApiStationId> stationIds, AtomicBoolean isFetchingForProvider, Provider provider, Consumer<Set<ApiStationId>> fetchForProviderFunction) {
+        if (isFetchingForProvider.compareAndSet(false, true)) {
+            LOG.info("Fetching {} data for {} stations...", provider.name(), stationIds.size());
             try {
                 try {
-                    fetchForCountryFunction.accept(stationIds);
+                    fetchForProviderFunction.accept(stationIds);
                 } catch (Exception e) {
-                    LOG.error("Error while fetching data for country {}. We will ignore this so that the other countries data can be fetched.", country, e);
+                    LOG.error("Error while fetching data of provider {}. We will ignore this so that the data of the other providers can be fetched.", provider, e);
                 }
 
                 updateCurrentInfoForAllSpotsOfStationsAndSendNotifications(stationIds);
 
                 fetchedDataSinceRestart = true;
 
-                LOG.info("Finished fetching {} data.", country.name());
+                LOG.info("Finished fetching {} data.", provider.name());
             } finally {
-                isFetchingForCountry.set(false);
+                isFetchingForProvider.set(false);
             }
         } else {
-            LOG.warn("Fetch already in progress for {}, skipping this trigger.", country.name());
+            LOG.warn("Fetch already in progress for {}, skipping this trigger.", provider.name());
         }
     }
 
     @Async
     public void triggerFrenchFetchForStationAsync(ApiStationId stationId) {
-        if (stationId == null || stationId.getCountry() != CountryEnum.FR) {
+        if (stationId == null || !getStationIdsOfProvider(Provider.VIGICRUES).contains(stationId)) {
             return;
         }
         LOG.info("Triggering immediate French fetch for station {}", stationId.getExternalId());
@@ -128,10 +130,11 @@ public class InputDataFetcherService {
         notificationService.sendNotificationsForSpots(spotsThatImproved);
     }
 
-    private static Set<ApiStationId> filterByCountry(Set<ApiStationId> stationIds, CountryEnum country) {
-        return stationIds.stream()
-                .filter(stationId -> stationId.getCountry().equals(country))
-                .collect(Collectors.toSet());
+    private Set<ApiStationId> getStationIdsOfProvider(Provider provider) {
+        return stationDao.getStations().stream()
+                .filter(station -> station.provider() == provider)
+                .map(Station::stationId)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     private void fetchAndWriteSwissData(Set<ApiStationId> swissStationIds) {
@@ -166,9 +169,4 @@ public class InputDataFetcherService {
         forecastDao.persistForecastsIfNotExist(forecasts);
     }
 
-    private Set<ApiStationId> getAllStationIds() {
-        return stationDao.getStations().stream()
-                .map(Station::stationId)
-                .collect(Collectors.toSet());
-    }
 }

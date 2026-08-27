@@ -420,6 +420,18 @@ export interface ApiStation {
      * @memberof ApiStation
      */
     'supportedMeasurements': Array<ApiMeasurementType>;
+    /**
+     * State / region the station is located in (e.g. Baden-Württemberg), if known.
+     * @type {string}
+     * @memberof ApiStation
+     */
+    'state'?: string;
+    /**
+     * Full URL to the station page of the data source (the authority publishing the data).
+     * @type {string}
+     * @memberof ApiStation
+     */
+    'sourceLink'?: string;
 }
 /**
  * 
@@ -428,35 +440,18 @@ export interface ApiStation {
  */
 export interface ApiStationId {
     /**
-     * 
-     * @type {CountryEnum}
+     * ISO 3166-1 alpha-2 country code of the station (e.g. CH, FR, DE).
+     * @type {string}
      * @memberof ApiStationId
      */
-    'country': CountryEnum;
+    'country': string;
     /**
-     * 
+     * The id of the station at its provider.
      * @type {string}
      * @memberof ApiStationId
      */
     'externalId': string;
 }
-
-
-/**
- * 
- * @export
- * @enum {string}
- */
-
-export const CountryEnum = {
-    Ch: 'CH',
-    Fr: 'FR',
-    DeBw: 'DE_BW'
-} as const;
-
-export type CountryEnum = typeof CountryEnum[keyof typeof CountryEnum];
-
-
 /**
  * 
  * @export
@@ -1343,7 +1338,7 @@ export const StationApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
-         * @summary Get a list of stations from BAFU
+         * @summary Get a list of all known measuring stations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1383,7 +1378,7 @@ export const StationApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get a list of stations from BAFU
+         * @summary Get a list of all known measuring stations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1405,7 +1400,7 @@ export const StationApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
-         * @summary Get a list of stations from BAFU
+         * @summary Get a list of all known measuring stations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1424,7 +1419,7 @@ export const StationApiFactory = function (configuration?: Configuration, basePa
 export class StationApi extends BaseAPI {
     /**
      * 
-     * @summary Get a list of stations from BAFU
+     * @summary Get a list of all known measuring stations
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof StationApi

@@ -5,7 +5,6 @@ import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.daos.SampleTableDao;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
@@ -51,7 +50,7 @@ public class SampleRepository extends AbstractTimestampedRepository
     protected SampleTableRecord mapDomain(Sample sample) {
         final SampleTableRecord record = dsl.newRecord(table);
         record.setId(sample.sampleId().getId());
-        record.setCountry(country(sample.getStationId().getCountry()));
+        record.setCountry(sample.getStationId().getCountry());
         record.setStationid(sample.getStationId().getExternalId());
         record.setTimestamp(sample.getTimestamp());
         record.setValue((float) sample.getValue());
@@ -73,19 +72,19 @@ public class SampleRepository extends AbstractTimestampedRepository
     @Override
     public Sample getCurrentSample(ApiStationId stationId, ApiMeasurementType type) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                .where(TABLE.COUNTRY.eq(stationId.getCountry())
                         .and(TABLE.STATIONID.eq(stationId.getExternalId()))
                         .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type))))
                 .orderBy(TABLE.TIMESTAMP.desc())
                 .limit(1)
                 .fetchOptional(this::mapRecord)
-                .orElseThrow(() -> new NoDataAvailableException("No current " + type.getValue() + " sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry().getValue()));
+                .orElseThrow(() -> new NoDataAvailableException("No current " + type.getValue() + " sample found for station " + stationId.getExternalId() + " in " + stationId.getCountry()));
     }
 
     @Override
     public List<Sample> getSamplesOfLastNDays(ApiStationId stationId, ApiMeasurementType type, int days) {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                .where(TABLE.COUNTRY.eq(stationId.getCountry())
                         .and(TABLE.STATIONID.eq(stationId.getExternalId()))
                         .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type)))
                         .and(TABLE.TIMESTAMP.greaterOrEqual(OffsetDateTime.now().minusDays(days))))
@@ -128,9 +127,9 @@ public class SampleRepository extends AbstractTimestampedRepository
     private static Condition buildStationFilter(Set<ApiStationId> stationIds) {
         // Group external IDs by country so we can emit `(country = X AND stationid IN (...)) OR ...`,
         // which is index-friendly and avoids vendor-specific row-value-IN syntax.
-        Map<Country, Set<String>> externalIdsByCountry = stationIds.stream()
+        Map<String, Set<String>> externalIdsByCountry = stationIds.stream()
                 .collect(Collectors.groupingBy(
-                        id -> country(id.getCountry()),
+                        id -> id.getCountry(),
                         Collectors.mapping(ApiStationId::getExternalId, Collectors.toSet())));
 
         return externalIdsByCountry.entrySet().stream()

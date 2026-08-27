@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
@@ -29,7 +28,7 @@ public class HistoricalYearsDataTable implements Serializable {
     private final JSONB max;
     private final JSONB min;
     private final JSONB currentYear;
-    private final Country country;
+    private final String country;
     private final MeasurementType measurementType;
 
     public HistoricalYearsDataTable(HistoricalYearsDataTable value) {
@@ -54,7 +53,7 @@ public class HistoricalYearsDataTable implements Serializable {
         JSONB max,
         JSONB min,
         JSONB currentYear,
-        Country country,
+        String country,
         MeasurementType measurementType
     ) {
         this.dbId = dbId;
@@ -130,7 +129,7 @@ public class HistoricalYearsDataTable implements Serializable {
     /**
      * Getter for <code>public.historical_years_data_table.country</code>.
      */
-    public Country getCountry() {
+    public String getCountry() {
         return this.country;
     }
 

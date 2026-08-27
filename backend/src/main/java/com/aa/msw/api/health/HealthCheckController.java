@@ -4,7 +4,7 @@ import com.aa.msw.database.exceptions.NoDataAvailableException;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Sample;
 import com.aa.msw.source.InputDataFetcherService;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class HealthCheckController {
     private final SampleDao sampleDao;
     private final InputDataFetcherService inputDataFetcherService;
 
-    private static final ApiStationId STATION = new ApiStationId(CountryEnum.CH, "2018");
+    private static final ApiStationId STATION = new ApiStationId(Country.CH, "2018");
 
     public HealthCheckController(SampleDao sampleDao, InputDataFetcherService inputDataFetcherService) {
         this.sampleDao = sampleDao;

@@ -34,7 +34,9 @@ public class StationApiController implements StationApi {
                                 s.label(),
                                 s.latitude(),
                                 s.longitude(),
-                                new ArrayList<>(supported.getOrDefault(s.stationId(), Set.of()))))
+                                new ArrayList<>(supported.getOrDefault(s.stationId(), Set.of())))
+                                .state(s.state())
+                                .sourceLink(s.sourceLink()))
                         .toList()
         );
     }

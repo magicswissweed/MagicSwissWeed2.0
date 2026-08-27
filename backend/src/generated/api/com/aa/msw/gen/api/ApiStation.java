@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * ApiStation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-12T14:49:17.702360+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiStation {
 
   private ApiStationId id;
@@ -36,6 +36,10 @@ public class ApiStation {
 
   @Valid
   private List<ApiMeasurementType> supportedMeasurements = new ArrayList<>();
+
+  private String state;
+
+  private String sourceLink;
 
   public ApiStation() {
     super();
@@ -160,6 +164,46 @@ public class ApiStation {
     this.supportedMeasurements = supportedMeasurements;
   }
 
+  public ApiStation state(String state) {
+    this.state = state;
+    return this;
+  }
+
+  /**
+   * State / region the station is located in (e.g. Baden-Württemberg), if known.
+   * @return state
+  */
+  
+  @Schema(name = "state", description = "State / region the station is located in (e.g. Baden-Württemberg), if known.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("state")
+  public String getState() {
+    return state;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
+  public ApiStation sourceLink(String sourceLink) {
+    this.sourceLink = sourceLink;
+    return this;
+  }
+
+  /**
+   * Full URL to the station page of the data source (the authority publishing the data).
+   * @return sourceLink
+  */
+  
+  @Schema(name = "sourceLink", description = "Full URL to the station page of the data source (the authority publishing the data).", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("sourceLink")
+  public String getSourceLink() {
+    return sourceLink;
+  }
+
+  public void setSourceLink(String sourceLink) {
+    this.sourceLink = sourceLink;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -173,12 +217,14 @@ public class ApiStation {
         Objects.equals(this.label, apiStation.label) &&
         Objects.equals(this.latitude, apiStation.latitude) &&
         Objects.equals(this.longitude, apiStation.longitude) &&
-        Objects.equals(this.supportedMeasurements, apiStation.supportedMeasurements);
+        Objects.equals(this.supportedMeasurements, apiStation.supportedMeasurements) &&
+        Objects.equals(this.state, apiStation.state) &&
+        Objects.equals(this.sourceLink, apiStation.sourceLink);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, label, latitude, longitude, supportedMeasurements);
+    return Objects.hash(id, label, latitude, longitude, supportedMeasurements, state, sourceLink);
   }
 
   @Override
@@ -190,6 +236,8 @@ public class ApiStation {
     sb.append("    latitude: ").append(toIndentedString(latitude)).append("\n");
     sb.append("    longitude: ").append(toIndentedString(longitude)).append("\n");
     sb.append("    supportedMeasurements: ").append(toIndentedString(supportedMeasurements)).append("\n");
+    sb.append("    state: ").append(toIndentedString(state)).append("\n");
+    sb.append("    sourceLink: ").append(toIndentedString(sourceLink)).append("\n");
     sb.append("}");
     return sb.toString();
   }

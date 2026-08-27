@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
-import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 import static com.aa.msw.database.helpers.EnumConverterHelper.measurementType;
 
 
@@ -92,7 +91,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
         }
 
         record.setId(forecast.forecastId().getId());
-        record.setCountry(country(forecast.getStationId().getCountry()));
+        record.setCountry(forecast.getStationId().getCountry());
         record.setStationid(forecast.getStationId().getExternalId());
         record.setTimestamp(forecast.getTimestamp());
         record.setMeasureddata(measuredData);
@@ -153,7 +152,7 @@ public class ForecastRepository extends AbstractTimestampedRepository
     @Override
     public Forecast getCurrentForecast(ApiStationId stationId, ApiMeasurementType type) throws NoDataAvailableException {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                .where(TABLE.COUNTRY.eq(stationId.getCountry())
                         .and(TABLE.STATIONID.eq(stationId.getExternalId()))
                         .and(TABLE.MEASUREMENT_TYPE.eq(measurementType(type))))
                 .orderBy(TABLE.TIMESTAMP.desc())

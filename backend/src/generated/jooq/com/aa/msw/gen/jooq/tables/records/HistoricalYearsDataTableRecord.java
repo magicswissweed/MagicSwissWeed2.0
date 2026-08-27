@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 
@@ -150,7 +149,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Setter for <code>public.historical_years_data_table.country</code>.
      */
-    public HistoricalYearsDataTableRecord setCountry(Country value) {
+    public HistoricalYearsDataTableRecord setCountry(String value) {
         set(8, value);
         return this;
     }
@@ -158,8 +157,8 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Getter for <code>public.historical_years_data_table.country</code>.
      */
-    public Country getCountry() {
-        return (Country) get(8);
+    public String getCountry() {
+        return (String) get(8);
     }
 
     /**
@@ -202,7 +201,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
     /**
      * Create a detached, initialised HistoricalYearsDataTableRecord
      */
-    public HistoricalYearsDataTableRecord(UUID dbId, String stationId, JSONB median, JSONB twentyFivePercentile, JSONB seventyFivePercentile, JSONB max, JSONB min, JSONB currentYear, Country country, MeasurementType measurementType) {
+    public HistoricalYearsDataTableRecord(UUID dbId, String stationId, JSONB median, JSONB twentyFivePercentile, JSONB seventyFivePercentile, JSONB max, JSONB min, JSONB currentYear, String country, MeasurementType measurementType) {
         super(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE);
 
         setDbId(dbId);

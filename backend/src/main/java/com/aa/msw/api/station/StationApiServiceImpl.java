@@ -148,10 +148,10 @@ public class StationApiServiceImpl implements StationApiService {
 
     private boolean canFetchData(Station station) {
         ApiStationId stationId = station.stationId();
-        return switch (stationId.getCountry()) {
-            case CH -> canFetchDataForCh(stationId);
-            case FR -> canFetchDataForFr(stationId);
-            case DE_BW -> canFetchDataForBw(stationId);
+        return switch (station.provider()) {
+            case HYDRODATEN -> canFetchDataForCh(stationId);
+            case VIGICRUES -> canFetchDataForFr(stationId);
+            case HVZ_BW -> canFetchDataForBw(stationId);
         };
     }
 

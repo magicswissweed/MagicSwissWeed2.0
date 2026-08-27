@@ -4,7 +4,7 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.Provider;
 import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.records.StationTableRecord;
 
@@ -134,14 +134,59 @@ public class StationTableDao extends DAOImpl<StationTableRecord, com.aa.msw.gen.
      * Fetch records that have <code>country BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfCountry(String lowerInclusive, String upperInclusive) {
         return fetchRange(StationTable.STATION_TABLE.COUNTRY, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>country IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByCountry(Country... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByCountry(String... values) {
         return fetch(StationTable.STATION_TABLE.COUNTRY, values);
+    }
+
+    /**
+     * Fetch records that have <code>provider BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfProvider(Provider lowerInclusive, Provider upperInclusive) {
+        return fetchRange(StationTable.STATION_TABLE.PROVIDER, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>provider IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByProvider(Provider... values) {
+        return fetch(StationTable.STATION_TABLE.PROVIDER, values);
+    }
+
+    /**
+     * Fetch records that have <code>state BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfState(String lowerInclusive, String upperInclusive) {
+        return fetchRange(StationTable.STATION_TABLE.STATE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>state IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchByState(String... values) {
+        return fetch(StationTable.STATION_TABLE.STATE, values);
+    }
+
+    /**
+     * Fetch records that have <code>source_link BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchRangeOfSourceLink(String lowerInclusive, String upperInclusive) {
+        return fetchRange(StationTable.STATION_TABLE.SOURCE_LINK, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>source_link IN (values)</code>
+     */
+    public List<com.aa.msw.gen.jooq.tables.pojos.StationTable> fetchBySourceLink(String... values) {
+        return fetch(StationTable.STATION_TABLE.SOURCE_LINK, values);
     }
 }

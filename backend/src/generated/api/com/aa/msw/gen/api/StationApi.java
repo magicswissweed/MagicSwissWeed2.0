@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-12T14:49:17.702360+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "station", description = "the station API")
 public interface StationApi {
@@ -42,16 +42,16 @@ public interface StationApi {
     }
 
     /**
-     * GET /api/v1/stations : Get a list of stations from BAFU
+     * GET /api/v1/stations : Get a list of all known measuring stations
      *
-     * @return Returns a list of stations from BAFU. (status code 200)
+     * @return Returns a list of all known measuring stations (all providers). (status code 200)
      */
     @Operation(
         operationId = "getStations",
-        summary = "Get a list of stations from BAFU",
+        summary = "Get a list of all known measuring stations",
         tags = { "station" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Returns a list of stations from BAFU.", content = {
+            @ApiResponse(responseCode = "200", description = "Returns a list of all known measuring stations (all providers).", content = {
                 @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ApiStation.class)))
             })
         }
@@ -68,7 +68,7 @@ public interface StationApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 }, { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"id\" : { \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"longitude\" : 5.962133916683182 } ]";
+                    String exampleString = "[ { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"sourceLink\" : \"sourceLink\", \"id\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"state\" : \"state\", \"longitude\" : 5.962133916683182 }, { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"sourceLink\" : \"sourceLink\", \"id\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"state\" : \"state\", \"longitude\" : 5.962133916683182 } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

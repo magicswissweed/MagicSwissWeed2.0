@@ -3,7 +3,6 @@ package com.aa.msw.database.repository;
 import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
 import com.aa.msw.gen.jooq.tables.daos.SpotTableDao;
@@ -18,7 +17,6 @@ import java.util.Set;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiMeasurementType;
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
-import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 import static com.aa.msw.database.helpers.EnumConverterHelper.measurementType;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
@@ -54,7 +52,7 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
         record.setId(spot.getId().getId());
         record.setIspublic(spot.isPublic());
         record.setType(mapDomainToDbEnum(spot.type()));
-        record.setCountry(country(spot.stationId().getCountry()));
+        record.setCountry(spot.stationId().getCountry());
         record.setStationid(spot.stationId().getExternalId());
         record.setName(spot.name());
         record.setMeasurementType(measurementType(spot.measurementType()));
@@ -106,7 +104,7 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
     @Override
     public Set<Spot> getSpotsWithStationId(ApiStationId stationId) {
         return dsl.selectFrom(TABLE)
-                .where(TABLE.COUNTRY.eq(country(stationId.getCountry()))
+                .where(TABLE.COUNTRY.eq(stationId.getCountry())
                         .and(TABLE.STATIONID.eq(stationId.getExternalId())))
                 .fetch(this::mapRecord)
                 .stream()
@@ -114,10 +112,9 @@ public class SpotRepository extends AbstractRepository<SpotId, Spot, SpotTableRe
     }
 
     @Override
-    public Set<ApiStationId> getReferencedStationIds(CountryEnum country) {
+    public Set<ApiStationId> getReferencedStationIds() {
         return dsl.selectDistinct(TABLE.COUNTRY, TABLE.STATIONID)
                 .from(TABLE)
-                .where(TABLE.COUNTRY.eq(country(country)))
                 .fetch(r -> apiStationId(r.value1(), r.value2()))
                 .stream()
                 .collect(toUnmodifiableSet());

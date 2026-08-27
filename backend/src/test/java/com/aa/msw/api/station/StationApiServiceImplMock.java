@@ -2,15 +2,14 @@ package com.aa.msw.api.station;
 
 import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.Provider;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Station;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
-
-import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
 
 @Profile("test")
 @Service
@@ -31,8 +30,10 @@ public class StationApiServiceImplMock implements StationApiService {
         );
     }
 
-    private Station station(Country country, String stationId, String label) {
-        return new Station(new StationId(), apiStationId(country, stationId), label, 2.0, 3.0);
+    private Station station(String country, String stationId, String label) {
+        Provider provider = Country.FR.equals(country) ? Provider.VIGICRUES : Provider.HYDRODATEN;
+        return new Station(new StationId(), new ApiStationId(country, stationId), label, 2.0, 3.0,
+                provider, null, "https://example.org/station/" + stationId);
     }
 
     @Override

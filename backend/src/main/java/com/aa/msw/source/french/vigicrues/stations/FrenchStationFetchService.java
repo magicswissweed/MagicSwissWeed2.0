@@ -2,7 +2,8 @@ package com.aa.msw.source.french.vigicrues.stations;
 
 import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.gen.jooq.enums.Provider;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.french.vigicrues.model.allstations.VigicruesStationsApiWrapper;
@@ -30,6 +31,7 @@ public class FrenchStationFetchService extends AbstractFetchService {
 
     public static final String STATIONS_FETCH_URL = "https://www.vigicrues.gouv.fr/services/StaEntVigiCru.json";
     public static final String CERTAIN_STATION_FETCH_URL_PREFIX = "https://www.vigicrues.gouv.fr/services/station.json/index.php?CdStationHydro=";
+    public static final String STATION_LINK_PREFIX = "https://www.vigicrues.gouv.fr/station/";
 
     public Set<Station> fetchStations() {
         try {
@@ -43,8 +45,7 @@ public class FrenchStationFetchService extends AbstractFetchService {
             return vigicruesStationsResponse.stations().stream()
                     .map(vigicruesStation -> {
                         try {
-                            // Random jittered delay between to avoid pattern detection
-                            Thread.sleep(150 + (long) (Math.random() * 150));
+                            delayBetweenStationRequests();
 
                             VigicruesStationDetail stationDetail = fetchStationDetails(vigicruesStation.id());
                             if (stationDetail.communeCode().startsWith("97")) {
@@ -56,10 +57,13 @@ public class FrenchStationFetchService extends AbstractFetchService {
 
                             return new Station(
                                     new StationId(),
-                                    new ApiStationId(CountryEnum.FR, vigicruesStation.id()),
+                                    new ApiStationId(Country.FR, vigicruesStation.id()),
                                     vigicruesStation.label(),
                                     projCoordinates.y,
-                                    projCoordinates.x);
+                                    projCoordinates.x,
+                                    Provider.VIGICRUES,
+                                    null,
+                                    STATION_LINK_PREFIX + vigicruesStation.id());
                         } catch (Exception e) {
                             LOG.error("Error fetching station details for station {} - skipping station.", vigicruesStation.id(), e);
                             return null;
@@ -71,6 +75,10 @@ public class FrenchStationFetchService extends AbstractFetchService {
             LOG.error("Error fetching stations from vigicrues - returning emptySet", e);
             return Collections.emptySet();
         }
+    }
+
+    protected void delayBetweenStationRequests() throws InterruptedException {
+        Thread.sleep(150 + (long) (Math.random() * 150));
     }
 
     private static ProjCoordinate transformCoordinates(VigicruesCoordinates frenchCoordinates) {
