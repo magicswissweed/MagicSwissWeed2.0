@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,11 @@ public class StationApiServiceImpl implements StationApiService {
     private final FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService;
     private final BwSampleFetchService bwSampleFetchService;
     private final RivermapSampleFetchService rivermapSampleFetchService;
+    /**
+     * A Rivermap station without a reading younger than this is considered down and is deleted.
+     */
+    static final Period RIVERMAP_MAX_READING_AGE = Period.ofMonths(3);
+
     private Set<Station> stations = new HashSet<>();
 
     public StationApiServiceImpl(SwissStationFetchService swissStationFetchService, StationDao stationDao, FrenchStationFetchService frenchStationFetchService, DeBwStationFetchService deBwStationFetchService, RivermapStationFetchService rivermapStationFetchService, SampleDao sampleDao, SwissSampleFetchService swissSampleFetchService, FrenchLast30DaysSampleFetchService frenchLast30DaysSampleFetchService, BwSampleFetchService bwSampleFetchService, RivermapSampleFetchService rivermapSampleFetchService) {
@@ -106,7 +112,7 @@ public class StationApiServiceImpl implements StationApiService {
         stations.addAll(deBwStationFetchService.fetchStations());
         Set<Station> rivermapStations = rivermapStationFetchService.fetchStations();
         stations.addAll(rivermapStations);
-        Optional<Set<ApiStationId>> rivermapStationsWithReadings = fetchRivermapStationsWithReadings(rivermapStations);
+        Optional<Set<ApiStationId>> rivermapStationsWithReadings = fetchRivermapStationsWithRecentReadings(rivermapStations);
         return stations.stream()
                 .map(station -> processFetchedStations(station, rivermapStationsWithReadings))
                 .filter(Optional::isPresent)
@@ -117,23 +123,32 @@ public class StationApiServiceImpl implements StationApiService {
     /**
      * Probing the readings of every single Rivermap station would cost one (rate limited) request each, so the readings
      * of all Rivermap stations are fetched with one request and the validation checks against that set.
+     * <p>
+     * The readings endpoint answers with the <b>latest</b> reading of a station even when it lies outside the requested
+     * window (gauges that stopped reporting years ago are still listed), so being part of the answer is not enough:
+     * only stations whose newest reading is younger than {@link #RIVERMAP_MAX_READING_AGE} count as alive.
      *
      * @return the Rivermap stations that delivered a reading recently - empty if the request failed (no readings for
      * any of the stations means the API did not answer, not that all gauges are dead)
      */
-    private Optional<Set<ApiStationId>> fetchRivermapStationsWithReadings(Set<Station> rivermapStations) {
+    private Optional<Set<ApiStationId>> fetchRivermapStationsWithRecentReadings(Set<Station> rivermapStations) {
         if (rivermapStations.isEmpty()) {
             return Optional.of(Set.of());
         }
         Set<ApiStationId> stationIds = rivermapStations.stream().map(Station::stationId).collect(Collectors.toSet());
-        Set<ApiStationId> withReadings = rivermapSampleFetchService.fetchSamples(stationIds, RivermapSampleFetchService.MAX_WINDOW_MINUTES).stream()
-                .map(Sample::getStationId)
-                .collect(Collectors.toSet());
-        if (withReadings.isEmpty()) {
+        List<Sample> samples = rivermapSampleFetchService.fetchSamples(stationIds, RivermapSampleFetchService.MAX_WINDOW_MINUTES);
+        if (samples.isEmpty()) {
             LOG.warn("Got no Rivermap readings at all for {} stations - keeping all of them.", stationIds.size());
             return Optional.empty();
         }
-        return Optional.of(withReadings);
+        OffsetDateTime oldestAcceptedReading = OffsetDateTime.now().minus(RIVERMAP_MAX_READING_AGE);
+        Set<ApiStationId> withRecentReadings = samples.stream()
+                .filter(sample -> sample.getTimestamp().isAfter(oldestAcceptedReading))
+                .map(Sample::getStationId)
+                .collect(Collectors.toSet());
+        LOG.info("{} of {} Rivermap stations delivered a reading within the last {} - dropping the others.",
+                withRecentReadings.size(), stationIds.size(), RIVERMAP_MAX_READING_AGE);
+        return Optional.of(withRecentReadings);
     }
 
     /**
