@@ -13,7 +13,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_URL }}
           username: studi
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker restart msw-backend
