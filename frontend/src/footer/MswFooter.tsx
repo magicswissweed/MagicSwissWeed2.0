@@ -13,14 +13,12 @@ export const MswFooter = () => {
                 <div className="Footer">
                     <ul className='Footer_list'>
                         <li>
-                            <li>
-                                <a
-                                    style={{width: "135px"}}
-                                    target="_blank"
-                                    href="https://github.com/magicswissweed/msw/issues">
-                                    Add your own Feature
-                                </a>
-                            </li>
+                            <a
+                                style={{width: "135px"}}
+                                target="_blank"
+                                href="https://github.com/magicswissweed/msw/issues">
+                                Add your own Feature
+                            </a>
                         </li>
                         <li>
                             <BuyMeACoffeeButton/>
