@@ -5,18 +5,20 @@ import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
+import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
+import com.aa.msw.gen.jooq.tables.StationTable;
 import com.aa.msw.gen.jooq.tables.daos.SampleTableDao;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 import com.aa.msw.model.Sample;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,8 +96,28 @@ public class SampleRepository extends AbstractTimestampedRepository
 
     @Override
     public Map<ApiStationId, Set<ApiMeasurementType>> getSupportedMeasurementsByStation() {
-        return dsl.selectDistinct(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
-                .from(TABLE)
+        StationTable station = StationTable.STATION_TABLE;
+        SampleTable sample = TABLE.as("t");
+
+        Field<MeasurementType> type = DSL.field(DSL.name("m", "mt"), MeasurementType.class);
+        @SuppressWarnings("unchecked") // generic array creation for the varargs of DSL.values
+        Row1<MeasurementType>[] typeRows = Arrays.stream(MeasurementType.values())
+                .map(DSL::row)
+                .toArray(Row1[]::new);
+        Table<?> types = DSL.values(typeRows).as("m", "mt");
+        Table<?> probe = DSL.lateral(
+                        DSL.selectOne()
+                                .from(sample)
+                                .where(sample.COUNTRY.eq(station.COUNTRY))
+                                .and(sample.STATIONID.eq(station.STATIONID))
+                                .and(sample.MEASUREMENT_TYPE.eq(type))
+                                .limit(1))
+                .as("x");
+
+        return dsl.select(station.COUNTRY, station.STATIONID, type)
+                .from(station)
+                .crossJoin(types)
+                .crossJoin(probe)
                 .fetch()
                 .stream()
                 .collect(Collectors.groupingBy(
@@ -129,7 +151,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         // which is index-friendly and avoids vendor-specific row-value-IN syntax.
         Map<String, Set<String>> externalIdsByCountry = stationIds.stream()
                 .collect(Collectors.groupingBy(
-                        id -> id.getCountry(),
+                        ApiStationId::getCountry,
                         Collectors.mapping(ApiStationId::getExternalId, Collectors.toSet())));
 
         return externalIdsByCountry.entrySet().stream()
