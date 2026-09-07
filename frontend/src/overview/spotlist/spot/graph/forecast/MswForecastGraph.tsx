@@ -36,9 +36,20 @@ export const MswForecastGraph = (props: MswForecastGraphProps) => {
     const currentTime = currentSample?.timestamp;
 
     const useHistory = !props.isMini && (props.lastFewDays?.length ?? 0) > 0;
-    const pastMeasured: TimeSeriesPoint[] = useHistory
+    const baseMeasured: TimeSeriesPoint[] = useHistory
         ? props.lastFewDays!.filter(s => !currentTime || s.timestamp <= currentTime)
         : (measuredData ?? []);
+
+    // The forecast bands below are cut off at currentTime (the latest live
+    // sample), but the measuredData fallback above is a snapshot frozen at
+    // forecast generation time, which can lag well behind currentTime (mini
+    // graphs, logged-out users without lastFewDays). Append the live current
+    // sample so "Measured" always reaches the same cutoff as the forecast
+    // bands, instead of leaving a gap between the two.
+    const lastMeasuredTime = baseMeasured.length ? baseMeasured[baseMeasured.length - 1].timestamp : undefined;
+    const pastMeasured: TimeSeriesPoint[] = (currentSample && currentTime && (!lastMeasuredTime || currentTime > lastMeasuredTime))
+        ? [...baseMeasured, currentSample]
+        : baseMeasured;
 
     // Get timestamps for x-axis grid and labels
     const allTimestamps = getTimestamps([...pastMeasured, ...median ?? []]);
