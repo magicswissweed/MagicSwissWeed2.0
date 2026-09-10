@@ -2,10 +2,8 @@ package com.aa.msw.gen.api;
 
 import java.net.URI;
 import java.util.Objects;
-import com.aa.msw.gen.api.CountryEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -20,10 +18,10 @@ import jakarta.annotation.Generated;
  * ApiStationId
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-12T14:49:17.702360+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiStationId {
 
-  private CountryEnum country;
+  private String country;
 
   private String externalId;
 
@@ -34,28 +32,28 @@ public class ApiStationId {
   /**
    * Constructor with only required parameters
    */
-  public ApiStationId(CountryEnum country, String externalId) {
+  public ApiStationId(String country, String externalId) {
     this.country = country;
     this.externalId = externalId;
   }
 
-  public ApiStationId country(CountryEnum country) {
+  public ApiStationId country(String country) {
     this.country = country;
     return this;
   }
 
   /**
-   * Get country
+   * ISO 3166-1 alpha-2 country code of the station (e.g. CH, FR, DE).
    * @return country
   */
-  @NotNull @Valid 
-  @Schema(name = "country", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull 
+  @Schema(name = "country", description = "ISO 3166-1 alpha-2 country code of the station (e.g. CH, FR, DE).", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("country")
-  public CountryEnum getCountry() {
+  public String getCountry() {
     return country;
   }
 
-  public void setCountry(CountryEnum country) {
+  public void setCountry(String country) {
     this.country = country;
   }
 
@@ -65,11 +63,11 @@ public class ApiStationId {
   }
 
   /**
-   * Get externalId
+   * The id of the station at its provider.
    * @return externalId
   */
   @NotNull 
-  @Schema(name = "externalId", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "externalId", description = "The id of the station at its provider.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("externalId")
   public String getExternalId() {
     return externalId;

@@ -7,6 +7,7 @@ WORKDIR /msw-frontend/
 COPY public/ public
 COPY src/ src
 COPY package.json package.json
+COPY package-lock.json package-lock.json
 COPY tsconfig.json tsconfig.json
 COPY .env.production .env.production
 
@@ -15,7 +16,8 @@ ARG API_BASE_URL=https://api.msw.ponteshare.ch
 ENV API_BASE_URL=${API_BASE_URL}
 RUN sh -c 'sed -i "s|http://localhost:8080|${API_BASE_URL}|g" src/gen/msw-api-ts/base.ts'
 
-RUN npm install
+# ci = install exactly the versions of the lockfile (reproducible, same as locally)
+RUN npm ci
 RUN npm run build
 
 FROM nginx:1.25.3

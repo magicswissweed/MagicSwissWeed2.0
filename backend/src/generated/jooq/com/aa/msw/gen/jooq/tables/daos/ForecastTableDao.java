@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 import com.aa.msw.gen.jooq.tables.records.ForecastTableRecord;
@@ -197,14 +196,14 @@ public class ForecastTableDao extends DAOImpl<ForecastTableRecord, com.aa.msw.ge
      * Fetch records that have <code>country BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchRangeOfCountry(String lowerInclusive, String upperInclusive) {
         return fetchRange(ForecastTable.FORECAST_TABLE.COUNTRY, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>country IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchByCountry(Country... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.ForecastTable> fetchByCountry(String... values) {
         return fetch(ForecastTable.FORECAST_TABLE.COUNTRY, values);
     }
 

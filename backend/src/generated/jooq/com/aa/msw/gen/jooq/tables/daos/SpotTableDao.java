@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
@@ -136,14 +135,14 @@ public class SpotTableDao extends DAOImpl<SpotTableRecord, com.aa.msw.gen.jooq.t
      * Fetch records that have <code>country BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchRangeOfCountry(String lowerInclusive, String upperInclusive) {
         return fetchRange(SpotTable.SPOT_TABLE.COUNTRY, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>country IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByCountry(Country... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SpotTable> fetchByCountry(String... values) {
         return fetch(SpotTable.SPOT_TABLE.COUNTRY, values);
     }
 

@@ -3,7 +3,8 @@ package com.aa.msw.source.swiss.hydrodaten.stations;
 
 import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.gen.jooq.enums.Provider;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.swiss.existenz.station.ExistenzStationFetchService;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class SwissStationFetchService extends AbstractFetchService {
 
     public static final String STATIONS_FETCH_URL = "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten.json";
+    public static final String STATION_LINK_PREFIX = "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/";
 
     private final ExistenzStationFetchService existenzStationFetchService;
 
@@ -55,10 +57,13 @@ public class SwissStationFetchService extends AbstractFetchService {
                         }
                         return new Station(
                                 new StationId(),
-                                new ApiStationId(CountryEnum.CH, hydroStation.key()),
+                                new ApiStationId(Country.CH, hydroStation.key()),
                                 hydroStation.label(),
                                 latitude,
-                                longitude);
+                                longitude,
+                                Provider.HYDRODATEN,
+                                null,
+                                STATION_LINK_PREFIX + hydroStation.key());
                     })
                     .collect(Collectors.toSet());
         } catch (Exception e) {

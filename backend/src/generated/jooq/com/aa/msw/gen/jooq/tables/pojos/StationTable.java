@@ -4,7 +4,7 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.Provider;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -23,7 +23,10 @@ public class StationTable implements Serializable {
     private final String label;
     private final Double latitude;
     private final Double longitude;
-    private final Country country;
+    private final String country;
+    private final Provider provider;
+    private final String state;
+    private final String sourceLink;
 
     public StationTable(StationTable value) {
         this.dbId = value.dbId;
@@ -32,6 +35,9 @@ public class StationTable implements Serializable {
         this.latitude = value.latitude;
         this.longitude = value.longitude;
         this.country = value.country;
+        this.provider = value.provider;
+        this.state = value.state;
+        this.sourceLink = value.sourceLink;
     }
 
     public StationTable(
@@ -40,7 +46,10 @@ public class StationTable implements Serializable {
         String label,
         Double latitude,
         Double longitude,
-        Country country
+        String country,
+        Provider provider,
+        String state,
+        String sourceLink
     ) {
         this.dbId = dbId;
         this.stationid = stationid;
@@ -48,6 +57,9 @@ public class StationTable implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.country = country;
+        this.provider = provider;
+        this.state = state;
+        this.sourceLink = sourceLink;
     }
 
     /**
@@ -88,8 +100,29 @@ public class StationTable implements Serializable {
     /**
      * Getter for <code>public.station_table.country</code>.
      */
-    public Country getCountry() {
+    public String getCountry() {
         return this.country;
+    }
+
+    /**
+     * Getter for <code>public.station_table.provider</code>.
+     */
+    public Provider getProvider() {
+        return this.provider;
+    }
+
+    /**
+     * Getter for <code>public.station_table.state</code>.
+     */
+    public String getState() {
+        return this.state;
+    }
+
+    /**
+     * Getter for <code>public.station_table.source_link</code>.
+     */
+    public String getSourceLink() {
+        return this.sourceLink;
     }
 
     @Override
@@ -137,6 +170,24 @@ public class StationTable implements Serializable {
         }
         else if (!this.country.equals(other.country))
             return false;
+        if (this.provider == null) {
+            if (other.provider != null)
+                return false;
+        }
+        else if (!this.provider.equals(other.provider))
+            return false;
+        if (this.state == null) {
+            if (other.state != null)
+                return false;
+        }
+        else if (!this.state.equals(other.state))
+            return false;
+        if (this.sourceLink == null) {
+            if (other.sourceLink != null)
+                return false;
+        }
+        else if (!this.sourceLink.equals(other.sourceLink))
+            return false;
         return true;
     }
 
@@ -150,6 +201,9 @@ public class StationTable implements Serializable {
         result = prime * result + ((this.latitude == null) ? 0 : this.latitude.hashCode());
         result = prime * result + ((this.longitude == null) ? 0 : this.longitude.hashCode());
         result = prime * result + ((this.country == null) ? 0 : this.country.hashCode());
+        result = prime * result + ((this.provider == null) ? 0 : this.provider.hashCode());
+        result = prime * result + ((this.state == null) ? 0 : this.state.hashCode());
+        result = prime * result + ((this.sourceLink == null) ? 0 : this.sourceLink.hashCode());
         return result;
     }
 
@@ -163,6 +217,9 @@ public class StationTable implements Serializable {
         sb.append(", ").append(latitude);
         sb.append(", ").append(longitude);
         sb.append(", ").append(country);
+        sb.append(", ").append(provider);
+        sb.append(", ").append(state);
+        sb.append(", ").append(sourceLink);
 
         sb.append(")");
         return sb.toString();

@@ -1,7 +1,7 @@
 package com.aa.msw.source.swiss.hydrodaten.forecast;
 
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.model.Country;
 import com.aa.msw.helper.TestResourceLoader;
 import com.aa.msw.model.Forecast;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class SwissForecastFetchIntegrationTest {
 
     @Test
     void shouldFetchAndParseForecast() throws IOException, URISyntaxException {
-        ApiStationId stationId = new ApiStationId(CountryEnum.CH, "2018");
+        ApiStationId stationId = new ApiStationId(Country.CH, "2018");
 
         Forecast forecast = service.fetchForecast(stationId);
 
@@ -45,8 +45,8 @@ class SwissForecastFetchIntegrationTest {
     @Test
     void shouldFetchForecastsForMultipleStations() {
         Set<ApiStationId> stationIds = Set.of(
-                new ApiStationId(CountryEnum.CH, "2018"),
-                new ApiStationId(CountryEnum.CH, "2243")
+                new ApiStationId(Country.CH, "2018"),
+                new ApiStationId(Country.CH, "2243")
         );
 
         List<Forecast> forecasts = service.fetchForecasts(stationIds);

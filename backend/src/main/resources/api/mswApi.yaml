@@ -184,13 +184,13 @@ paths:
           description: Registration was successful.
   /api/v1/stations:
     get:
-      summary: Get a list of stations from BAFU
+      summary: Get a list of all known measuring stations
       operationId: getStations
       tags:
         - station
       responses:
         '200':
-          description: Returns a list of stations from BAFU.
+          description: Returns a list of all known measuring stations (all providers).
           content:
             application/json:
               schema:
@@ -279,21 +279,16 @@ components:
         - GOOD
         - BAD
         - TENDENCY_TO_BECOME_GOOD
-    CountryEnum:
-      type: string
-      nullable: false
-      enum:
-        - CH
-        - FR
-        - DE_BW
     ApiStationId:
       type: object
       required: [ country, externalId ]
       properties:
         country:
-          $ref: '#/components/schemas/CountryEnum'
+          type: string
+          description: ISO 3166-1 alpha-2 country code of the station (e.g. CH, FR, DE).
         externalId:
           type: string
+          description: The id of the station at its provider.
     SpotOrderList:
       type: array
       required: [ type, format ]
@@ -419,6 +414,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ApiMeasurementType'
+        state:
+          type: string
+          description: State / region the station is located in (e.g. Baden-Württemberg), if known.
+        sourceLink:
+          type: string
+          description: Full URL to the station page of the data source (the authority publishing the data).
     PushNotificationSubscription:
       type: object
       required: [ token ]

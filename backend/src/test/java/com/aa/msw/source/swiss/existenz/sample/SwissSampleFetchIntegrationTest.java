@@ -2,7 +2,7 @@ package com.aa.msw.source.swiss.existenz.sample;
 
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.model.Country;
 import com.aa.msw.helper.TestResourceLoader;
 import com.aa.msw.model.Sample;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ class SwissSampleFetchIntegrationTest {
     @Test
     void shouldFetchAndParseSamples() {
         Set<ApiStationId> stationIds = Set.of(
-                new ApiStationId(CountryEnum.CH, "2018"),
-                new ApiStationId(CountryEnum.CH, "2243")
+                new ApiStationId(Country.CH, "2018"),
+                new ApiStationId(Country.CH, "2243")
         );
 
         List<Sample> samples = service.fetchSamples(stationIds);
@@ -34,7 +34,7 @@ class SwissSampleFetchIntegrationTest {
 
         Sample flow2018 = findSample(samples, "2018", ApiMeasurementType.FLOW);
         assertEquals(81.77, flow2018.value(), 0.01);
-        assertEquals(CountryEnum.CH, flow2018.stationId().getCountry());
+        assertEquals(Country.CH, flow2018.stationId().getCountry());
         assertNotNull(flow2018.timestamp());
 
         Sample temp2018 = findSample(samples, "2018", ApiMeasurementType.TEMPERATURE);
@@ -57,7 +57,7 @@ class SwissSampleFetchIntegrationTest {
     @Test
     void shouldReturnEmptyListForStationNotInResponse() {
         Set<ApiStationId> stationIds = Set.of(
-                new ApiStationId(CountryEnum.CH, "9999999")
+                new ApiStationId(Country.CH, "9999999")
         );
 
         List<Sample> samples = service.fetchSamples(stationIds);

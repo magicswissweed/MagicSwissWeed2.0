@@ -7,7 +7,7 @@ import com.aa.msw.database.helpers.id.SpotId;
 import com.aa.msw.database.repository.dao.SampleDao;
 import com.aa.msw.database.repository.dao.SpotDao;
 import com.aa.msw.gen.api.ApiMeasurementType;
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Sample;
 import com.aa.msw.model.Spot;
 import com.aa.msw.model.SpotTypeEnum;

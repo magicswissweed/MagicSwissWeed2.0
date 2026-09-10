@@ -3,7 +3,6 @@ package com.aa.msw.source.german.bw.sample;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.german.bw.HvzBwParser;
@@ -26,19 +25,18 @@ public class BwSampleFetchServiceImpl extends AbstractFetchService implements Bw
     @Override
     public List<Sample> fetchSamples(Set<ApiStationId> stationIds) {
         try {
-            Set<String> externalIds = stationIds.stream()
-                    .map(ApiStationId::getExternalId)
-                    .collect(Collectors.toSet());
+            Map<String, ApiStationId> stationIdsByExternalId = stationIds.stream()
+                    .collect(Collectors.toMap(ApiStationId::getExternalId, id -> id, (a, b) -> a));
 
             String jsContent = fetchHvzBwData();
             List<HvzBwStation> allStations = HvzBwParser.parse(jsContent);
 
             List<Sample> samples = new ArrayList<>();
             for (HvzBwStation station : allStations) {
-                if (!externalIds.contains(station.stationId())) {
+                ApiStationId stationId = stationIdsByExternalId.get(station.stationId());
+                if (stationId == null) {
                     continue;
                 }
-                ApiStationId stationId = new ApiStationId(CountryEnum.DE_BW, station.stationId());
                 if (station.flowValue().isPresent() && station.flowTimestamp().isPresent()) {
                     samples.add(new Sample(
                             new SampleId(),

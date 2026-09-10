@@ -15,3 +15,5 @@ firebase.private-key=<FROM SERVICE-ACCOUNT>
 firebase.client-email=<FROM SERVICE-ACCOUNT>
 firebase.client-id=<FROM SERVICE-ACCOUNT>
 firebase.token-uri=<FROM SERVICE-ACCOUNT>
+
+rivermap.api-key=<FROM RIVERMAP>

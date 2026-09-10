@@ -71,7 +71,6 @@ export const MswAddSpot = () => {
 
         setIsSubmitButtonDisabled(true);
         let config = await authConfiguration(token);
-        // TODO: country
         const apiSpot: ApiSpot = {
             id: uuid(),
             name: spotName,

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
-import static com.aa.msw.database.helpers.EnumConverterHelper.country;
 
 @Component
 public class StationRepository extends AbstractRepository
@@ -33,7 +32,10 @@ public class StationRepository extends AbstractRepository
                 apiStationId(record.getCountry(), record.getStationid()),
                 record.getLabel(),
                 record.getLatitude(),
-                record.getLongitude()
+                record.getLongitude(),
+                record.getProvider(),
+                record.getState(),
+                record.getSourceLink()
         );
     }
 
@@ -42,11 +44,14 @@ public class StationRepository extends AbstractRepository
         final StationTableRecord record = dsl.newRecord(table);
 
         record.setDbId(station.databaseId().getId());
-        record.setCountry(country(station.stationId().getCountry()));
+        record.setCountry(station.stationId().getCountry());
         record.setStationid(station.stationId().getExternalId());
         record.setLabel(station.label());
         record.setLatitude(station.latitude());
         record.setLongitude(station.longitude());
+        record.setProvider(station.provider());
+        record.setState(station.state());
+        record.setSourceLink(station.sourceLink());
         return record;
     }
 
@@ -57,7 +62,10 @@ public class StationRepository extends AbstractRepository
                 apiStationId(stationTable.getCountry(), stationTable.getStationid()),
                 stationTable.getLabel(),
                 stationTable.getLatitude(),
-                stationTable.getLongitude()
+                stationTable.getLongitude(),
+                stationTable.getProvider(),
+                stationTable.getState(),
+                stationTable.getSourceLink()
         );
     }
 
@@ -71,7 +79,7 @@ public class StationRepository extends AbstractRepository
     public void deleteByStationId(ApiStationId stationId) {
         dsl.deleteFrom(TABLE)
                 .where(TABLE.STATIONID.eq(stationId.getExternalId())
-                        .and(TABLE.COUNTRY.eq(country(stationId.getCountry()))))
+                        .and(TABLE.COUNTRY.eq(stationId.getCountry())))
                 .execute();
     }
 }

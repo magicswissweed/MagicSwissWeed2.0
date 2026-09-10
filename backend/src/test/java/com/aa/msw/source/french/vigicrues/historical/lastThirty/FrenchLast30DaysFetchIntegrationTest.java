@@ -2,7 +2,7 @@ package com.aa.msw.source.french.vigicrues.historical.lastThirty;
 
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.model.Country;
 import com.aa.msw.helper.TestResourceLoader;
 import com.aa.msw.model.Sample;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class FrenchLast30DaysFetchIntegrationTest {
 
     @Test
     void shouldFetchAndParseLatestSample() {
-        ApiStationId stationId = new ApiStationId(CountryEnum.FR, "V271201001");
+        ApiStationId stationId = new ApiStationId(Country.FR, "V271201001");
 
         List<Sample> result = service.fetchLatestSamples(Set.of(stationId));
 

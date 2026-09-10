@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.HistoricalYearsDataTable;
 import com.aa.msw.gen.jooq.tables.records.HistoricalYearsDataTableRecord;
@@ -181,14 +180,14 @@ public class HistoricalYearsDataTableDao extends DAOImpl<HistoricalYearsDataTabl
      * Fetch records that have <code>country BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchRangeOfCountry(String lowerInclusive, String upperInclusive) {
         return fetchRange(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.COUNTRY, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>country IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchByCountry(Country... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.HistoricalYearsDataTable> fetchByCountry(String... values) {
         return fetch(HistoricalYearsDataTable.HISTORICAL_YEARS_DATA_TABLE.COUNTRY, values);
     }
 

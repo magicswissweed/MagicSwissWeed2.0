@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.enums.Spottype;
 import com.aa.msw.gen.jooq.tables.SpotTable;
@@ -101,7 +100,7 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
     /**
      * Setter for <code>public.spot_table.country</code>.
      */
-    public SpotTableRecord setCountry(Country value) {
+    public SpotTableRecord setCountry(String value) {
         set(5, value);
         return this;
     }
@@ -109,8 +108,8 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
     /**
      * Getter for <code>public.spot_table.country</code>.
      */
-    public Country getCountry() {
-        return (Country) get(5);
+    public String getCountry() {
+        return (String) get(5);
     }
 
     /**
@@ -181,7 +180,7 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
     /**
      * Create a detached, initialised SpotTableRecord
      */
-    public SpotTableRecord(UUID id, Spottype type, String stationid, String name, Boolean ispublic, Country country, MeasurementType measurementType, Float minValue, Float maxValue) {
+    public SpotTableRecord(UUID id, Spottype type, String stationid, String name, Boolean ispublic, String country, MeasurementType measurementType, Float minValue, Float maxValue) {
         super(SpotTable.SPOT_TABLE);
 
         setId(id);

@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 
@@ -86,7 +85,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Setter for <code>public.sample_table.country</code>.
      */
-    public SampleTableRecord setCountry(Country value) {
+    public SampleTableRecord setCountry(String value) {
         set(4, value);
         return this;
     }
@@ -94,8 +93,8 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Getter for <code>public.sample_table.country</code>.
      */
-    public Country getCountry() {
-        return (Country) get(4);
+    public String getCountry() {
+        return (String) get(4);
     }
 
     /**
@@ -136,7 +135,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
     /**
      * Create a detached, initialised SampleTableRecord
      */
-    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float value, Country country, MeasurementType measurementType) {
+    public SampleTableRecord(UUID id, String stationid, OffsetDateTime timestamp, Float value, String country, MeasurementType measurementType) {
         super(SampleTable.SAMPLE_TABLE);
 
         setId(id);

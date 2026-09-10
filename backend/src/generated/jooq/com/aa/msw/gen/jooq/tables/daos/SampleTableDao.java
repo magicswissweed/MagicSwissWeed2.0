@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.daos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.SampleTable;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
@@ -121,14 +120,14 @@ public class SampleTableDao extends DAOImpl<SampleTableRecord, com.aa.msw.gen.jo
      * Fetch records that have <code>country BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfCountry(Country lowerInclusive, Country upperInclusive) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchRangeOfCountry(String lowerInclusive, String upperInclusive) {
         return fetchRange(SampleTable.SAMPLE_TABLE.COUNTRY, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>country IN (values)</code>
      */
-    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByCountry(Country... values) {
+    public List<com.aa.msw.gen.jooq.tables.pojos.SampleTable> fetchByCountry(String... values) {
         return fetch(SampleTable.SAMPLE_TABLE.COUNTRY, values);
     }
 

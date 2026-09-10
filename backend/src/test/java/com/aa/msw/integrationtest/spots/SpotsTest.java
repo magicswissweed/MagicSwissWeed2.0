@@ -3,7 +3,7 @@ package com.aa.msw.integrationtest.spots;
 import com.aa.msw.gen.api.AddPrivateSpotRequest;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiSpot;
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.model.Country;
 import com.aa.msw.integrationtest.IntegrationTest;
 import com.aa.msw.integrationtest.TestUser;
 import com.google.gson.Gson;
@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import java.util.UUID;
 
 import static com.aa.msw.database.helpers.EnumConverterHelper.apiStationId;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.startsWith;
 
 public class SpotsTest extends IntegrationTest {
     public static final String API_PREFIX = "/api/v1";
@@ -27,7 +29,9 @@ public class SpotsTest extends IntegrationTest {
                 .get(ALL_SPOTS_URL)
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body("spots", hasSize(5));
+                .body("spots", hasSize(5))
+                // the link to the data source of the station is delivered by the backend
+                .body("spots.station.sourceLink", everyItem(startsWith("https://example.org/station/")));
     }
 
     @Test

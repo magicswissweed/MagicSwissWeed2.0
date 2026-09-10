@@ -40,7 +40,7 @@ export const MswLastMeasurementsGraph = (props: MswLastMeasurementsGraphProps) =
     const lastMs = sortedTimestamps.length
         ? Date.parse(sortedTimestamps[sortedTimestamps.length - 1])
         : undefined;
-    const defaultXRange = lastMs !== undefined ? [lastMs - ONE_WEEK, lastMs] : undefined;
+    const defaultXRange: [number, number] | undefined = lastMs !== undefined ? [lastMs - ONE_WEEK, lastMs] : undefined;
 
     let midDayTicks = getTicksAt(12, sortedTimestamps);
     let startOfDayTicks = getTicksAt(0, sortedTimestamps);

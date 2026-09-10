@@ -7,7 +7,6 @@ package com.aa.msw.gen.jooq.tables;
 import com.aa.msw.gen.jooq.Indexes;
 import com.aa.msw.gen.jooq.Keys;
 import com.aa.msw.gen.jooq.Public;
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.records.SampleTableRecord;
 
@@ -80,7 +79,7 @@ public class SampleTable extends TableImpl<SampleTableRecord> {
     /**
      * The column <code>public.sample_table.country</code>.
      */
-    public final TableField<SampleTableRecord, Country> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'CH'::country"), SQLDataType.VARCHAR)).asEnumDataType(Country.class), this, "");
+    public final TableField<SampleTableRecord, String> COUNTRY = createField(DSL.name("country"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.sample_table.measurement_type</code>.

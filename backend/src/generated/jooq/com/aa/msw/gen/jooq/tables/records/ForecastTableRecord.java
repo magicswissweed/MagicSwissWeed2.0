@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 import com.aa.msw.gen.jooq.tables.ForecastTable;
 
@@ -162,7 +161,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Setter for <code>public.forecast_table.country</code>.
      */
-    public ForecastTableRecord setCountry(Country value) {
+    public ForecastTableRecord setCountry(String value) {
         set(9, value);
         return this;
     }
@@ -170,8 +169,8 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Getter for <code>public.forecast_table.country</code>.
      */
-    public Country getCountry() {
-        return (Country) get(9);
+    public String getCountry() {
+        return (String) get(9);
     }
 
     /**
@@ -212,7 +211,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
     /**
      * Create a detached, initialised ForecastTableRecord
      */
-    public ForecastTableRecord(UUID id, String stationid, JSONB measureddata, JSONB median, JSONB max, JSONB min, OffsetDateTime timestamp, JSONB twentyfivepercentile, JSONB seventyfivepercentile, Country country, MeasurementType measurementType) {
+    public ForecastTableRecord(UUID id, String stationid, JSONB measureddata, JSONB median, JSONB max, JSONB min, OffsetDateTime timestamp, JSONB twentyfivepercentile, JSONB seventyfivepercentile, String country, MeasurementType measurementType) {
         super(ForecastTable.FORECAST_TABLE);
 
         setId(id);

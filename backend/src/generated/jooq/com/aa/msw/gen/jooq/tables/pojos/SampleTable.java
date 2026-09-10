@@ -4,7 +4,6 @@
 package com.aa.msw.gen.jooq.tables.pojos;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
 import com.aa.msw.gen.jooq.enums.MeasurementType;
 
 import java.io.Serializable;
@@ -24,7 +23,7 @@ public class SampleTable implements Serializable {
     private final String stationid;
     private final OffsetDateTime timestamp;
     private final Float value;
-    private final Country country;
+    private final String country;
     private final MeasurementType measurementType;
 
     public SampleTable(SampleTable value) {
@@ -41,7 +40,7 @@ public class SampleTable implements Serializable {
         String stationid,
         OffsetDateTime timestamp,
         Float value,
-        Country country,
+        String country,
         MeasurementType measurementType
     ) {
         this.id = id;
@@ -83,7 +82,7 @@ public class SampleTable implements Serializable {
     /**
      * Getter for <code>public.sample_table.country</code>.
      */
-    public Country getCountry() {
+    public String getCountry() {
         return this.country;
     }
 

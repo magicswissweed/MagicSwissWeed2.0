@@ -1,6 +1,6 @@
 import './Spot.scss'
 import React, {useEffect, useState} from 'react';
-import {ApiForecast, ApiSample, CountryEnum, ForecastApi, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
+import {ApiForecast, ApiSample, ForecastApi, SampleApi, SpotsApi} from '../../../gen/msw-api-ts';
 import {useAutoFontSize} from './useAutoFontSize';
 import {MswEditSpot} from "../../../spot/edit/MswEditSpot";
 import {MswMeasurement} from './measurement/MswMeasurement';
@@ -133,25 +133,9 @@ export const Spot = (props: SpotProps) => {
         return formatted.replace(",", "");
     }
 
-    function getStationLinkBaseUrl(country: CountryEnum) {
-        switch (country) {
-            case CountryEnum.Ch:
-                return "https://www.hydrodaten.admin.ch/de/seen-und-fluesse/stationen-und-daten/";
-            case CountryEnum.Fr:
-                return "https://www.vigicrues.gouv.fr/station/"
-            case CountryEnum.DeBw:
-                return "https://www.hvz.baden-wuerttemberg.de/pegel.html?id="
-        }
-        return assertUnreachable(country);
-    }
-
-    // This is a bit of a hack to make the switch exhaustive and remind us to add new enum types here.
-    function assertUnreachable(x: never): never {
-        throw new Error("Forgot to declare a link to a station in the switch statement.");
-    }
-
     function getSpotSummaryContent(spot: SpotModel) {
-        let stationLinkUrl = getStationLinkBaseUrl(spot.stationId.country) + spot.stationId.externalId;
+        // the link to the page of the data source is provided by the backend (may be missing for some stations)
+        const stationLinkUrl = spot.station.sourceLink;
 
         return <>
             <div className='icons-container'>
@@ -178,16 +162,18 @@ export const Spot = (props: SpotProps) => {
                 }
             </div>
             <div className="icons-container">
-                <Button
-                    variant="link"
-                    className="icon"
-                    href={stationLinkUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Link to the station"
-                >
-                    <LinkIcon className="svg-icon inverted-bg-icon"/>
-                </Button>
+                {stationLinkUrl &&
+                    <Button
+                        variant="link"
+                        className="icon"
+                        href={stationLinkUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Link to the station"
+                    >
+                        <LinkIcon className="svg-icon inverted-bg-icon"/>
+                    </Button>
+                }
                 {user &&
                     <MswEditSpot spot={spot}/>
                 }

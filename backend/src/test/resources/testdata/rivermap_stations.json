@@ -1,0 +1,207 @@
+{
+  "elapsedMs": 34,
+  "stations": [
+    {
+      "id": "f2e174e8-83ae-4a7f-8049-dea767a41900",
+      "type": "online",
+      "revision": 1,
+      "revisionTs": 1617377213,
+      "sensors": [
+        "level",
+        "flow"
+      ],
+      "isActive": true,
+      "name": "Etzgen",
+      "river": {
+        "de": "Etzgerbach"
+      },
+      "countryCode": "CH",
+      "state": "Aargau",
+      "latlng": [
+        47569608,
+        8110454
+      ],
+      "dataSourceId": "27b694f7-a9ea-4d0a-b85c-b2f30c3f3fd6",
+      "sourceLinks": {
+        "de": {
+          "level": "https://www.ag.ch/app/hydrometrie/station/?id=11584",
+          "flow": "https://www.ag.ch/app/hydrometrie/station/?id=11584"
+        }
+      },
+      "parserConfigs": "11584,FG_0360,40625042,23484042",
+      "observationFreqMins": 10,
+      "publishingFreqMins": -1,
+      "note": {}
+    },
+    {
+      "id": "e5b917e0-b25d-45a4-a73a-3ee22adf037c",
+      "type": "online",
+      "revision": 2,
+      "revisionTs": 1725969895,
+      "sensors": [
+        "level",
+        "flow"
+      ],
+      "isActive": true,
+      "name": "Ramales",
+      "river": {
+        "es": "Asón"
+      },
+      "countryCode": "ES",
+      "state": "Asón",
+      "latlng": [
+        43263805,
+        -3461539
+      ],
+      "dataSourceId": "e3550eac-cfcc-4302-b970-e56cb5ac2680",
+      "sourceLinks": {
+        "es": {
+          "level": "https://www.chcantabrico.es/sistema-automatico-de-informacion-detalle-estacion?cod_estacion=A141",
+          "flow": "https://www.chcantabrico.es/sistema-automatico-de-informacion-detalle-estacion?cod_estacion=A141"
+        }
+      },
+      "parserConfigs": "A141",
+      "observationFreqMins": 15,
+      "publishingFreqMins": 15,
+      "note": {}
+    },
+    {
+      "id": "07aa3fb8-4a39-58ad-bf4e-acddaca0602a",
+      "type": "online",
+      "revision": 2,
+      "revisionTs": 1617401827,
+      "sensors": [
+        "flow"
+      ],
+      "isActive": true,
+      "name": "Ocourt",
+      "river": {
+        "de": "Doubs"
+      },
+      "countryCode": "CH",
+      "state": "",
+      "latlng": [
+        47343685,
+        7064944
+      ],
+      "dataSourceId": "5f9ef6e9-f76d-428a-9d7b-46b86e5da7c4",
+      "sourceLinks": {
+        "de": {
+          "level": "https://www.hydrodaten.admin.ch/de/2210.html",
+          "flow": "https://www.hydrodaten.admin.ch/de/2210.html"
+        },
+        "en": {
+          "level": "https://www.hydrodaten.admin.ch/en/2210.html",
+          "flow": "https://www.hydrodaten.admin.ch/en/2210.html"
+        },
+        "fr": {
+          "level": "https://www.hydrodaten.admin.ch/fr/2210.html",
+          "flow": "https://www.hydrodaten.admin.ch/fr/2210.html"
+        },
+        "it": {
+          "level": "https://www.hydrodaten.admin.ch/it/2210.html",
+          "flow": "https://www.hydrodaten.admin.ch/it/2210.html"
+        }
+      },
+      "parserConfigs": "2210",
+      "observationFreqMins": 5,
+      "publishingFreqMins": 10,
+      "note": {}
+    },
+    {
+      "id": "ad56d635-f178-5c32-a6af-c3a86971ca9c",
+      "type": "online",
+      "revision": 0,
+      "revisionTs": 1724252684,
+      "sensors": [
+        "level",
+        "flow"
+      ],
+      "isActive": true,
+      "name": "Peißenberg",
+      "river": {
+        "de": "Ammer"
+      },
+      "countryCode": "DE",
+      "state": "Bayern",
+      "latlng": [
+        47778252,
+        11057398
+      ],
+      "dataSourceId": "5553922c-273c-4358-8693-9434ead62611",
+      "sourceLinks": {
+        "de": {
+          "level": "https://www.hnd.bayern.de/pegel/isar/peissenberg-16612001",
+          "flow": "https://www.hnd.bayern.de/pegel/isar/peissenberg-16612001/abfluss?"
+        }
+      },
+      "parserConfigs": "16612001,isar/peissenberg,HQ",
+      "observationFreqMins": 5,
+      "publishingFreqMins": 15,
+      "note": {}
+    },
+    {
+      "id": "2304ffae-4083-4589-904e-0146b1323a5e",
+      "type": "online",
+      "revision": 3,
+      "revisionTs": 1774809275,
+      "sensors": [
+        "level"
+      ],
+      "isActive": true,
+      "name": "Albbruck by Swiss Canoe",
+      "river": {
+        "de": "Alb"
+      },
+      "countryCode": "DE",
+      "state": "Baden-Württemberg",
+      "latlng": [
+        47590323,
+        8129295
+      ],
+      "dataSourceId": "95882577-8ceb-4017-87ad-0f7c95850873",
+      "sourceLinks": {
+        "de": {
+          "level": "https://app.datacake.de/pd/5cdcf449-6246-44e3-9574-4d4d42b3cbc8",
+          "flow": null
+        }
+      },
+      "parserConfigs": "748d5373-1e37-4959-a258-6b6c6f80b3bb,5cdcf449-6246-44e3-9574-4d4d42b3cbc8",
+      "observationFreqMins": 10,
+      "publishingFreqMins": 10,
+      "note": {}
+    },
+    {
+      "id": "3abf948a-35e9-5a29-bec7-06a6addf61f2",
+      "type": "online",
+      "revision": 1,
+      "revisionTs": 1700000000,
+      "sensors": [
+        "level",
+        "flow"
+      ],
+      "isActive": true,
+      "name": "Alleyras [Pont D33]",
+      "river": {
+        "fr": "Allier"
+      },
+      "countryCode": "FR",
+      "state": "Auvergne-Rhône-Alpes",
+      "latlng": [
+        44928000,
+        3679000
+      ],
+      "dataSourceId": "00000000-0000-0000-0000-000000000001",
+      "sourceLinks": {
+        "fr": {
+          "level": "https://www.hydro.eaufrance.fr/stationhydro/K221084301/fiche",
+          "flow": "https://www.hydro.eaufrance.fr/stationhydro/K221084301/fiche"
+        }
+      },
+      "parserConfigs": "0,K221084301,HQ",
+      "observationFreqMins": 5,
+      "publishingFreqMins": 60,
+      "note": {}
+    }
+  ]
+}

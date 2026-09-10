@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * ApiLineEntry
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-12T14:49:17.702360+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiLineEntry {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

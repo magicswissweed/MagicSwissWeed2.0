@@ -3,7 +3,6 @@ package com.aa.msw.source.swiss.existenz.sample;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
 import com.aa.msw.model.Sample;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.swiss.existenz.sample.model.ExistenzResponseSample;
@@ -38,11 +37,10 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
         return "https://api.existenz.ch/apiv1/hydro/latest?locations=" + locationsString + "&parameters=flow%2C%20temperature&app=MagicSwissWeed&version=0.2.0";
     }
 
-    private static List<Sample> extractSamplesForStationId(List<ExistenzSample> samples, String stationId) {
-        ApiStationId apiStationId = new ApiStationId(CountryEnum.CH, stationId);
+    private static List<Sample> extractSamplesForStationId(List<ExistenzSample> samples, ApiStationId apiStationId) {
         List<Sample> result = new ArrayList<>();
         for (ExistenzSample sample : samples) {
-            if (!sample.stationId().equals(stationId)) {
+            if (!sample.stationId().equals(apiStationId.getExternalId())) {
                 continue;
             }
             ApiMeasurementType type = switch (sample.par()) {
@@ -69,7 +67,7 @@ public class SwissSampleFetchServiceImpl extends AbstractFetchService implements
             return List.of();
         }
         return stationIds.stream()
-                .flatMap(id -> extractSamplesForStationId(existenzSamples, id.getExternalId()).stream())
+                .flatMap(id -> extractSamplesForStationId(existenzSamples, id).stream())
                 .collect(Collectors.toList());
     }
 

@@ -3,7 +3,7 @@ package com.aa.msw.source.swiss.existenz.sample;
 import com.aa.msw.database.helpers.id.SampleId;
 import com.aa.msw.gen.api.ApiMeasurementType;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Sample;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ class SwissSampleFetchServiceMock implements SwissSampleFetchService {
             return samples(stationIds.iterator().next(), Optional.of(3.0), 20);
         }
         List<Sample> result = new ArrayList<>();
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2018"), Optional.of(15.0), 200));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2243"), Optional.of(14.0), 100));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2105"), Optional.empty(), 20));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2152"), Optional.of(13.0), 70));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2091"), Optional.of(12.0), 850));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2135"), Optional.of(11.0), 90));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2473"), Optional.of(10.0), 120));
-        result.addAll(samples(apiStationId(CountryEnum.CH, "2152"), Optional.of(9.0), 310));
+        result.addAll(samples(apiStationId(Country.CH, "2018"), Optional.of(15.0), 200));
+        result.addAll(samples(apiStationId(Country.CH, "2243"), Optional.of(14.0), 100));
+        result.addAll(samples(apiStationId(Country.CH, "2105"), Optional.empty(), 20));
+        result.addAll(samples(apiStationId(Country.CH, "2152"), Optional.of(13.0), 70));
+        result.addAll(samples(apiStationId(Country.CH, "2091"), Optional.of(12.0), 850));
+        result.addAll(samples(apiStationId(Country.CH, "2135"), Optional.of(11.0), 90));
+        result.addAll(samples(apiStationId(Country.CH, "2473"), Optional.of(10.0), 120));
+        result.addAll(samples(apiStationId(Country.CH, "2152"), Optional.of(9.0), 310));
         return result;
     }
 
@@ -46,7 +46,7 @@ class SwissSampleFetchServiceMock implements SwissSampleFetchService {
         return samples;
     }
 
-    private ApiStationId apiStationId(CountryEnum country, String stationId) {
+    private ApiStationId apiStationId(String country, String stationId) {
         return new ApiStationId(country, stationId);
     }
 

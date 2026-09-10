@@ -2,7 +2,7 @@ package com.aa.msw.source.swiss.hydrodaten.forecast;
 
 import com.aa.msw.database.helpers.id.ForecastId;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Forecast;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;

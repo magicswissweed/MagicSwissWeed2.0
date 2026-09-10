@@ -4,7 +4,7 @@
 package com.aa.msw.gen.jooq.tables.records;
 
 
-import com.aa.msw.gen.jooq.enums.Country;
+import com.aa.msw.gen.jooq.enums.Provider;
 import com.aa.msw.gen.jooq.tables.StationTable;
 
 import java.util.UUID;
@@ -99,7 +99,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
     /**
      * Setter for <code>public.station_table.country</code>.
      */
-    public StationTableRecord setCountry(Country value) {
+    public StationTableRecord setCountry(String value) {
         set(5, value);
         return this;
     }
@@ -107,8 +107,53 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
     /**
      * Getter for <code>public.station_table.country</code>.
      */
-    public Country getCountry() {
-        return (Country) get(5);
+    public String getCountry() {
+        return (String) get(5);
+    }
+
+    /**
+     * Setter for <code>public.station_table.provider</code>.
+     */
+    public StationTableRecord setProvider(Provider value) {
+        set(6, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.station_table.provider</code>.
+     */
+    public Provider getProvider() {
+        return (Provider) get(6);
+    }
+
+    /**
+     * Setter for <code>public.station_table.state</code>.
+     */
+    public StationTableRecord setState(String value) {
+        set(7, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.station_table.state</code>.
+     */
+    public String getState() {
+        return (String) get(7);
+    }
+
+    /**
+     * Setter for <code>public.station_table.source_link</code>.
+     */
+    public StationTableRecord setSourceLink(String value) {
+        set(8, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.station_table.source_link</code>.
+     */
+    public String getSourceLink() {
+        return (String) get(8);
     }
 
     // -------------------------------------------------------------------------
@@ -134,7 +179,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
     /**
      * Create a detached, initialised StationTableRecord
      */
-    public StationTableRecord(UUID dbId, String stationid, String label, Double latitude, Double longitude, Country country) {
+    public StationTableRecord(UUID dbId, String stationid, String label, Double latitude, Double longitude, String country, Provider provider, String state, String sourceLink) {
         super(StationTable.STATION_TABLE);
 
         setDbId(dbId);
@@ -143,6 +188,9 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
         setLatitude(latitude);
         setLongitude(longitude);
         setCountry(country);
+        setProvider(provider);
+        setState(state);
+        setSourceLink(sourceLink);
         resetChangedOnNotNull();
     }
 
@@ -159,6 +207,9 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
             setLatitude(value.getLatitude());
             setLongitude(value.getLongitude());
             setCountry(value.getCountry());
+            setProvider(value.getProvider());
+            setState(value.getState());
+            setSourceLink(value.getSourceLink());
             resetChangedOnNotNull();
         }
     }

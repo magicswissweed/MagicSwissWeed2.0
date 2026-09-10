@@ -2,7 +2,8 @@ package com.aa.msw.source.german.bw.stations;
 
 import com.aa.msw.database.helpers.id.StationId;
 import com.aa.msw.gen.api.ApiStationId;
-import com.aa.msw.gen.api.CountryEnum;
+import com.aa.msw.gen.jooq.enums.Provider;
+import com.aa.msw.model.Country;
 import com.aa.msw.model.Station;
 import com.aa.msw.source.AbstractFetchService;
 import com.aa.msw.source.german.bw.HvzBwParser;
@@ -20,6 +21,8 @@ public class DeBwStationFetchService extends AbstractFetchService {
     private static final Logger LOG = LoggerFactory.getLogger(DeBwStationFetchService.class);
 
     public static final String HVZ_BW_JS_URL = "https://www.hvz.baden-wuerttemberg.de/js/hvz_peg_stmn.js";
+    public static final String STATION_LINK_PREFIX = "https://www.hvz.baden-wuerttemberg.de/pegel.html?id=";
+    public static final String STATE = "Baden-Württemberg";
 
     public Set<Station> fetchStations() {
         try {
@@ -30,10 +33,13 @@ public class DeBwStationFetchService extends AbstractFetchService {
                         try {
                             return new Station(
                                     new StationId(),
-                                    new ApiStationId(CountryEnum.DE_BW, station.stationId()),
+                                    new ApiStationId(Country.DE, station.stationId()),
                                     station.stationName() + "/" + station.riverName(),
                                     station.latitude(),
-                                    station.longitude()
+                                    station.longitude(),
+                                    Provider.HVZ_BW,
+                                    STATE,
+                                    STATION_LINK_PREFIX + station.stationId()
                             );
                         } catch (Exception e) {
                             return null;
