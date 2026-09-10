@@ -100,11 +100,7 @@ public class SampleRepository extends AbstractTimestampedRepository
         SampleTable sample = TABLE.as("t");
 
         Field<MeasurementType> type = DSL.field(DSL.name("m", "mt"), MeasurementType.class);
-        @SuppressWarnings("unchecked") // generic array creation for the varargs of DSL.values
-        Row1<MeasurementType>[] typeRows = Arrays.stream(MeasurementType.values())
-                .map(DSL::row)
-                .toArray(Row1[]::new);
-        Table<?> types = DSL.values(typeRows).as("m", "mt");
+        Table<?> types = measurementTypeRows();
         Table<?> probe = DSL.lateral(
                         DSL.selectOne()
                                 .from(sample)
@@ -132,32 +128,50 @@ public class SampleRepository extends AbstractTimestampedRepository
             return Map.of();
         }
 
-        return dsl.select(TABLE.fields())
-                .distinctOn(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE)
-                .from(TABLE)
-                .where(buildStationFilter(stationIds))
-                .orderBy(TABLE.COUNTRY, TABLE.STATIONID, TABLE.MEASUREMENT_TYPE, TABLE.TIMESTAMP.desc())
+        SampleTable sample = TABLE.as("t");
+
+        Field<String> country = DSL.field(DSL.name("s", "country"), String.class);
+        Field<String> externalId = DSL.field(DSL.name("s", "stationid"), String.class);
+        @SuppressWarnings("unchecked") // generic array creation for the varargs of DSL.values
+        Row2<String, String>[] stationRows = stationIds.stream()
+                .map(id -> DSL.row(id.getCountry(), id.getExternalId()))
+                .toArray(Row2[]::new);
+        Table<?> stations = DSL.values(stationRows).as("s", "country", "stationid");
+
+        Field<MeasurementType> type = DSL.field(DSL.name("m", "mt"), MeasurementType.class);
+        Table<?> types = measurementTypeRows();
+
+        Table<?> latest = DSL.lateral(
+                        DSL.selectFrom(sample)
+                                .where(sample.COUNTRY.eq(country))
+                                .and(sample.STATIONID.eq(externalId))
+                                .and(sample.MEASUREMENT_TYPE.eq(type))
+                                .orderBy(sample.TIMESTAMP.desc())
+                                .limit(1))
+                .as("x");
+
+        return dsl.select(latest.fields())
+                .from(stations)
+                .crossJoin(types)
+                .crossJoin(latest)
                 .fetch()
                 .into(TABLE)
                 .stream()
                 .map(this::mapRecord)
                 .collect(Collectors.groupingBy(
                         Sample::getStationId,
-                        Collectors.toMap(Sample::getMeasurementType, sample -> sample)));
+                        Collectors.toMap(Sample::getMeasurementType, s -> s)));
     }
 
-    private static Condition buildStationFilter(Set<ApiStationId> stationIds) {
-        // Group external IDs by country so we can emit `(country = X AND stationid IN (...)) OR ...`,
-        // which is index-friendly and avoids vendor-specific row-value-IN syntax.
-        Map<String, Set<String>> externalIdsByCountry = stationIds.stream()
-                .collect(Collectors.groupingBy(
-                        ApiStationId::getCountry,
-                        Collectors.mapping(ApiStationId::getExternalId, Collectors.toSet())));
-
-        return externalIdsByCountry.entrySet().stream()
-                .map(entry -> TABLE.COUNTRY.eq(entry.getKey()).and(TABLE.STATIONID.in(entry.getValue())))
-                .reduce(Condition::or)
-                .orElse(DSL.falseCondition());
+    /**
+     * @return a derived table {@code m(mt)} with one row per {@link MeasurementType}
+     */
+    private static Table<?> measurementTypeRows() {
+        @SuppressWarnings("unchecked") // generic array creation for the varargs of DSL.values
+        Row1<MeasurementType>[] typeRows = Arrays.stream(MeasurementType.values())
+                .map(DSL::row)
+                .toArray(Row1[]::new);
+        return DSL.values(typeRows).as("m", "mt");
     }
 
     @Override
