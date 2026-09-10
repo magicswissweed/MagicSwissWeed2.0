@@ -56,9 +56,13 @@ export const MswFooter = () => {
                         If you find this site useful, we would appreciate your support and feedback.
                     </p>
 
-                    Source:{" "}
-                    <a href="https://www.hydrodaten.admin.ch">
-                        BAFU
+                    Sources:{" "}
+                    <a target="_blank" href="https://api.existenz.ch">
+                        Existenz API
+                    </a>
+                    {", "}
+                    <a target="_blank" href="https://rivermap.org">
+                        Rivermap
                     </a>
                 </Modal.Body>
                 <Modal.Footer style={{justifyContent: "center"}}>

@@ -19,10 +19,6 @@ export const MswStationMap = (props: {
         return <p>Loading maps...</p>;
     }
 
-    // sometimes the externalId is already in the label (e.g. switzerland does that)
-    let label = selectedStation?.label.includes(selectedStation?.id.externalId) ?
-        selectedStation.label :
-        selectedStation?.id.externalId + " - " + selectedStation?.label;
     return (
         <GoogleMap
             mapContainerStyle={{
@@ -58,7 +54,7 @@ export const MswStationMap = (props: {
                     onCloseClick={() => setSelectedStation(null)}
                     options={{headerDisabled: true}}
                 >
-                    <p className="info-window-content">{label}</p>
+                    <p className="info-window-content">{selectedStation?.label}</p>
                 </InfoWindow>
             )}
         </GoogleMap>
