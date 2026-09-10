@@ -143,6 +143,15 @@ public class InputDataFetcherService {
         return fetchedDataSinceRestart;
     }
 
+    public void triggerAllFetches() {
+        Set<ApiStationId> allIds = getAllStationIds();
+        fetchAndWriteSwissData(filterByCountry(allIds, CountryEnum.CH));
+        fetchAndWriteFrenchLatestSample(filterByCountry(allIds, CountryEnum.FR));
+        fetchAndWriteBwSamples(filterByCountry(allIds, CountryEnum.DE_BW));
+        updateCurrentInfoForAllSpotsOfStationsAndSendNotifications(allIds);
+        fetchedDataSinceRestart = true;
+    }
+
     private void fetchAndWriteFrenchLatestSample(Set<ApiStationId> stationIds) {
         // France does not have a call for the latest sample, so we fetch the last 30 days and use the newest as our current sample.
         List<Sample> currentSamples = frenchLast30DaysSampleFetchService.fetchLatestSamples(stationIds);
