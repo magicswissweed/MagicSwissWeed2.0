@@ -41,6 +41,11 @@ export const Spot = (props: SpotProps) => {
     const [lastFewDays, setLastFewDays] = useState<Array<ApiSample> | undefined>(undefined);
     const [lastFewDaysLoaded, setLastFewDaysLoaded] = useState(false);
 
+    const [notesDraft, setNotesDraft] = useState(props.spot.notes ?? '');
+    useEffect(() => {
+        setNotesDraft(props.spot.notes ?? '');
+    }, [props.spot.notes]);
+
     const shouldLoadForecast = props.showGraphOfType === GraphTypeEnum.Forecast;
 
     useEffect(() => {
@@ -117,6 +122,17 @@ export const Spot = (props: SpotProps) => {
                     </div>
                     {getGraph(props.spot, false)}
                 </div>
+            }
+            {isSpotOpen && user &&
+                <textarea
+                    className="spot-notes"
+                    value={notesDraft}
+                    placeholder="Add a private note about this spot — conditions, parking, tips..."
+                    maxLength={1000}
+                    aria-label={`Private notes for ${props.spot.name}`}
+                    onChange={(e) => setNotesDraft(e.target.value)}
+                    onBlur={(e) => handleSaveNotes(e.target.value)}
+                />
             }
         </div>
     </>;
@@ -243,6 +259,15 @@ export const Spot = (props: SpotProps) => {
         let config = await authConfiguration(token);
         new SpotsApi(config).deletePrivateSpot(spot.id!); // no await to not be blocking
         spotsService.deleteSpot(spot.id!);
+    }
+
+    async function handleSaveNotes(notes: string) {
+        const config = await authConfiguration(token);
+        // no await to not be blocking; failures are logged only, the UI keeps the user's typed value
+        new SpotsApi(config).updateSpotNotes(props.spot.id, {notes}).catch((e) => {
+            console.error("Failed to save spot notes", e);
+        });
+        spotsService.updateNotes(props.spot.id, notes);
     }
 
 }

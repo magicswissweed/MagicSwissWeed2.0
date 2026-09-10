@@ -83,6 +83,11 @@ public class UserToSpotTable extends TableImpl<UserToSpotTableRecord> {
      */
     public final TableField<UserToSpotTableRecord, Boolean> WITHNOTIFICATION = createField(DSL.name("withnotification"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
 
+    /**
+     * The column <code>public.user_to_spot_table.notes</code>.
+     */
+    public final TableField<UserToSpotTableRecord, String> NOTES = createField(DSL.name("notes"), SQLDataType.VARCHAR(1000), this, "");
+
     private UserToSpotTable(Name alias, Table<UserToSpotTableRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

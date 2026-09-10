@@ -82,6 +82,17 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
     }
 
     @Override
+    public void setNotes(SpotId spotId, String notes) {
+        UserId userId = UserContext.getCurrentUser().userId();
+
+        dsl.update(TABLE)
+                .set(TABLE.NOTES, notes)
+                .where(TABLE.USER_ID.eq(userId.getId())
+                        .and(TABLE.SPOT_ID.eq(spotId.getId())))
+                .execute();
+    }
+
+    @Override
     @Transactional
     // this only deletes the mapping from the user to the spot. The spot stays in the db.
     public void deletePrivateSpot(SpotId spotId) {
@@ -98,7 +109,8 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 new UserId(record.getUserId()),
                 new SpotId(record.getSpotId()),
                 record.getPosition(),
-                record.getWithnotification()
+                record.getWithnotification(),
+                record.getNotes()
         );
     }
 
@@ -110,6 +122,7 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
         record.setSpotId(userToSpot.spotId().getId());
         record.setPosition(userToSpot.position());
         record.setWithnotification(userToSpot.withNotification());
+        record.setNotes(userToSpot.notes());
         return record;
     }
 
@@ -120,7 +133,8 @@ public class UserToSpotRepository extends AbstractRepository<UserToSpotId, UserT
                 new UserId(userToSpotTable.getUserId()),
                 new SpotId(userToSpotTable.getSpotId()),
                 userToSpotTable.getPosition(),
-                userToSpotTable.getWithnotification()
+                userToSpotTable.getWithnotification(),
+                userToSpotTable.getNotes()
         );
     }
 }

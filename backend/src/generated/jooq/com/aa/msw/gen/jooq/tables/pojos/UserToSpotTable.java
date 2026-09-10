@@ -21,6 +21,7 @@ public class UserToSpotTable implements Serializable {
     private final UUID spotId;
     private final Integer position;
     private final Boolean withnotification;
+    private final String notes;
 
     public UserToSpotTable(UserToSpotTable value) {
         this.id = value.id;
@@ -28,6 +29,7 @@ public class UserToSpotTable implements Serializable {
         this.spotId = value.spotId;
         this.position = value.position;
         this.withnotification = value.withnotification;
+        this.notes = value.notes;
     }
 
     public UserToSpotTable(
@@ -35,13 +37,15 @@ public class UserToSpotTable implements Serializable {
         UUID userId,
         UUID spotId,
         Integer position,
-        Boolean withnotification
+        Boolean withnotification,
+        String notes
     ) {
         this.id = id;
         this.userId = userId;
         this.spotId = spotId;
         this.position = position;
         this.withnotification = withnotification;
+        this.notes = notes;
     }
 
     /**
@@ -77,6 +81,13 @@ public class UserToSpotTable implements Serializable {
      */
     public Boolean getWithnotification() {
         return this.withnotification;
+    }
+
+    /**
+     * Getter for <code>public.user_to_spot_table.notes</code>.
+     */
+    public String getNotes() {
+        return this.notes;
     }
 
     @Override
@@ -118,6 +129,12 @@ public class UserToSpotTable implements Serializable {
         }
         else if (!this.withnotification.equals(other.withnotification))
             return false;
+        if (this.notes == null) {
+            if (other.notes != null)
+                return false;
+        }
+        else if (!this.notes.equals(other.notes))
+            return false;
         return true;
     }
 
@@ -130,6 +147,7 @@ public class UserToSpotTable implements Serializable {
         result = prime * result + ((this.spotId == null) ? 0 : this.spotId.hashCode());
         result = prime * result + ((this.position == null) ? 0 : this.position.hashCode());
         result = prime * result + ((this.withnotification == null) ? 0 : this.withnotification.hashCode());
+        result = prime * result + ((this.notes == null) ? 0 : this.notes.hashCode());
         return result;
     }
 
@@ -142,6 +160,7 @@ public class UserToSpotTable implements Serializable {
         sb.append(", ").append(spotId);
         sb.append(", ").append(position);
         sb.append(", ").append(withnotification);
+        sb.append(", ").append(notes);
 
         sb.append(")");
         return sb.toString();

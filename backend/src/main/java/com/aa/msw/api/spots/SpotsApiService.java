@@ -162,6 +162,9 @@ public class SpotsApiService {
         }
 
         ApiSample currentSample = latestSamplesForStation.get(spot.measurementType());
+        UserToSpot userToSpot = UserContext.getCurrentUser() == null
+                ? null
+                : userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId());
         return Optional.of(new ApiSpotInformation()
                 .id(spot.spotId().getId())
                 .name(spot.name())
@@ -176,7 +179,8 @@ public class SpotsApiService {
                 .currentTemperature(latestSamplesForStation.get(TEMPERATURE))
                 .dataPending(currentSample == null)
                 .flowStatusEnum(getFlowStatusEnum(spot.spotId()))
-                .withNotification(isWithNotification(spot)));
+                .withNotification(isWithNotification(spot, userToSpot))
+                .notes(getNotes(userToSpot)));
     }
 
     private boolean isVigicruesStation(ApiStationId stationId) {
@@ -202,11 +206,16 @@ public class SpotsApiService {
         return ApiSpotInformation.SpotTypeEnum.valueOf(type.name());
     }
 
-    private boolean isWithNotification(Spot spot) {
-        if (spot.isPublic()) {
-            return false;
-        }
-        return userToSpotDao.get(UserContext.getCurrentUser().userId(), spot.spotId()).withNotification();
+    private boolean isWithNotification(Spot spot, UserToSpot userToSpot) {
+        return !spot.isPublic() && userToSpot != null && userToSpot.withNotification();
+    }
+
+    private String getNotes(UserToSpot userToSpot) {
+        return userToSpot == null ? null : userToSpot.notes();
+    }
+
+    public void updateNotes(SpotId spotId, String notes) {
+        userToSpotDao.setNotes(spotId, notes);
     }
 
     private ApiFlowStatusEnum getFlowStatusEnum(SpotId spotId) {

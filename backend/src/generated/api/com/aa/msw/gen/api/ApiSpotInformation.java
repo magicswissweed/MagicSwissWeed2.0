@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.UUID;
-import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -25,7 +24,7 @@ import jakarta.annotation.Generated;
  * ApiSpotInformation
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-10T14:59:14.118027+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 public class ApiSpotInformation {
 
   private UUID id;
@@ -90,6 +89,8 @@ public class ApiSpotInformation {
   private ApiFlowStatusEnum flowStatusEnum;
 
   private Boolean dataPending;
+
+  private String notes = null;
 
   public ApiSpotInformation() {
     super();
@@ -393,6 +394,26 @@ public class ApiSpotInformation {
     this.dataPending = dataPending;
   }
 
+  public ApiSpotInformation notes(String notes) {
+    this.notes = notes;
+    return this;
+  }
+
+  /**
+   * User-specific notes for this spot. Null when no notes have been set, or when the request is unauthenticated.
+   * @return notes
+  */
+  @Size(max = 1000) 
+  @Schema(name = "notes", description = "User-specific notes for this spot. Null when no notes have been set, or when the request is unauthenticated.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("notes")
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -415,12 +436,13 @@ public class ApiSpotInformation {
         Objects.equals(this.currentSample, apiSpotInformation.currentSample) &&
         Objects.equals(this.currentTemperature, apiSpotInformation.currentTemperature) &&
         Objects.equals(this.flowStatusEnum, apiSpotInformation.flowStatusEnum) &&
-        Objects.equals(this.dataPending, apiSpotInformation.dataPending);
+        Objects.equals(this.dataPending, apiSpotInformation.dataPending) &&
+        Objects.equals(this.notes, apiSpotInformation.notes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, currentTemperature, flowStatusEnum, dataPending);
+    return Objects.hash(id, name, stationId, spotType, isPublic, measurementType, minValue, maxValue, station, withNotification, currentSample, currentTemperature, flowStatusEnum, dataPending, notes);
   }
 
   @Override
@@ -441,6 +463,7 @@ public class ApiSpotInformation {
     sb.append("    currentTemperature: ").append(toIndentedString(currentTemperature)).append("\n");
     sb.append("    flowStatusEnum: ").append(toIndentedString(flowStatusEnum)).append("\n");
     sb.append("    dataPending: ").append(toIndentedString(dataPending)).append("\n");
+    sb.append("    notes: ").append(toIndentedString(notes)).append("\n");
     sb.append("}");
     return sb.toString();
   }

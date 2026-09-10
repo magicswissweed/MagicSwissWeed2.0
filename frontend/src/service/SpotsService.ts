@@ -34,6 +34,15 @@ class SpotsService {
         this.notifySubscribers();
     }
 
+    updateNotes(id: string, notes: string): void {
+        this.spots = this.spots.map((spot) => {
+            if (spot.id !== id) return spot;
+            spot.notes = notes;
+            return spot;
+        });
+        this.notifySubscribers();
+    }
+
     subscribe(callback: SubscriberCallback): void {
         this.subscribers.push(callback);
     }
@@ -64,7 +73,8 @@ class SpotsService {
                     getFlowColorEnumFromFlowStatus(s.flowStatusEnum),
                     undefined,
                     s.withNotification,
-                    s.dataPending);
+                    s.dataPending,
+                    s.notes ?? null);
             })
             this.setSpots(spots);
         }

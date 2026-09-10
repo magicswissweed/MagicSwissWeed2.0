@@ -155,6 +155,36 @@ paths:
       responses:
         '200':
           description: Removed private spot successfully.
+  /api/v1/spot/{spotId}/notes:
+    patch:
+      summary: Update the user's personal notes for a spot.
+      security:
+        - bearerAuth: [ ]
+      operationId: updateSpotNotes
+      parameters:
+        - name: spotId
+          description: The id of the spot to update notes for.
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes:
+                  type: string
+                  nullable: true
+                  maxLength: 1000
+      tags:
+        - spots
+      responses:
+        '200':
+          description: Notes updated successfully.
   /api/v1/spots/order:
     patch:
       summary: Change the order of the spots
@@ -272,6 +302,11 @@ components:
             dataPending:
               type: boolean
               description: True when no sample data has been fetched yet for this spot's station (e.g. a newly added French spot). The frontend should show a "fetching data" placeholder.
+            notes:
+              type: string
+              nullable: true
+              maxLength: 1000
+              description: User-specific notes for this spot. Null when no notes have been set, or when the request is unauthenticated.
     ApiFlowStatusEnum:
       type: string
       nullable: false
