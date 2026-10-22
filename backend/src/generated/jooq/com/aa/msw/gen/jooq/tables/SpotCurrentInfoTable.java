@@ -112,6 +112,8 @@ public class SpotCurrentInfoTable extends TableImpl<SpotCurrentInfoTableRecord> 
      * A subtype implementing {@link Path} for simplified path-based joins.
      */
     public static class SpotCurrentInfoTablePath extends SpotCurrentInfoTable implements Path<SpotCurrentInfoTableRecord> {
+
+        private static final long serialVersionUID = 1L;
         public <O extends Record> SpotCurrentInfoTablePath(Table<O> path, ForeignKey<O, SpotCurrentInfoTableRecord> childPath, InverseForeignKey<O, SpotCurrentInfoTableRecord> parentPath) {
             super(path, childPath, parentPath);
         }

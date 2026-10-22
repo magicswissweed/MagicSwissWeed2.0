@@ -140,6 +140,8 @@ public class SpotTable extends TableImpl<SpotTableRecord> {
      * A subtype implementing {@link Path} for simplified path-based joins.
      */
     public static class SpotTablePath extends SpotTable implements Path<SpotTableRecord> {
+
+        private static final long serialVersionUID = 1L;
         public <O extends Record> SpotTablePath(Table<O> path, ForeignKey<O, SpotTableRecord> childPath, InverseForeignKey<O, SpotTableRecord> parentPath) {
             super(path, childPath, parentPath);
         }
