@@ -1,0 +1,1 @@
+ALTER TABLE user_to_spot_table ADD COLUMN IF NOT EXISTS notes VARCHAR(1000);

@@ -98,4 +98,10 @@ public class SpotsApiController implements SpotsApi {
         spotsApiService.deletePrivateSpot(new SpotId(spotId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Void> updateSpotNotes(UUID spotId, UpdateSpotNotesRequest updateSpotNotesRequest) {
+        spotsApiService.updateNotes(new SpotId(spotId), updateSpotNotesRequest.getNotes());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

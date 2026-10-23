@@ -18,6 +18,8 @@ public interface UserToSpotDao extends Dao<UserToSpotId, UserToSpot> {
 
     void setWithNotification(SpotId spotId, boolean withNotification);
 
+    void setNotes(SpotId spotId, String notes);
+
     void deletePrivateSpot(SpotId spotId);
 
     List<UserToSpot> getUserToSpotOrdered();

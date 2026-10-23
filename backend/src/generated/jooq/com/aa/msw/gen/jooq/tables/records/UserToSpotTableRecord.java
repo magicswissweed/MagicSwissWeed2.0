@@ -95,6 +95,21 @@ public class UserToSpotTableRecord extends UpdatableRecordImpl<UserToSpotTableRe
         return (Boolean) get(4);
     }
 
+    /**
+     * Setter for <code>public.user_to_spot_table.notes</code>.
+     */
+    public UserToSpotTableRecord setNotes(String value) {
+        set(5, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.user_to_spot_table.notes</code>.
+     */
+    public String getNotes() {
+        return (String) get(5);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -118,7 +133,7 @@ public class UserToSpotTableRecord extends UpdatableRecordImpl<UserToSpotTableRe
     /**
      * Create a detached, initialised UserToSpotTableRecord
      */
-    public UserToSpotTableRecord(UUID id, UUID userId, UUID spotId, Integer position, Boolean withnotification) {
+    public UserToSpotTableRecord(UUID id, UUID userId, UUID spotId, Integer position, Boolean withnotification, String notes) {
         super(UserToSpotTable.USER_TO_SPOT_TABLE);
 
         setId(id);
@@ -126,6 +141,7 @@ public class UserToSpotTableRecord extends UpdatableRecordImpl<UserToSpotTableRe
         setSpotId(spotId);
         setPosition(position);
         setWithnotification(withnotification);
+        setNotes(notes);
         resetChangedOnNotNull();
     }
 
@@ -141,6 +157,7 @@ public class UserToSpotTableRecord extends UpdatableRecordImpl<UserToSpotTableRe
             setSpotId(value.getSpotId());
             setPosition(value.getPosition());
             setWithnotification(value.getWithnotification());
+            setNotes(value.getNotes());
             resetChangedOnNotNull();
         }
     }

@@ -169,3 +169,26 @@ $icons-container-width: 40px;
 .lastFewdays-graph-container {
   width: 100px;
 }
+
+.spot-notes {
+  width: calc(100% - 20px);
+  margin: 0 10px 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--bg-inverted-rgb), 0.3);
+  background: transparent;
+  color: var(--bg-inverted);
+  font-size: 85%;
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+
+  &::placeholder {
+    color: rgba(var(--bg-inverted-rgb), 0.4);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(var(--bg-inverted-rgb), 0.7);
+  }
+}

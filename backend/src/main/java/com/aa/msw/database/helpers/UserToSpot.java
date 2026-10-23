@@ -12,18 +12,29 @@ public final class UserToSpot implements HasId<UserToSpotId> {
     private final UserId userId;
     private final SpotId spotId;
     private final boolean withNotification;
+    private final String notes;
     private int position;
 
     public UserToSpot(UserToSpotId userToSpotId,
                       UserId userId,
                       SpotId spotId,
                       int position,
-                      boolean withNotification) {
+                      boolean withNotification,
+                      String notes) {
         this.userToSpotId = userToSpotId;
         this.userId = userId;
         this.spotId = spotId;
         this.position = position;
         this.withNotification = withNotification;
+        this.notes = notes;
+    }
+
+    public UserToSpot(UserToSpotId userToSpotId,
+                      UserId userId,
+                      SpotId spotId,
+                      int position,
+                      boolean withNotification) {
+        this(userToSpotId, userId, spotId, position, withNotification, null);
     }
 
     @Override
@@ -55,6 +66,10 @@ public final class UserToSpot implements HasId<UserToSpotId> {
         return withNotification;
     }
 
+    public String notes() {
+        return notes;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -64,12 +79,13 @@ public final class UserToSpot implements HasId<UserToSpotId> {
                 Objects.equals(this.userId, that.userId) &&
                 Objects.equals(this.spotId, that.spotId) &&
                 this.position == that.position &&
-                this.withNotification == that.withNotification;
+                this.withNotification == that.withNotification &&
+                Objects.equals(this.notes, that.notes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userToSpotId, userId, spotId, position);
+        return Objects.hash(userToSpotId, userId, spotId, position, notes);
     }
 
     @Override
@@ -79,7 +95,8 @@ public final class UserToSpot implements HasId<UserToSpotId> {
                 "userId=" + userId + ", " +
                 "spotId=" + spotId + ", " +
                 "position=" + position + ", " +
-                "withNotification=" + withNotification + ']';
+                "withNotification=" + withNotification + ", " +
+                "notes=" + notes + ']';
     }
 
 }

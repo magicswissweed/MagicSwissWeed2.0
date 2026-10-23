@@ -24,6 +24,7 @@ export class SpotModel {
     historical: ApiHistoricalYears | undefined;
     withNotification: boolean;
     dataPending: boolean;
+    notes: string | null;
 
     constructor(
         id: string,
@@ -40,7 +41,8 @@ export class SpotModel {
         flowStatus: FlowColorEnum,
         historical: ApiHistoricalYears | undefined,
         withNotification: boolean,
-        dataPending: boolean) {
+        dataPending: boolean,
+        notes: string | null) {
         this.id = id;
         this.name = name;
         this.stationId = stationId;
@@ -56,6 +58,7 @@ export class SpotModel {
         this.historical = historical;
         this.withNotification = withNotification;
         this.dataPending = dataPending;
+        this.notes = notes;
     }
 }
 

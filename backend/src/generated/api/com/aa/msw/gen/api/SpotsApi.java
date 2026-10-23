@@ -9,6 +9,7 @@ import com.aa.msw.gen.api.AddPrivateSpotRequest;
 import com.aa.msw.gen.api.ApiSpotInformation;
 import com.aa.msw.gen.api.EditPrivateSpotRequest;
 import java.util.UUID;
+import com.aa.msw.gen.api.UpdateSpotNotesRequest;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T13:53:43.871951+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-10T14:59:14.118027+02:00[Europe/Zurich]", comments = "Generator version: 7.5.0")
 @Validated
 @Tag(name = "spots", description = "the spots API")
 public interface SpotsApi {
@@ -156,7 +157,7 @@ public interface SpotsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"currentTemperature\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"maxValue\" : 6.027456183070403, \"spotType\" : \"RIVER_SURF\", \"dataPending\" : true, \"currentSample\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"minValue\" : 0.8008281904610115, \"name\" : \"name\", \"station\" : { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"sourceLink\" : \"sourceLink\", \"id\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"state\" : \"state\", \"longitude\" : 5.962133916683182 }, \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"withNotification\" : true, \"stationId\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" } }, { \"currentTemperature\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"maxValue\" : 6.027456183070403, \"spotType\" : \"RIVER_SURF\", \"dataPending\" : true, \"currentSample\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"minValue\" : 0.8008281904610115, \"name\" : \"name\", \"station\" : { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"sourceLink\" : \"sourceLink\", \"id\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"state\" : \"state\", \"longitude\" : 5.962133916683182 }, \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"withNotification\" : true, \"stationId\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" } } ]";
+                    String exampleString = "[ { \"currentTemperature\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"notes\" : \"notes\", \"maxValue\" : 6.027456183070403, \"spotType\" : \"RIVER_SURF\", \"dataPending\" : true, \"currentSample\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"minValue\" : 0.8008281904610115, \"name\" : \"name\", \"station\" : { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"sourceLink\" : \"sourceLink\", \"id\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"state\" : \"state\", \"longitude\" : 5.962133916683182 }, \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"withNotification\" : true, \"stationId\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" } }, { \"currentTemperature\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"notes\" : \"notes\", \"maxValue\" : 6.027456183070403, \"spotType\" : \"RIVER_SURF\", \"dataPending\" : true, \"currentSample\" : { \"value\" : 0.8008281904610115, \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }, \"minValue\" : 0.8008281904610115, \"name\" : \"name\", \"station\" : { \"supportedMeasurements\" : [ null, null ], \"latitude\" : 1.4658129805029452, \"sourceLink\" : \"sourceLink\", \"id\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" }, \"label\" : \"label\", \"state\" : \"state\", \"longitude\" : 5.962133916683182 }, \"isPublic\" : true, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"withNotification\" : true, \"stationId\" : { \"country\" : \"country\", \"externalId\" : \"externalId\" } } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -189,6 +190,36 @@ public interface SpotsApi {
     
     default ResponseEntity<Void> orderSpots(
         @Parameter(name = "UUID", description = "The new order of the spots.", required = true) @Valid @RequestBody List<UUID> UUID
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * PATCH /api/v1/spot/{spotId}/notes : Update the user&#39;s personal notes for a spot.
+     *
+     * @param spotId The id of the spot to update notes for. (required)
+     * @param updateSpotNotesRequest  (required)
+     * @return Notes updated successfully. (status code 200)
+     */
+    @Operation(
+        operationId = "updateSpotNotes",
+        summary = "Update the user's personal notes for a spot.",
+        tags = { "spots" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Notes updated successfully.")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PATCH,
+        value = "/api/v1/spot/{spotId}/notes",
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> updateSpotNotes(
+        @Parameter(name = "spotId", description = "The id of the spot to update notes for.", required = true, in = ParameterIn.PATH) @PathVariable("spotId") UUID spotId,
+        @Parameter(name = "UpdateSpotNotesRequest", description = "", required = true) @Valid @RequestBody UpdateSpotNotesRequest updateSpotNotesRequest
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
