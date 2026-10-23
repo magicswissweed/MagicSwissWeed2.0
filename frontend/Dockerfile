@@ -1,4 +1,4 @@
-FROM node:20.1.0 AS build
+FROM node:24 AS build
 
 # Set the working directory
 WORKDIR /msw-frontend/
@@ -16,11 +16,13 @@ ARG API_BASE_URL=https://api.msw.ponteshare.ch
 ENV API_BASE_URL=${API_BASE_URL}
 RUN sh -c 'sed -i "s|http://localhost:8080|${API_BASE_URL}|g" src/gen/msw-api-ts/base.ts'
 
+ENV GENERATE_SOURCEMAP=false
+
 # ci = install exactly the versions of the lockfile (reproducible, same as locally)
 RUN npm ci
 RUN npm run build
 
-FROM nginx:1.25.3
+FROM nginx:1.30-alpine
 COPY --from=build /msw-frontend/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # default port for nginx is 80, but we overwrite it to 3000 in nginx.conf

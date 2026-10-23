@@ -1,7 +1,7 @@
 services:
   msw-postgres:
     container_name: msw-postgres
-    image: postgres:14.1-alpine
+    image: postgres:17.11-alpine
     restart: always
     environment:
       POSTGRES_USER: 'develop'

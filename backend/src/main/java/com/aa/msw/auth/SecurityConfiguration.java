@@ -19,6 +19,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        // Run CORS inside the security filter chain so that preflight (OPTIONS) requests are answered
+        // before authentication. Reuses the CORS mappings registered in WebConfig (via HandlerMappingIntrospector).
+        // Without this, Spring Security >= 6.4 rejects preflights with 401, which the browser reports as a CORS error.
+        http.cors(withDefaults());
         http.oauth2ResourceServer(oAuth2ResourceServerConfigurer -> oAuth2ResourceServerConfigurer
                 .jwt(withDefaults())
                 .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(converter)));

@@ -115,6 +115,8 @@ public class UserTable extends TableImpl<UserTableRecord> {
      * A subtype implementing {@link Path} for simplified path-based joins.
      */
     public static class UserTablePath extends UserTable implements Path<UserTableRecord> {
+
+        private static final long serialVersionUID = 1L;
         public <O extends Record> UserTablePath(Table<O> path, ForeignKey<O, UserTableRecord> childPath, InverseForeignKey<O, UserTableRecord> parentPath) {
             super(path, childPath, parentPath);
         }
@@ -150,7 +152,7 @@ public class UserTable extends TableImpl<UserTableRecord> {
 
     @Override
     public List<UniqueKey<UserTableRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.UNIQUE_EXTID, Keys.UNIQUE_EMAIL);
+        return Arrays.asList(Keys.UNIQUE_EMAIL, Keys.UNIQUE_EXTID);
     }
 
     private transient NotificationSubscriptionTablePath _notificationSubscriptionTable;

@@ -15,7 +15,7 @@ function create_user_and_database() {
 	echo "  Creating user '$user' with password '$password' for db '$database'"
 	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
 	    CREATE USER $user WITH PASSWORD '$password';
-	    CREATE DATABASE $database;
+	    CREATE DATABASE $database OWNER $user;
 	    GRANT ALL PRIVILEGES ON DATABASE $database TO $user;
 EOSQL
 }

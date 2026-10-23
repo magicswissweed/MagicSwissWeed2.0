@@ -21,7 +21,7 @@
     "@types/uuid": "^10.0.0",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
-    "firebase": "^12.7.0",
+    "firebase": "^12.19.0",
     "jwt-decode": "^4.0.0",
     "luxon": "^3.7.2",
     "plotly.js-basic-dist-min": "^3.3.1",

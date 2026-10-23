@@ -120,6 +120,8 @@ public class UserToSpotTable extends TableImpl<UserToSpotTableRecord> {
      * A subtype implementing {@link Path} for simplified path-based joins.
      */
     public static class UserToSpotTablePath extends UserToSpotTable implements Path<UserToSpotTableRecord> {
+
+        private static final long serialVersionUID = 1L;
         public <O extends Record> UserToSpotTablePath(Table<O> path, ForeignKey<O, UserToSpotTableRecord> childPath, InverseForeignKey<O, UserToSpotTableRecord> parentPath) {
             super(path, childPath, parentPath);
         }
@@ -155,19 +157,7 @@ public class UserToSpotTable extends TableImpl<UserToSpotTableRecord> {
 
     @Override
     public List<ForeignKey<UserToSpotTableRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_USER_ID_FKEY, Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_SPOT_ID_FKEY);
-    }
-
-    private transient UserTablePath _userTable;
-
-    /**
-     * Get the implicit join path to the <code>public.user_table</code> table.
-     */
-    public UserTablePath userTable() {
-        if (_userTable == null)
-            _userTable = new UserTablePath(this, Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_USER_ID_FKEY, null);
-
-        return _userTable;
+        return Arrays.asList(Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_SPOT_ID_FKEY, Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_USER_ID_FKEY);
     }
 
     private transient SpotTablePath _spotTable;
@@ -180,6 +170,18 @@ public class UserToSpotTable extends TableImpl<UserToSpotTableRecord> {
             _spotTable = new SpotTablePath(this, Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_SPOT_ID_FKEY, null);
 
         return _spotTable;
+    }
+
+    private transient UserTablePath _userTable;
+
+    /**
+     * Get the implicit join path to the <code>public.user_table</code> table.
+     */
+    public UserTablePath userTable() {
+        if (_userTable == null)
+            _userTable = new UserTablePath(this, Keys.USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_USER_ID_FKEY, null);
+
+        return _userTable;
     }
 
     @Override
