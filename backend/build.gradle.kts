@@ -3,7 +3,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     java
     id("idea")
-    id("org.springframework.boot") version "3.5.16"
+    id("org.springframework.boot") version "4.1.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.flywaydb.flyway") version "9.7.0"
     id("org.openapi.generator") version "7.5.0"
@@ -21,17 +21,15 @@ repositories {
     mavenCentral()
 }
 
-// Boot 3.5.16 still manages versions with known CVEs - pin the patched ones.
-// Drop these once the Boot BOM catches up.
-extra["tomcat.version"] = "10.1.61"           // CVE-2026-65182, -65905, -68525
-extra["netty.version"] = "4.1.139.Final"      // CVE-2026-75595
-
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
-    implementation("org.flywaydb:flyway-core:9.8.2")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    // the code and the generated API models use Jackson 2 (com.fasterxml), keep it as the MVC mapper
+    implementation("org.springframework.boot:spring-boot-jackson2")
     implementation("org.openapitools:jackson-databind-nullable:0.2.12")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.google.firebase:firebase-admin:9.11.0")
@@ -41,6 +39,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -53,9 +52,9 @@ dependencies {
     jooqGenerator("org.postgresql:postgresql:42.7.14")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("io.rest-assured:rest-assured")
+    testImplementation("io.rest-assured:rest-assured:6.3.0")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
 tasks.withType<Test> {

@@ -30,6 +30,7 @@ import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
+import org.jooq.impl.QOM.ForeignKeyRule;
 
 
 /**
@@ -63,8 +64,8 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<NotificationSubscriptionTableRecord, UserTableRecord> NOTIFICATION_SUBSCRIPTION_TABLE__NOTIFICATION_SUBSCRIPTION_TABLE_USER_ID_FKEY = Internal.createForeignKey(NotificationSubscriptionTable.NOTIFICATION_SUBSCRIPTION_TABLE, DSL.name("notification_subscription_table_user_id_fkey"), new TableField[] { NotificationSubscriptionTable.NOTIFICATION_SUBSCRIPTION_TABLE.USER_ID }, Keys.USER_TABLE_PKEY, new TableField[] { UserTable.USER_TABLE.ID }, true);
-    public static final ForeignKey<SpotCurrentInfoTableRecord, SpotTableRecord> SPOT_CURRENT_INFO_TABLE__SPOT_CURRENT_INFO_TABLE_SPOT_ID_FKEY = Internal.createForeignKey(SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE, DSL.name("spot_current_info_table_spot_id_fkey"), new TableField[] { SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE.SPOT_ID }, Keys.SPOT_TABLE_PKEY, new TableField[] { SpotTable.SPOT_TABLE.ID }, true);
-    public static final ForeignKey<UserToSpotTableRecord, SpotTableRecord> USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_SPOT_ID_FKEY = Internal.createForeignKey(UserToSpotTable.USER_TO_SPOT_TABLE, DSL.name("user_to_spot_table_spot_id_fkey"), new TableField[] { UserToSpotTable.USER_TO_SPOT_TABLE.SPOT_ID }, Keys.SPOT_TABLE_PKEY, new TableField[] { SpotTable.SPOT_TABLE.ID }, true);
-    public static final ForeignKey<UserToSpotTableRecord, UserTableRecord> USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_USER_ID_FKEY = Internal.createForeignKey(UserToSpotTable.USER_TO_SPOT_TABLE, DSL.name("user_to_spot_table_user_id_fkey"), new TableField[] { UserToSpotTable.USER_TO_SPOT_TABLE.USER_ID }, Keys.USER_TABLE_PKEY, new TableField[] { UserTable.USER_TABLE.ID }, true);
+    public static final ForeignKey<NotificationSubscriptionTableRecord, UserTableRecord> NOTIFICATION_SUBSCRIPTION_TABLE__NOTIFICATION_SUBSCRIPTION_TABLE_USER_ID_FKEY = Internal.createForeignKey(NotificationSubscriptionTable.NOTIFICATION_SUBSCRIPTION_TABLE, DSL.name("notification_subscription_table_user_id_fkey"), new TableField[] { NotificationSubscriptionTable.NOTIFICATION_SUBSCRIPTION_TABLE.USER_ID }, Keys.USER_TABLE_PKEY, new TableField[] { UserTable.USER_TABLE.ID }, true, ForeignKeyRule.CASCADE, ForeignKeyRule.NO_ACTION);
+    public static final ForeignKey<SpotCurrentInfoTableRecord, SpotTableRecord> SPOT_CURRENT_INFO_TABLE__SPOT_CURRENT_INFO_TABLE_SPOT_ID_FKEY = Internal.createForeignKey(SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE, DSL.name("spot_current_info_table_spot_id_fkey"), new TableField[] { SpotCurrentInfoTable.SPOT_CURRENT_INFO_TABLE.SPOT_ID }, Keys.SPOT_TABLE_PKEY, new TableField[] { SpotTable.SPOT_TABLE.ID }, true, ForeignKeyRule.CASCADE, ForeignKeyRule.NO_ACTION);
+    public static final ForeignKey<UserToSpotTableRecord, SpotTableRecord> USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_SPOT_ID_FKEY = Internal.createForeignKey(UserToSpotTable.USER_TO_SPOT_TABLE, DSL.name("user_to_spot_table_spot_id_fkey"), new TableField[] { UserToSpotTable.USER_TO_SPOT_TABLE.SPOT_ID }, Keys.SPOT_TABLE_PKEY, new TableField[] { SpotTable.SPOT_TABLE.ID }, true, ForeignKeyRule.CASCADE, ForeignKeyRule.NO_ACTION);
+    public static final ForeignKey<UserToSpotTableRecord, UserTableRecord> USER_TO_SPOT_TABLE__USER_TO_SPOT_TABLE_USER_ID_FKEY = Internal.createForeignKey(UserToSpotTable.USER_TO_SPOT_TABLE, DSL.name("user_to_spot_table_user_id_fkey"), new TableField[] { UserToSpotTable.USER_TO_SPOT_TABLE.USER_ID }, Keys.USER_TABLE_PKEY, new TableField[] { UserTable.USER_TABLE.ID }, true, ForeignKeyRule.CASCADE, ForeignKeyRule.NO_ACTION);
 }

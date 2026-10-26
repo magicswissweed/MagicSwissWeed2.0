@@ -225,7 +225,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
         setSeventyfivepercentile(seventyfivepercentile);
         setCountry(country);
         setMeasurementType(measurementType);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -246,7 +246,7 @@ public class ForecastTableRecord extends UpdatableRecordImpl<ForecastTableRecord
             setSeventyfivepercentile(value.getSeventyfivepercentile());
             setCountry(value.getCountry());
             setMeasurementType(value.getMeasurementType());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

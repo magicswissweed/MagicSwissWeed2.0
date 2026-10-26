@@ -214,7 +214,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
         setCurrentYear(currentYear);
         setCountry(country);
         setMeasurementType(measurementType);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -234,7 +234,7 @@ public class HistoricalYearsDataTableRecord extends UpdatableRecordImpl<Historic
             setCurrentYear(value.getCurrentYear());
             setCountry(value.getCountry());
             setMeasurementType(value.getMeasurementType());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }
