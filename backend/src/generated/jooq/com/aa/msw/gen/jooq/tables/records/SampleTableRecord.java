@@ -144,7 +144,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
         setValue(value);
         setCountry(country);
         setMeasurementType(measurementType);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -160,7 +160,7 @@ public class SampleTableRecord extends UpdatableRecordImpl<SampleTableRecord> {
             setValue(value.getValue());
             setCountry(value.getCountry());
             setMeasurementType(value.getMeasurementType());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

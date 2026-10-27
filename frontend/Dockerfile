@@ -23,6 +23,7 @@ RUN npm ci
 RUN npm run build
 
 FROM nginx:1.30-alpine
+RUN apk upgrade --no-cache
 COPY --from=build /msw-frontend/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # default port for nginx is 80, but we overwrite it to 3000 in nginx.conf

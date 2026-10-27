@@ -191,7 +191,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
         setProvider(provider);
         setState(state);
         setSourceLink(sourceLink);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -210,7 +210,7 @@ public class StationTableRecord extends UpdatableRecordImpl<StationTableRecord> 
             setProvider(value.getProvider());
             setState(value.getState());
             setSourceLink(value.getSourceLink());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

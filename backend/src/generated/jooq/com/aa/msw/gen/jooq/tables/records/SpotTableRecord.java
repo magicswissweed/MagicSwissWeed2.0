@@ -192,7 +192,7 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
         setMeasurementType(measurementType);
         setMinValue(minValue);
         setMaxValue(maxValue);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -211,7 +211,7 @@ public class SpotTableRecord extends UpdatableRecordImpl<SpotTableRecord> {
             setMeasurementType(value.getMeasurementType());
             setMinValue(value.getMinValue());
             setMaxValue(value.getMaxValue());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

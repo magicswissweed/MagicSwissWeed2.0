@@ -110,7 +110,7 @@ public class UserTableRecord extends UpdatableRecordImpl<UserTableRecord> {
         setExtid(extid);
         setEmail(email);
         setUsername(username);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -124,7 +124,7 @@ public class UserTableRecord extends UpdatableRecordImpl<UserTableRecord> {
             setExtid(value.getExtid());
             setEmail(value.getEmail());
             setUsername(value.getUsername());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

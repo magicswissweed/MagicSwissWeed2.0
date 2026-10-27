@@ -126,7 +126,7 @@ public class UserToSpotTableRecord extends UpdatableRecordImpl<UserToSpotTableRe
         setSpotId(spotId);
         setPosition(position);
         setWithnotification(withnotification);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -141,7 +141,7 @@ public class UserToSpotTableRecord extends UpdatableRecordImpl<UserToSpotTableRe
             setSpotId(value.getSpotId());
             setPosition(value.getPosition());
             setWithnotification(value.getWithnotification());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

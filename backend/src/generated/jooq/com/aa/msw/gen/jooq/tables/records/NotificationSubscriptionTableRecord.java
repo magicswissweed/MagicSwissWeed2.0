@@ -96,7 +96,7 @@ public class NotificationSubscriptionTableRecord extends UpdatableRecordImpl<Not
         setId(id);
         setUserId(userId);
         setSubscriptionToken(subscriptionToken);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -109,7 +109,7 @@ public class NotificationSubscriptionTableRecord extends UpdatableRecordImpl<Not
             setId(value.getId());
             setUserId(value.getUserId());
             setSubscriptionToken(value.getSubscriptionToken());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

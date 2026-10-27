@@ -8,13 +8,18 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.util.Map;
+
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
 public class MswApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MswApplication.class, args);
+        SpringApplication app = new SpringApplication(MswApplication.class);
+        // Spring Boot 4 defaults to Jackson 3; the API models (JsonNullable) are built for Jackson 2
+        app.setDefaultProperties(Map.of("spring.http.converters.preferred-json-mapper", "jackson2"));
+        app.run(args);
     }
 
     @Bean

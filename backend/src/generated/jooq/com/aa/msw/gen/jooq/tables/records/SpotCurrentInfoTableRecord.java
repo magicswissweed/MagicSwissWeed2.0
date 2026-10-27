@@ -95,7 +95,7 @@ public class SpotCurrentInfoTableRecord extends UpdatableRecordImpl<SpotCurrentI
         setId(id);
         setSpotId(spotId);
         setCurrentflowstatus(currentflowstatus);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -108,7 +108,7 @@ public class SpotCurrentInfoTableRecord extends UpdatableRecordImpl<SpotCurrentI
             setId(value.getId());
             setSpotId(value.getSpotId());
             setCurrentflowstatus(value.getCurrentflowstatus());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }
