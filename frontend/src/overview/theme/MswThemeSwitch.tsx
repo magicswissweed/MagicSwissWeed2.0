@@ -20,7 +20,7 @@ export const MswThemeSwitch = () => {
     const label = LABELS[preference];
 
     return (
-        <>
+        <div className="theme-toggle-wrapper">
             <button
                 type="button"
                 className={`theme-toggle pref-${preference}`}
@@ -33,7 +33,7 @@ export const MswThemeSwitch = () => {
                 <span className="icon moon"/>
                 <span className="thumb"/>
             </button>
-            <span className="sr-only" aria-live="polite" aria-atomic="true">{label}</span>
-        </>
+            <span className="visually-hidden theme-toggle-status" aria-live="polite" aria-atomic="true">{label}</span>
+        </div>
     );
 };
