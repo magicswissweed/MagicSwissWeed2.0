@@ -1,23 +1,5 @@
 import './MswThemeSwitch.scss'
-import {CSSProperties} from "react";
 import {MswThemePreference, useTheme} from "../../theme/MswThemeContext";
-
-// Inline styles (not a CSS class) so the live region stays invisible even if the
-// stylesheet is missing, stale (e.g. cached PWA assets) or overridden.
-const VISUALLY_HIDDEN: CSSProperties = {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    padding: 0,
-    margin: -1,
-    overflow: 'hidden',
-    clip: 'rect(0, 0, 0, 0)',
-    clipPath: 'inset(50%)',
-    whiteSpace: 'nowrap',
-    border: 0,
-    fontSize: 0,
-    lineHeight: 0,
-};
 
 const CYCLE: MswThemePreference[] = ['light', 'system', 'dark'];
 
@@ -37,21 +19,23 @@ export const MswThemeSwitch = () => {
 
     const label = LABELS[preference];
 
+    // The current theme is exposed to assistive tech through the button's
+    // aria-label only. A separate hidden aria-live text element was rendered
+    // visibly on some mobile browsers after toggling and overlapped the
+    // Log Out button in the profile modal, so there is deliberately no extra
+    // text node here.
     return (
-        <div className="theme-toggle-wrapper" style={{position: 'relative'}}>
-            <button
-                type="button"
-                className={`theme-toggle pref-${preference}`}
-                onClick={cycle}
-                aria-label={`Theme: ${label}`}
-                title={label}
-            >
-                <span className="icon sun"/>
-                <span className="icon system"/>
-                <span className="icon moon"/>
-                <span className="thumb"/>
-            </button>
-            <span className="visually-hidden" style={VISUALLY_HIDDEN} aria-live="polite" aria-atomic="true">{label}</span>
-        </div>
+        <button
+            type="button"
+            className={`theme-toggle pref-${preference}`}
+            onClick={cycle}
+            aria-label={`Theme: ${label}`}
+            title={label}
+        >
+            <span className="icon sun" aria-hidden="true"/>
+            <span className="icon system" aria-hidden="true"/>
+            <span className="icon moon" aria-hidden="true"/>
+            <span className="thumb" aria-hidden="true"/>
+        </button>
     );
 };
