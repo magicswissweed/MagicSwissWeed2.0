@@ -19,21 +19,23 @@ export const MswThemeSwitch = () => {
 
     const label = LABELS[preference];
 
+    // The current theme is exposed to assistive tech through the button's
+    // aria-label only. A separate hidden aria-live text element was rendered
+    // visibly on some mobile browsers after toggling and overlapped the
+    // Log Out button in the profile modal, so there is deliberately no extra
+    // text node here.
     return (
-        <>
-            <button
-                type="button"
-                className={`theme-toggle pref-${preference}`}
-                onClick={cycle}
-                aria-label={`Theme: ${label}`}
-                title={label}
-            >
-                <span className="icon sun"/>
-                <span className="icon system"/>
-                <span className="icon moon"/>
-                <span className="thumb"/>
-            </button>
-            <span className="sr-only" aria-live="polite" aria-atomic="true">{label}</span>
-        </>
+        <button
+            type="button"
+            className={`theme-toggle pref-${preference}`}
+            onClick={cycle}
+            aria-label={`Theme: ${label}`}
+            title={label}
+        >
+            <span className="icon sun" aria-hidden="true"/>
+            <span className="icon system" aria-hidden="true"/>
+            <span className="icon moon" aria-hidden="true"/>
+            <span className="thumb" aria-hidden="true"/>
+        </button>
     );
 };
