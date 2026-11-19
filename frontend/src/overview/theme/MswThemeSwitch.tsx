@@ -1,5 +1,23 @@
 import './MswThemeSwitch.scss'
+import {CSSProperties} from "react";
 import {MswThemePreference, useTheme} from "../../theme/MswThemeContext";
+
+// Inline styles (not a CSS class) so the live region stays invisible even if the
+// stylesheet is missing, stale (e.g. cached PWA assets) or overridden.
+const VISUALLY_HIDDEN: CSSProperties = {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    padding: 0,
+    margin: -1,
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    clipPath: 'inset(50%)',
+    whiteSpace: 'nowrap',
+    border: 0,
+    fontSize: 0,
+    lineHeight: 0,
+};
 
 const CYCLE: MswThemePreference[] = ['light', 'system', 'dark'];
 
@@ -20,7 +38,7 @@ export const MswThemeSwitch = () => {
     const label = LABELS[preference];
 
     return (
-        <div className="theme-toggle-wrapper">
+        <div className="theme-toggle-wrapper" style={{position: 'relative'}}>
             <button
                 type="button"
                 className={`theme-toggle pref-${preference}`}
@@ -33,7 +51,7 @@ export const MswThemeSwitch = () => {
                 <span className="icon moon"/>
                 <span className="thumb"/>
             </button>
-            <span className="visually-hidden theme-toggle-status" aria-live="polite" aria-atomic="true">{label}</span>
+            <span className="visually-hidden" style={VISUALLY_HIDDEN} aria-live="polite" aria-atomic="true">{label}</span>
         </div>
     );
 };

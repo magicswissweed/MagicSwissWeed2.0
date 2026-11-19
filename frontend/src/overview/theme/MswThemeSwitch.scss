@@ -4,22 +4,6 @@
   justify-content: center;
 }
 
-// Visually hidden live region announcing the current theme to screen readers.
-// Hardened on top of Bootstrap's .visually-hidden so it can never leak into the
-// layout (some mobile browsers/WebViews ignore the deprecated `clip` property).
-.theme-toggle-status {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  clip-path: inset(50%) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
 .theme-toggle {
   margin: auto;
   position: relative;
