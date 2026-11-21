@@ -32,7 +32,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-jackson2")
     implementation("org.openapitools:jackson-databind-nullable:0.2.12")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("com.google.firebase:firebase-admin:9.11.0")
+    implementation("com.google.firebase:firebase-admin:9.12.0")
+    constraints {
+        implementation("com.google.guava:guava:33.7.2-jre")
+    }
     implementation("org.locationtech.proj4j:proj4j:1.4.1")
     implementation("org.locationtech.proj4j:proj4j-epsg:1.4.1")
 
